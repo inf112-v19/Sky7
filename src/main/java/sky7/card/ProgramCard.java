@@ -1,10 +1,15 @@
 package sky7.card;
 
-public class Card implements ICard {
+public class ProgramCard implements ICard {
 
     private int priority, move, rotate;
     
-    public Card(int priority, int move, int rotate) {
+    /**
+     * @param priority Card priority number
+     * @param move Move value, positive forward, negative to reverse
+     * @param rotate rotation value, positive clockwise, negative counter-clockwise
+     */
+    public ProgramCard(int priority, int move, int rotate) {
         this.priority = priority;
         this.move = move;
         this.rotate = rotate;
