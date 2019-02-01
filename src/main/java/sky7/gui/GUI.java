@@ -8,20 +8,24 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import sky7.game.IGame;
+
 public class GUI implements ApplicationListener {
-    
+    private IGame game;
+    private int width, height;
     private SpriteBatch batch;
 //    private BitmapFont font;
-    private Texture floor;
+    private Texture txtr;
     
-    public GUI() {
-        // TODO Auto-generated constructor stub
+    public GUI(IGame game) {
+        this.game = game;
+        this.width = game.gameBoard().getWidth();
+        this.height = game.gameBoard().getHeight();
     }
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        floor = new Texture("assets/Floor.jpg");
     }
 
     @Override
@@ -41,9 +45,12 @@ public class GUI implements ApplicationListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         batch.begin();
-        for (int i = 0; i<=1024; i+=128) {
-            for(int j=0; j<=1024; j+=128) {
-                batch.draw(floor, i, j);
+        
+        // draw a grid of width*height, each square at 128*128 pixels
+        for (int i = 0; i<width; i++) {
+            for(int j=0; j<height; j++) {
+                txtr = new Texture(game.gameBoard().getTileTexture(i, j));
+                batch.draw(txtr, i*128, j*128);
             }
         }
         batch.end();

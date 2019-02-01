@@ -8,9 +8,11 @@ public class Game implements IGame {
     private IBoard board;
     
     public Game() {
-        board = new Board();
-        
-        
+        board = new Board(10,8);
     }
 
+    @Override
+    public IBoard gameBoard() {
+        return this.board;
+    }
 }
