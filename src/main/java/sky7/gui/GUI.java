@@ -4,13 +4,15 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class GUI implements ApplicationListener {
     
     private SpriteBatch batch;
-    private BitmapFont font;
+//    private BitmapFont font;
+    private Texture floor;
     
     public GUI() {
         // TODO Auto-generated constructor stub
@@ -19,14 +21,12 @@ public class GUI implements ApplicationListener {
     @Override
     public void create() {
         batch = new SpriteBatch();
-        font = new BitmapFont();
-        font.setColor(Color.RED);
+        floor = new Texture("assets/Floor.jpg");
     }
 
     @Override
     public void dispose() {
         batch.dispose();
-        font.dispose();
     }
 
     @Override
@@ -41,7 +41,11 @@ public class GUI implements ApplicationListener {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
         batch.begin();
-        font.draw(batch, "Test", 200, 200);
+        for (int i = 0; i<=1024; i+=128) {
+            for(int j=0; j<=1024; j+=128) {
+                batch.draw(floor, i, j);
+            }
+        }
         batch.end();
     }
 
