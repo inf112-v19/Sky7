@@ -1,6 +1,6 @@
 package sky7.card;
 
-public class ProgramCard implements ICard {
+public class ProgramCard implements IProgramCard {
 
     private int priority, move, rotate;
     
