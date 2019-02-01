@@ -5,10 +5,12 @@ import java.util.Stack;
 
 public class ProgramDeck implements IDeck {
     
-    private Stack<ICard> availableCards;
+    private Stack<IProgramCard> availableCards;
     
     public ProgramDeck() {
         availableCards = new Stack<>();
+        
+        //generate the 84 cards in a program deck
         
         for (int i=0; i<18; i++) {
             availableCards.push(new ProgramCard(80+20*i, 0, 1)); //rotate right
@@ -45,7 +47,7 @@ public class ProgramDeck implements IDeck {
     @Override
     public void returnCards(Stack<ICard> cards) {
         for (ICard card : cards) {
-            availableCards.push(card);
+            availableCards.push((ProgramCard)card);
         }
         
         shuffle();
