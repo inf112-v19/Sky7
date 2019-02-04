@@ -1,5 +1,9 @@
 package sky7.board;
 
 public interface ICell {
-    public String getTexture();
+
+    /**
+     * @return the name or value of an image to display for the cell.
+     */
+    String getTexture();
 }
