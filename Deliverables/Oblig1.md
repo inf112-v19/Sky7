@@ -57,10 +57,14 @@ Create a PC-game implementation of the board game RoboRally. It should be playab
     - After round
       - Repair ?
 
-
+### Priority
+1. Overall Structure 
+2. Create Interfaces in accordance with structure plan
+3. Get a basic understanding of LibGDX
+4. Create a barebone game class with a visual board and 1 robot
+5. Prepare a presentation
 
 ## Part 3
-
 
 ### Verktøy
 - Java (Eclipse, IntelliJ)
@@ -69,12 +73,5 @@ Create a PC-game implementation of the board game RoboRally. It should be playab
 - Google Docs
 - Trello -> Git
 - Git
-
-### Priority
-1. Overall Structure 
-2. Create Interfaces in accordance with structure plan
-3. Get a basic understanding of LibGDX
-4. Create a barebone game class with a visual board and 1 robot
-5. Prepare a presentation
 
 ## Part 4
