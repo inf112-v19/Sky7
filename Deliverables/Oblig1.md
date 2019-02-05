@@ -35,30 +35,37 @@ Create a PC-game implementation of the board game RoboRally. It should be playab
   - 1 Robot per grid square
 Robots
   - Visible
-Position on board
-Movable
-Health
-Laser
-Power-down (repair)
+  - Position on board
+  - Movable
+  - Health
+  - Laser
+  - Power-down (repair)
 UI-border
-Health status
-Cards on hand
-Cards in play
+  - Health status
+  - Cards on hand
+  - Cards in play
 Cards
-Priority
-Actions (Instructions)
+  - Priority
+  - Actions (Instructions)
 Game rounds
-Before round
-Hand out cards
-Players can move cards from hand to play
-Players can click ready when instructions are complete / auto ready if powerdown
-5 Phases
-Reveal cards and move robots in order of priority
-After round
-Repair ?
+  - Before round
+    - Hand out cards
+    - Players can move cards from hand to play
+    - Players can click ready when instructions are complete / auto ready if powerdown
+  - 5 Phases
+    - Reveal cards and move robots in order of priority
+    - After round
+    - Repair ?
 
 
 
 ## Part 3
+
+### Priority
+1. Overall Structure 
+2. Create Interfaces in accordance with structure plan
+3. Get a basic understanding of LibGDX
+4. Create a barebone game class with a visual board and 1 robot
+5. Prepare a presentation
 
 ## Part 4
