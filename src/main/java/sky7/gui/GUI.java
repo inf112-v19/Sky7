@@ -24,18 +24,11 @@ public class GUI implements ApplicationListener {
        
         
         textures = new HashMap<>();
-//        loadTextures();
-    }
-
-    private void loadTextures() {
-        textures.put("robot", new Texture("assets/robot1.png"));
-        textures.put("floor", new Texture("assets/Floor.jpg"));
     }
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        Texture temp = new Texture("assets/robot1.png");
         textures.put("robot", new Texture("assets/robot1.png"));
         textures.put("floor", new Texture("assets/Floor.jpg"));
     }
