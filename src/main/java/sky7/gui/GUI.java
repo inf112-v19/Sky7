@@ -30,7 +30,7 @@ public class GUI implements ApplicationListener {
     public void create() {
         batch = new SpriteBatch();
         textures.put("robot", new Texture("assets/robot1.png"));
-        textures.put("floor", new Texture("assets/Floor.jpg"));
+        textures.put("floor", new Texture("assets/Floor.png"));
     }
 
     @Override
