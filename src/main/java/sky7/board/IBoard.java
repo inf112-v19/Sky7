@@ -1,6 +1,8 @@
 package sky7.board;
 
 public interface IBoard {
+    public String[] getTileTexture(int x, int y);
+
 
     /**
      * Returns a string representation of a cell to be displayed at a given position of a tile on the board.
