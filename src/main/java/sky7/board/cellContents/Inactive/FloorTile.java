@@ -4,6 +4,7 @@ import sky7.board.ICell;
 import sky7.board.cellContents.IInactive;
 
 public class FloorTile implements IInactive {
+
     String textureRef = "floor";
     int priority = 1;
 
