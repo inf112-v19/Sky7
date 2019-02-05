@@ -33,21 +33,21 @@ Create a PC-game implementation of the board game RoboRally. It should be playab
   - Conveyor belt
   - Flags
   - 1 Robot per grid square
-Robots
+- Robots
   - Visible
   - Position on board
   - Movable
   - Health
   - Laser
   - Power-down (repair)
-UI-border
+- UI-border
   - Health status
   - Cards on hand
   - Cards in play
-Cards
+- Cards
   - Priority
   - Actions (Instructions)
-Game rounds
+- Game rounds
   - Before round
     - Hand out cards
     - Players can move cards from hand to play
@@ -55,7 +55,7 @@ Game rounds
   - 5 Phases
     - Reveal cards and move robots in order of priority
     - After round
-    - Repair ?
+      - Repair ?
 
 
 
