@@ -61,6 +61,15 @@ Create a PC-game implementation of the board game RoboRally. It should be playab
 
 ## Part 3
 
+
+### Verktøy
+- Java (Eclipse, IntelliJ)
+- LibGDX
+- Slack
+- Google Docs
+- Trello -> Git
+- Git
+
 ### Priority
 1. Overall Structure 
 2. Create Interfaces in accordance with structure plan
