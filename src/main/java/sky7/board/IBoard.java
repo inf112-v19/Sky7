@@ -1,7 +1,6 @@
 package sky7.board;
 
 public interface IBoard {
-    public String[] getTileTexture(int x, int y);
 
 
     /**
@@ -11,7 +10,7 @@ public interface IBoard {
      * @param y vertical position of a tile
      * @return the name or value of an image to display of a cell at a given tile.
      */
-    String getTileTexture(int x, int y);
+    String[] getTileTexture(int x, int y);
 
     /**
      * The width of the board by the number of tiles
