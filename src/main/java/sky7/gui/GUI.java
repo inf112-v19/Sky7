@@ -36,6 +36,7 @@ public class GUI implements ApplicationListener {
 		batch = new SpriteBatch();
 		textures.put("robot", new Texture("assets/robot1.png"));
 		textures.put("floor", new Texture("assets/floor/plain.png"));
+		textures.put("CardPlaceHolder", new Texture("assets/cards/CardPlaceHolder.png"));
 		camera = new OrthographicCamera(width, height);
 		viewport = new FitViewport(width, height, camera);
 	}
@@ -66,11 +67,18 @@ public class GUI implements ApplicationListener {
 					// batch.draw(textures.get(tex), i*128, j*128);
 					
 					// need extra parameters (last 2 128s to scale each texture to 128x128 instead of original 300x300)
-					batch.draw(textures.get(tex), i*128, j*128, 128, 128);
+				    // (j+2) leaves space for dock
+					batch.draw(textures.get(tex), i*128, (j+2)*128, 128, 128);
 
 				}
 			}
 		}
+		
+		// draw 9 cards in dock 
+		for (int i=0; i<9; i++) {
+		    batch.draw(textures.get("CardPlaceHolder"), 40+i*90, 64, 84, 128);
+        }
+		
 		batch.end();
 	}
 
