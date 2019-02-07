@@ -7,19 +7,19 @@ public interface IProgramCard extends ICard {
      * 
      * @return the priority number
      */
-    public int priorityN();
+    int priorityN();
     
     /**
      * Get the movement value of the card
      * 
      * @return the movement value, should be from -1 (reverse) to 3
      */
-    public int move();
+    int move();
     
     /**
      * Get the rotation value of the card
      * 
      * @return the rotation value  (-1, 1 or 2)
      */
-    public int rotate();
+    int rotate();
 }

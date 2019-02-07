@@ -9,6 +9,5 @@ public interface IGame {
      *
      * @return A board
      */
-
     IBoard gameBoard();
 }

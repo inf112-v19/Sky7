@@ -9,7 +9,7 @@ public interface IDeck {
      * @param n number of cards to draw
      * @return a stack of the drawn cards
      */
-    public Stack<ICard> draw (int n);
+    Stack<ICard> draw (int n);
     
     /**
      * Return used cards to the deck. <br>
@@ -17,7 +17,7 @@ public interface IDeck {
      * 
      * @param cards stack of cards returned
      */
-    public void returnCards (Stack<ICard> cards);
+    void returnCards (Stack<ICard> cards);
     
     void shuffle();
 }

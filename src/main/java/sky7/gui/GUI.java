@@ -69,7 +69,6 @@ public class GUI implements ApplicationListener {
 					// need extra parameters (last 2 128s to scale each texture to 128x128 instead of original 300x300)
 				    // (j+2) leaves space for dock
 					batch.draw(textures.get(tex), i*128, (j+2)*128, 128, 128);
-
 				}
 			}
 		}
