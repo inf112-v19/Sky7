@@ -7,7 +7,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -20,6 +22,8 @@ public class GUI implements ApplicationListener {
 	private HashMap<String, Texture> textures;
 	private Viewport viewport;
 	private OrthographicCamera camera;
+	private Sprite sp;
+	private Vector3 clickPos = new Vector3();
 
 	public GUI(IGame game) {
 		this.game = game;
@@ -37,8 +41,9 @@ public class GUI implements ApplicationListener {
 		textures.put("robot", new Texture("assets/robot1.png"));
 		textures.put("floor", new Texture("assets/floor/plain.png"));
 		textures.put("CardPlaceHolder", new Texture("assets/cards/CardPlaceHolder.png"));
-		camera = new OrthographicCamera(width, height);
-		viewport = new FitViewport(width, height, camera);
+		camera = new OrthographicCamera(width*128, height*128);
+		viewport = new FitViewport(width*128, height*128, camera);
+		sp = new Sprite(new Texture("assets/cards/CardPlaceHolder.png"));
 	}
 
 	@Override
@@ -56,6 +61,7 @@ public class GUI implements ApplicationListener {
 	public void render() {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
 
@@ -73,10 +79,24 @@ public class GUI implements ApplicationListener {
 			}
 		}
 		
+		sp.draw(batch);
+		
+		if (Gdx.input.isTouched()) {
+		    
+		    camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+		    
+		    if (clickPos.x > sp.getX() && clickPos.x < sp.getX() + sp.getWidth()) { 
+                if (clickPos.y > sp.getY() && clickPos.y < sp.getY() + sp.getHeight()) {
+                    sp.setX(sp.getX()+100);
+                }
+		    }
+		}
+		    
+		
 		// draw 9 cards in dock 
-		for (int i=0; i<9; i++) {
-		    batch.draw(textures.get("CardPlaceHolder"), 40+i*90, 64, 84, 128);
-        }
+//		for (int i=0; i<9; i++) {
+//		    batch.draw(textures.get("CardPlaceHolder"), 40+i*90, 64, 84, 128);
+//        }
 		
 		batch.end();
 	}
