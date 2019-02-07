@@ -38,6 +38,8 @@ In summery, every team member has the programming skills needed for this task an
   - Slack
   - Github project board
   - Google Docs
+- Other
+  - Adobe photoshop
 
 ## Part 2
 
