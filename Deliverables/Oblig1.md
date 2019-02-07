@@ -117,11 +117,11 @@ Everybody can post on the backlog and everybodt else can contribute in definitio
 
 ## Summery
 
-### What went well:
+### What worked:
   - The code was completed with out much problems.
   - The meetings were productive.
   - Workflow is improving.
-  - 
+  
 ### What did not work:
 Team agreed to use trello because it was supposedly easy, but there were to many platforms of communication to keep track. This problem lead to some of the team members coding more than others and working on the same issue. Thus not everybody had overview. Therefore, inorder to use fewer platforms we changed to git projectboard. It is working better so far. 
 
