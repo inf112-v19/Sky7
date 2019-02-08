@@ -1,0 +1,40 @@
+Team lead: Carl
+Custom contact: Brigt
+Tools:
+"	Java 
+"	LibGDX
+"	Slack
+"	Google Docs
+"	Git Project Board
+"	Git
+"	photoshop
+
+Our overall goal: create a PC-game implementation of the board game Robo Rally. It should be playable by 2 and up to 8 players from 8 PCs on the same network. Some simplifications must be done: So far we remove
+o	"Options" cards
+o	Timer
+
+
+In our first meeting we sat down and present our self. We told about what we have done before and what we are studding. We decided that Carl is out team lead and Brigt is our custom contact. Henrik started right away exploring LibGDX. We also sat up Trello, slack, google dock and our project on Git. We also start to set up our priority list for the next two weeks. We planned to meet the next Thursday. Before that meeting we gave our self homework; learn game rules and see a little bit on LibGDX .
+
+In our second meeting we sat down and start drawing our structure on a blackboard. We discussed how we wanted to structure our interfaces. And what we could simplify from the board game. This gave all of our team members a good understanding of the overall structure. 
+
+In our third meeting we discussed some challenges. We discussed if our board should contain to grids or one grid with a priority list for each tile. We agreed on one grid. We also agreed on that we used Trello too little and forgot to update Trello while working. We then moved to Git Project Board. We think this is easier because now we have all in one place and it is easier for the teaching assistant to get a view. In this meeting we worked with different things on the project and discussed with each other if a problem came up. Brigt and Maren had some problem with their branch on Git, but with help from Carl Maren solved hers. Maren also started with the presentation. All members got an update and we now have a simple board with one robot. We planned the next step for our game. To make different tiles, a click-function, fix cards, move robots.
+We agreed on how to connect our branch with Git. Small changes=merge, big changes= pull request. Also send a notification on slack saying there is a new pull request.
+We also sat some rules on slack; tag names.
+
+Fjerde møte: en problemstilling har kommet opp. Vi må begynne å tenkte på gamerules. Og i den forbindelse tenker vi at vi tar utgangsounkt i multiplayer. I stedet for å først starte med en player og så forandre alt.
+
+
+What went well: drastisk endring på kommunikasjon underveis. Mye bedre etter vi byttet til git project board
+What should we do the next time:
+New tools:
+
+Challenges:
+1.	Board: two grids or one grid with a priority list
+2.	Trello: we forgot to active use Trello while working and coding. 
+3.	Placement on screen: how to show both board and player dock on the screen. How to fit everything.
+4.	LibGDX: 
+Solution:
+1.	Board: one grid with a priority list
+2.	Trello -> Git Project Board: we decided to switch to Git Project Board. It is easier for us because now we have all in one place. This also makes it easier for our teaching assistants.
+3.	Placement on screen:
