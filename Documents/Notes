@@ -1,0 +1,129 @@
+INF112 – Sky7
+
+Verv
+Team lead: Carl
+Kundekontakt: Brigt
+Verktøy
+Java (Eclipse, IntelliJ)
+LibGDX
+Slack
+Google Docs
+Trello -> Git Project Board
+Git
+Photoshop
+Kompetanse
+Henrik
+Java
+Nettverk i java
+Spill i java
+Carl
+Java
+Nettverk
+Spill i java
+Konkurranseprogrammering
+Word/Excel (Data representation)
+Maren
+Java
+Konkurranseprogrammering
+Brigt
+Java
+JavaFX
+Konkurranseprogrammering
+Brettspill
+Fromsa
+Java
+Python
+Haskell
+Konkurranseprogrammering
+
+Overall goal of application
+Create a PC-game implementation of the board game RoboRally. It should be playable by 2 to 8 players from 8 PCs on the same network. Some simplifications must be done; remove “Option” cards, remove timer
+Application Requirements
+Board
+Static tiles
+Holes
+Walls
+Floor
+Interacting tiles
+Backup station
+Cogwheel
+Repair station
+Laser
+Piston
+Conveyor belt
+Flags
+1 Robot per grid square
+Robots
+Visible
+Position on board
+Movable
+Health
+Laser
+Power-down (repair)
+UI-border
+Health status
+Cards on hand
+Cards in play
+Cards
+Priority
+Actions (Instructions)
+Game rounds
+Before round
+Hand out cards
+Players can move cards from hand to play
+Players can click ready when instructions are complete / auto ready if powerdown
+5 Phases
+Reveal cards and move robots in order of priority
+After round
+Repair ?
+
+Priority
+Overall Structure 
+Create Interfaces in accordance with structure plan
+Get a basic understanding of LibGDX
+Create a barebone game class with a visual board and 1 robot
+Prepare a presentation
+
+
+(next step
+lage klikk, ordne med kortene, flytte robotene)
+First meeting:  introduction, start create a plan
+Second meeting:  create a structure plan
+Third meeting: 
+ved små endringer: merge
+ved store endringer: pull request, skrive på slack at man har sendt en pull request
+Møter: første onsdag etter innlevering retrospektiv-møte og andre onsdag etter er status-møte. Kommunisere på slack, huske å assigne issues på git når vi jobber.
+prosjektmetodikk: to til tre ukers sykeler avhengig av deadline, blanding av scrum og kanban. jobber med en ting av gangen.
+
+
+
+
+
+
+Kanban
+Scrum
+Roles & Responsibilities
+There are no pre-defined roles for a team. Although there may still be a Project Manager, the team is encouraged to collaborate and chip in when any one person becomes overwhelmed. X
+
+
+Due Dates / Delivery Timelines
+
+
+Deliverables are determined by sprints, or set periods of time in which a set of work must be completed and ready for review. X
+Delegation & Prioritization
+Uses a “pull system,” or a systematic workflow that allows team members to only “pull” new tasks once the previous task is complete. X
+
+
+Modifications / Changes
+Allows for changes to be made to a project mid-stream, allowing for iterations and continuous improvement prior to the completion of a project. X
+
+
+Measurement of Productivity
+
+
+Measures production using velocity through sprints. Each sprint is laid out back-to-back and/or concurrently so that each additional sprint relies on the success of the one before it. X
+Best Applications
+
+
+Best for teams with stable priorities that may not change as much over time. X
+
