@@ -117,7 +117,7 @@ Everybody can post on the backlog and everybodt else can contribute in definitio
   - When big chanves are made: run a pull request, and inform on slack of the request. 
 
 
-## Summery
+## Summary
 
 ### What worked:
   - The code was completed with out much problems.
