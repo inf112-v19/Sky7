@@ -1,4 +1,4 @@
-# Oblig1 - Sky7 RoboRally
+# Oblig2 - Sky7 RoboRally
 
 ## Part 1
 
