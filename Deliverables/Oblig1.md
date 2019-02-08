@@ -109,13 +109,18 @@ Everybody can post on the backlog and everybodt else can contribute in definitio
   Communication will be mainly over slack.
 
 #### First meeting: 
-  - introduction, start create a plan
+  - introduction, start create a plan, set up Trello, Slack, google doc and a priority list.
 #### Second meeting: 
-  - create a structure plan
+  - create a structure plan, discuss what to simplify from the board game.
 #### Third meeting:  
+  - Change from Trello to Git Project Board.
+  - Plan the next step for our game.
   - When small changes are made, merge.
   - When big chanves are made: run a pull request, and inform on slack of the request. 
-
+  - Send notification on Slack if there is a new pull request.
+#### Fourth meeting:
+  - Discussion of what worked and did not work.
+  - Discussion of next itteration of the project. A problem is spoted, have to change the structure to accomidate for multiplayer game.
 
 ## Summary
 
