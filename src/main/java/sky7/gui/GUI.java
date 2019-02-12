@@ -13,10 +13,10 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
-import sky7.game.IGame;
+import sky7.game.IClient;
 
 public class GUI implements ApplicationListener {
-	private IGame game;
+	private IClient game;
 	private int width, height;
 	private SpriteBatch batch;
 	private HashMap<String, Texture> textures;
@@ -25,7 +25,7 @@ public class GUI implements ApplicationListener {
 	private Sprite sp;
 	private Vector3 clickPos = new Vector3();
 
-	public GUI(IGame game) {
+	public GUI(IClient game) {
 		this.game = game;
 		this.width = game.gameBoard().getWidth();
 		this.height = game.gameBoard().getHeight();
