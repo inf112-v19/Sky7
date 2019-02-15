@@ -38,12 +38,15 @@ public class GUI implements ApplicationListener {
 	@Override
 	public void create() {
 		batch = new SpriteBatch();
+		camera = new OrthographicCamera(width*128, height*128);
+		viewport = new FitViewport(width*128, height*128, camera);
+		
 		textures.put("robot", new Texture("assets/robot1.png"));
 		textures.put("floor", new Texture("assets/floor/plain.png"));
 		textures.put("CardPlaceHolder", new Texture("assets/cards/CardPlaceHolder.png"));
-		camera = new OrthographicCamera(width*128, height*128);
-		viewport = new FitViewport(width*128, height*128, camera);
-		sp = new Sprite(new Texture("assets/cards/CardPlaceHolder.png"));
+		textures.put("outline", new Texture("assets/cards/CardPlaceHolderOutline.png"));
+		textures.put("dock", new Texture("assets/dock.png"));
+		sp = new Sprite(new Texture("assets/cards/CardPlaceHolder2.png"));
 	}
 
 	@Override
@@ -75,8 +78,16 @@ public class GUI implements ApplicationListener {
 					// need extra parameters (last 2 128s to scale each texture to 128x128 instead of original 300x300)
 				    // (j+2) leaves space for dock
 					batch.draw(textures.get(tex), i*128, (j+2)*128, 128, 128);
+					
 				}
 			}
+			//draw dock
+			batch.draw(textures.get("dock"), i*128, 0);
+		}
+		
+		//draw cardoutline above dock
+		for (int i=0; i<9; i++) {
+			batch.draw(textures.get("outline"), i*128, 0);
 		}
 		
 		sp.draw(batch);
@@ -87,7 +98,7 @@ public class GUI implements ApplicationListener {
 		    
 		    if (clickPos.x > sp.getX() && clickPos.x < sp.getX() + sp.getWidth()) { 
                 if (clickPos.y > sp.getY() && clickPos.y < sp.getY() + sp.getHeight()) {
-                    sp.setX(sp.getX()+100);
+                    sp.setX(sp.getX()+128);
                 }
 		    }
 		}
