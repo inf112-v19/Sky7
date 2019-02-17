@@ -35,8 +35,10 @@ public class Main {
 
         @Override
         public void run() {
+            // Refactor cfg
             LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
             cfg.title = "hello-world";
+            // Width and Height should adapt to the resolution of a screen.
             cfg.width = 1280;
             cfg.height = 1024;
             

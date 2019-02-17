@@ -19,6 +19,7 @@ public class GUI implements ApplicationListener {
 	private IGame game;
 	private int width, height;
 	private SpriteBatch batch;
+	//abstract the name of textures.
 	private HashMap<String, Texture> textures;
 	private Viewport viewport;
 	private OrthographicCamera camera;
@@ -41,6 +42,7 @@ public class GUI implements ApplicationListener {
 		textures.put("robot", new Texture("assets/robot1.png"));
 		textures.put("floor", new Texture("assets/floor/plain.png"));
 		textures.put("CardPlaceHolder", new Texture("assets/cards/CardPlaceHolder.png"));
+		// find out how this works
 		camera = new OrthographicCamera(width*128, height*128);
 		viewport = new FitViewport(width*128, height*128, camera);
 		sp = new Sprite(new Texture("assets/cards/CardPlaceHolder.png"));
@@ -59,8 +61,8 @@ public class GUI implements ApplicationListener {
 
 	@Override
 	public void render() {
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		Gdx.gl.glClearColor(0, 0, 0, 1); // Background Color
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clears every image from previous iteration of render.
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
@@ -68,7 +70,7 @@ public class GUI implements ApplicationListener {
 		// draw a grid of width*height, each square at 128*128 pixels
 		for (int i = 0; i<width; i++) {
 			for(int j=0; j<height; j++) {
-				String[] texturesRef = game.gameBoard().getTileTexture(i, j);
+				String[] texturesRef = game.gameBoard().getTileTexture(i, j); // Which texture belongs at position i,j
 				for(String tex : texturesRef) {
 					// batch.draw(textures.get(tex), i*128, j*128);
 					

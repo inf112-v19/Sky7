@@ -4,5 +4,5 @@ public interface ICell extends Comparable<ICell>{
     
     String getTexture();
     
-    int drawPriority();
+    int drawPriority(); // Abstract away the priority of each ICell type to a txt file or Enumeration class.
 }
