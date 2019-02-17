@@ -35,10 +35,10 @@ public class Main {
 
         @Override
         public void run() {
-            // Refactor cfg
+            // TODO Refactor cfg
             LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
             cfg.title = "Sky7 Games";
-            // Width and Height should adapt to the resolution of a screen.
+            // TODO Width and Height should adapt to the resolution of a screen.
             cfg.width = 1280;
             cfg.height = 1024;
             
