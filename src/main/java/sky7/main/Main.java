@@ -3,30 +3,30 @@ package sky7.main;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import sky7.game.Game;
-import sky7.game.IGame;
+import sky7.game.Client;
+import sky7.game.IClient;
 import sky7.gui.GUI;
 
 public class Main {
     
-    private static IGame game;
+    private static IClient cli;
 
     public static void main(String[] args) {
         
-        gameEngine g = new gameEngine();
-        Thread engine = new Thread(g);
-        engine.start();
+        clientThread cThread = new clientThread();
+        Thread client = new Thread(cThread);
+        client.start();
         
-        startGUI x = new startGUI();
-        Thread gui = new Thread(x);
+        startGUI g = new startGUI();
+        Thread gui = new Thread(g);
         gui.start();
     }
     
-    public static class gameEngine implements Runnable {
+    public static class clientThread implements Runnable {
 
         @Override
         public void run() {
-            game = new Game();
+            cli = new Client();
         }
         
     }
@@ -37,12 +37,12 @@ public class Main {
         public void run() {
             // Refactor cfg
             LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-            cfg.title = "hello-world";
+            cfg.title = "Sky7 Games";
             // Width and Height should adapt to the resolution of a screen.
             cfg.width = 1280;
             cfg.height = 1024;
             
-            new LwjglApplication(new GUI(game), cfg);
+            new LwjglApplication(new GUI(cli), cfg);
         }
      }
 }
