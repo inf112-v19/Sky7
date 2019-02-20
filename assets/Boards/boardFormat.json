@@ -1,0 +1,24 @@
+{
+  "Size": [
+    "Width",
+    "Height"
+  ],
+  "Code": {
+    "b": "conveyor belt",
+    "c": "cogwheel",
+    "f": "floor",
+    "g": "flag(goal)",
+    "h": "hole",
+    "l": "laser",
+    "r": "sky7.board.Robot",
+    "s": "start cell",
+    "t": "tool",
+    "w": "wall"
+  },
+  "posCode": {
+    "N": "north",
+    "E": "east",
+    "W": "west",
+    "S": "south"
+  }
+}
