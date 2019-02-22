@@ -1,5 +1,6 @@
 package sky7.board;
     
+import java.util.Arrays;
 import java.util.TreeSet;
 
 import sky7.board.cellContents.Inactive.FloorTile;
@@ -27,8 +28,10 @@ public class Board implements IBoard {
         
     }
 
-    public Board(TreeSet<ICell>[][] grid){
+    public Board(TreeSet<ICell>[][] grid,int height, int width){
         this.grid = grid;
+        this.width = width;
+        this.height = height;
 
     }
     @Override
@@ -51,6 +54,9 @@ public class Board implements IBoard {
     public int getHeight() {
         return height;
     }
-    
 
+    @Override
+    public String toString() {
+        return Arrays.deepToString(grid);
+    }
 }

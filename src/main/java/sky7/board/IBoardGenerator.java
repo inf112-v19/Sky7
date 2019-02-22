@@ -1,8 +1,6 @@
 package sky7.board;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.IllegalFormatConversionException;
 
 public interface IBoardGenerator {
 
