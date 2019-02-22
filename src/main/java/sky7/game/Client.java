@@ -3,11 +3,11 @@ package sky7.game;
 import sky7.board.Board;
 import sky7.board.IBoard;
 
-public class Game implements IGame {
+public class Client implements IClient {
 
     private IBoard board;
     
-    public Game() {
+    public Client() {
         board = new Board(10,8);
     }
 
