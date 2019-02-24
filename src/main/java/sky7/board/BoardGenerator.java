@@ -9,6 +9,7 @@ import sky7.board.cellContents.Inactive.*;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeSet;
 
@@ -42,14 +43,12 @@ public class BoardGenerator implements IBoardGenerator {
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
 
-
                 String cell = cells[height*row+column];
                 //TODO split cell in to partial codes
                 String[] partsOfCell = cell.split("_");
+                for (String part : partsOfCell) {
 
-                for (String partOfCell : partsOfCell) {
-
-                    char typeOfCell = partOfCell.charAt(0);
+                    char typeOfCell = part.charAt(0);
 
                     TreeSet<ICell> layers = new TreeSet<ICell>();
 
@@ -58,8 +57,8 @@ public class BoardGenerator implements IBoardGenerator {
                             layers.add(new FloorTile());
                             break;
                         case 'w': //TODO fill in wall (direction, can be multiple walls)
-                            for (int k = 1; k < partOfCell.length(); k++) {
-                                char direction = partOfCell.charAt(k);
+                            for (int k = 1; k < part.length(); k++) {
+                                char direction = part.charAt(k);
                                 switch (direction) {
                                     case 'N': //TODO north
                                         layers.add(new Wall(1));
@@ -77,8 +76,8 @@ public class BoardGenerator implements IBoardGenerator {
                             }
                             break;
                         case 'b': //TODO fill in belt (direction and type)
-                            for (int k = 1; k < partOfCell.length(); k++) {
-                                char direction = partOfCell.charAt(k);
+                            for (int k = 1; k < part.length(); k++) {
+                                char direction = part.charAt(k);
                                 switch (direction) {
                                     case 'N': //TODO north
                                         layers.add(new Belt(1, 0));
@@ -96,8 +95,8 @@ public class BoardGenerator implements IBoardGenerator {
                             }
                             break;
                         case 'c': //TODO fill in cogwheel (direction with clock and against clock)
-                            for (int k = 1; k < partOfCell.length(); k++) {
-                                char direction = partOfCell.charAt(k);
+                            for (int k = 1; k < part.length(); k++) {
+                                char direction = part.charAt(k);
                                 switch (direction) {
                                     case 'C': //TODO with clock
                                         layers.add(new CogWheel(1));
@@ -109,11 +108,11 @@ public class BoardGenerator implements IBoardGenerator {
                             }
                             break;
                         case 'g': //fill in flag (number)
-                            int flagnumber = partOfCell.charAt(1);
-                            layers.add(new Flag(flagnumber));
+                            int flagNumber = Integer.parseInt(""+part.charAt(1));
+                            layers.add(new Flag(flagNumber));
                             break;
                         case 't': // fill in wrench (2 types)
-                            int typeOfWrench = partOfCell.charAt(1);
+                            int typeOfWrench = Integer.parseInt(""+part.charAt(1));
                             layers.add(new Wrench(typeOfWrench));
                             break;
                         case 'h': // fill in hole, essentially ignore
@@ -123,7 +122,7 @@ public class BoardGenerator implements IBoardGenerator {
                             layers.add(new Laser(false, 0, 1));
                             break;
                         case 's': //TODO fill in start cell for robot (number)
-                            int startNumber = partOfCell.charAt(1);
+                            int startNumber = Integer.parseInt(""+part.charAt(1));
                             layers.add(new StartPosition(startNumber));
                             break;
                         default:

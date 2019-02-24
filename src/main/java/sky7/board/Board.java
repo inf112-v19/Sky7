@@ -3,6 +3,7 @@ package sky7.board;
 import java.util.Arrays;
 import java.util.TreeSet;
 
+import com.badlogic.gdx.graphics.Texture;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.robots.RobotTile;
 
@@ -35,14 +36,8 @@ public class Board implements IBoard {
 
     }
     @Override
-    public String[] getTileTexture(int x, int y) {
-        String[] tiles = new String[grid[x][y].size()];
-        int i = 0;
-        for (ICell tile : grid[x][y]) {
-            tiles[i++] = tile.getTexture();
-        }
-        
-        return tiles;
+    public TreeSet<ICell> getTileTexture(int x, int y) {
+         return grid[x][y];
     }
     
     @Override

@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import sky7.board.ICell;
 import sky7.game.IClient;
 
 public class GUI implements ApplicationListener {
@@ -29,28 +30,31 @@ public class GUI implements ApplicationListener {
 
     public GUI(IClient game) throws FileNotFoundException {
         this.game = game;
-        game.generateBoard();
-        this.width = game.gameBoard().getWidth();
-        this.height = game.gameBoard().getHeight();
-
-
         textures = new HashMap<>();
     }
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
-        camera = new OrthographicCamera(width * 128, height * 128);
-        viewport = new FitViewport(width * 128, height * 128, camera);
+        try {
+            game.generateBoard();
+            this.width = game.gameBoard().getWidth();
+            this.height = game.gameBoard().getHeight();
+            batch = new SpriteBatch();
+            camera = new OrthographicCamera(width * 128, height * 128);
+            viewport = new FitViewport(width * 128, height * 128, camera);
 
-        textures.put("robot", new Texture("assets/robot1.png"));
-        textures.put("floor", new Texture("assets/floor/plain.png"));
-        textures.put("CardPlaceHolder", new Texture("assets/cards/CardPlaceHolder.png"));
-        textures.put("outline", new Texture("assets/cards/CardPlaceHolderOutline.png"));
-        textures.put("dock", new Texture("assets/dock.png"));
-        textures.put("unmarkedCard", new Texture("assets/cards/cardPlaceHolderFaded.png"));
+            textures.put("robot", new Texture("assets/robot1.png"));
+            textures.put("floor", new Texture("assets/floor/plain.png"));
+            textures.put("CardPlaceHolder", new Texture("assets/cards/CardPlaceHolder.png"));
+            textures.put("outline", new Texture("assets/cards/CardPlaceHolderOutline.png"));
+            textures.put("dock", new Texture("assets/dock.png"));
+            textures.put("unmarkedCard", new Texture("assets/cards/cardPlaceHolderFaded.png"));
 
-        sp = new Sprite(new Texture("assets/cards/CardPlaceHolder2.png"));
+            sp = new Sprite(new Texture("assets/cards/CardPlaceHolder2.png"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -75,7 +79,11 @@ public class GUI implements ApplicationListener {
         // draw a grid of width*height, each square at 128*128 pixels
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < height; j++) {
-                String[] texturesRef = game.gameBoard().getTileTexture(i, j); // Which texture belongs at position i,j
+                for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
+                    batch.draw(cell.getTexture(), i * 128, (j + 2) * 128, 128, 128);
+                }
+            }
+                /*String[] texturesRef = game.gameBoard().getTileTexture(i, j); // Which texture belongs at position i,j
                 for (String tex : texturesRef) {
                     // batch.draw(textures.get(tex), i*128, j*128);
 
@@ -83,15 +91,16 @@ public class GUI implements ApplicationListener {
                     // (j+2) leaves space for dock
                     batch.draw(textures.get(tex), i * 128, (j + 2) * 128, 128, 128);
 
-                }
-            }
+                }*/
         }
 
         Dock();
 
         sp.draw(batch);
 
-        if (Gdx.input.isTouched()) {
+        if (Gdx.input.isTouched())
+
+        {
 
             camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 

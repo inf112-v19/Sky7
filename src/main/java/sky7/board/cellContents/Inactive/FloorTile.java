@@ -7,16 +7,16 @@ import sky7.board.cellContents.IInactive;
 public class FloorTile implements IInactive {
 
     String textureRef = "floor";
-    Texture texture;
-    int priority = 1;
+    private Texture texture;
+    private int priority = 1;
 
     public FloorTile(){
-        texture = new Texture("assets/Floor.png");;
+        texture = new Texture("assets/Floor.png");
     }
 
     @Override
-    public String getTexture() {
-        return textureRef;
+    public Texture getTexture() {
+        return texture;
     }
 
     @Override

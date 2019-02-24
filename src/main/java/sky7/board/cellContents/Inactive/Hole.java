@@ -1,17 +1,19 @@
 package sky7.board.cellContents.Inactive;
 
+import com.badlogic.gdx.graphics.Texture;
 import sky7.board.ICell;
 import sky7.board.cellContents.IInactive;
 
 public class Hole implements IInactive{
     private int priority;
+    private Texture texture;
 
     public Hole(){
-
+        texture = new Texture("floor/hole.png");
     }
     @Override
-    public String getTexture() {
-        return null;
+    public Texture getTexture() {
+        return texture;
     }
 
     @Override

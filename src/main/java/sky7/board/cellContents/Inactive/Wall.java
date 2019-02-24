@@ -1,20 +1,23 @@
 package sky7.board.cellContents.Inactive;
 
+import com.badlogic.gdx.graphics.Texture;
 import sky7.board.ICell;
 import sky7.board.cellContents.IInactive;
 
 public class Wall implements IInactive {
     private int direction;
     private int priority;
+    private Texture texture;
 
-    public Wall(int direction) { //TODO trenger vi få inn type?
+    public Wall(int direction) {
         this.direction = direction;
+        texture = new Texture(""); //TODO add wall images.
 
     }
 
     @Override
-    public String getTexture() {
-        return null;
+    public Texture getTexture() {
+        return texture;
     }
 
     @Override

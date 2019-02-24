@@ -1,5 +1,6 @@
 package sky7.board.cellContents.Active;
 
+import com.badlogic.gdx.graphics.Texture;
 import sky7.board.ICell;
 import sky7.board.cellContents.IActive;
 
@@ -12,7 +13,7 @@ public class CogWheel implements IActive {
     }
 
     @Override
-    public String getTexture() {
+    public Texture getTexture() {
         return null;
     }
 
