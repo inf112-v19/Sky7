@@ -30,4 +30,11 @@ public class ProgramCard implements IProgramCard {
         return rotate;
     }
 
+
+
+    @Override
+    public String toString() {
+        return super.toString();//TODO return a string representation of the card
+    }
+
 }

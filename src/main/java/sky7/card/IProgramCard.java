@@ -22,4 +22,8 @@ public interface IProgramCard extends ICard {
      * @return the rotation value  (-1, 1 or 2)
      */
     int rotate();
+
+
+
+
 }
