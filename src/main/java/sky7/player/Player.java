@@ -3,20 +3,22 @@ package sky7.player;
 import sky7.card.IProgramCard;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Player implements IPlayer {
 
     private int health = 10;
     private int lifeTokens = 3;
-    private ArrayList<IProgramCard> hand;
+    private IProgramCard[] hand;
     private IProgramCard[] registry;
     private boolean[] locked = new boolean[5];
     private int nLocked = 0;
 
 
     public Player() {
-        hand = new ArrayList<>();
+        hand = new IProgramCard[9];
         registry = new IProgramCard[5];
 
     }
@@ -64,6 +66,26 @@ public class Player implements IPlayer {
     @Override
     public void updateHealth(int x) {
         health = x;
+    }
+
+    @Override
+    public IProgramCard[] getRegistry() {
+        return registry;
+    }
+
+    @Override
+    public void setHand(IProgramCard[] programCards) {
+       hand = programCards;
+    }
+
+    @Override
+    public void setRegistry(IProgramCard[] chosenCards) {
+        registry = chosenCards;
+    }
+
+    @Override
+    public IProgramCard[] getHand() {
+        return hand;
     }
 
 

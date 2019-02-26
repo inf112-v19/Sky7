@@ -1,5 +1,7 @@
 package sky7.player;
 
+import sky7.card.IProgramCard;
+
 public interface IPlayer {
 
     /**
@@ -28,7 +30,27 @@ public interface IPlayer {
 
     /**
      * update health with newHealth
-     * @param newHealth
+     * @param newHealth the new health of this player.
      */
     void updateHealth(int newHealth);
+
+    /**
+     * @return a list of cards chosen by player
+     */
+    IProgramCard[] getRegistry();
+
+    /**
+     * @param programCards the program cards the player can choose from.
+     */
+    void setHand(IProgramCard[] programCards);
+
+    /**
+     * @param chosenCards the cards the player has chosen.
+     */
+    void setRegistry(IProgramCard[] chosenCards);
+
+    /**
+     * @return the hand that the player was dealt.
+     */
+    IProgramCard[] getHand();
 }
