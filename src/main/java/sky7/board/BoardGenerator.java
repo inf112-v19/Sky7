@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import sky7.board.cellContents.Active.Belt;
 import sky7.board.cellContents.Active.CogWheel;
+import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Inactive.*;
 
 import java.io.FileNotFoundException;
@@ -61,16 +62,16 @@ public class BoardGenerator implements IBoardGenerator {
                                 char direction = part.charAt(k);
                                 switch (direction) {
                                     case 'N': //TODO north
-                                        layers.add(new Wall(1));
+                                        layers.add(new Wall(DIRECTION.NORTH));
                                         break;
                                     case 'S': //TODO south
-                                        layers.add(new Wall(2));
+                                        layers.add(new Wall(DIRECTION.SOUTH));
                                         break;
                                     case 'E': // TODO east
-                                        layers.add(new Wall(3));
+                                        layers.add(new Wall(DIRECTION.EAST));
                                         break;
                                     case 'W': // TODO west
-                                        layers.add(new Wall(4));
+                                        layers.add(new Wall(DIRECTION.WEST));
                                         break;
                                 }
                             }

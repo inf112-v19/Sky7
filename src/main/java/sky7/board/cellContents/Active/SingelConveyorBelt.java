@@ -28,9 +28,9 @@ public class SingelConveyorBelt implements ConveyorBelt {
 
 
     @Override
-    public String getTexture() {
+    public Texture getTexture() {
         // TODO: Change ICell to use Texture insted of String
-        return "conveyorBelt";
+        return texture;
 
     }
 
