@@ -13,5 +13,9 @@ public interface IClient {
      */
     IBoard gameBoard();
 
+    /**
+     * Generate a board (TODO by reading in a JSON file)
+     * @throws FileNotFoundException Throws a exception if file not found
+     */
     void generateBoard() throws FileNotFoundException;
 }
