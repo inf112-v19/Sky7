@@ -1,0 +1,34 @@
+{
+  "MetaInformation": [
+    "Width",
+    "Height",
+    "name",
+    "difficulty",
+    "players",
+    "length"
+  ],
+  "Code": {
+    "b": "conveyor belt followed by (direction and type)",
+    "c": "cogwheel followed by (direction with clock and against clock)",
+    "f": "floor",
+    "g": "flag[goal] followed by (number)",
+    "h": "hole",
+    "l": "laser followed by (start position, direction, number of lasers)",
+    "r": "robot",
+    "s": "start cell for robot followed by (number)",
+    "t": "wrench[tool] (1 or 2)",
+    "w": "wall followed by (direction, can be multiple walls)"
+  },
+  "posCode": {
+    "N": "north",
+    "E": "east",
+    "W": "west",
+    "S": "south",
+    "C": "with clock direction",
+    "A": "against clock direction"
+  },
+  "split": {
+    "_": "between codes in the same cell",
+    " ": "between cells"
+  }
+}

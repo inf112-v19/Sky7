@@ -2,6 +2,8 @@ package sky7.game;
 
 import sky7.board.IBoard;
 
+import java.io.FileNotFoundException;
+
 public interface IClient {
 
     /**
@@ -10,4 +12,6 @@ public interface IClient {
      * @return A board
      */
     IBoard gameBoard();
+
+    void generateBoard() throws FileNotFoundException;
 }
