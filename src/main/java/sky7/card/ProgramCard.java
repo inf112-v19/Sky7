@@ -1,6 +1,6 @@
 package sky7.card;
 
-public class ProgramCard implements IProgramCard {
+public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 
     private int priority, move, rotate;
     
@@ -28,6 +28,11 @@ public class ProgramCard implements IProgramCard {
     @Override
     public int rotate() {
         return rotate;
+    }
+
+    @Override
+    public int compareTo(ProgramCard other) {
+        return Integer.compare(this.priority, other.priorityN());
     }
 
 }
