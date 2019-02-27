@@ -96,6 +96,7 @@ public class GUI implements ApplicationListener {
 			if (clickPos.x > sp.getX() && clickPos.x < sp.getX() + sp.getWidth()) { 
 				if (clickPos.y > sp.getY() && clickPos.y < sp.getY() + sp.getHeight()) {
 					sp.setX(sp.getX()+128);
+					game.temp();
 				}
 			}
 		}

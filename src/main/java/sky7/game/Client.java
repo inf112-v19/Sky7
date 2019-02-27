@@ -11,9 +11,11 @@ public class Client implements IClient {
 
     private IBoard board;
     private IHost host;
+    private Stack<ICard> hand;
     
     public Client() {
         board = new Board(10,8);
+        hand = new Stack<>();
     }
 
     @Override
@@ -24,10 +26,17 @@ public class Client implements IClient {
     @Override
     public void connect(IHost host) {
         this.host = host;
+        
     }
 
     @Override
     public void getCards(Stack<ICard> draw) {
-        
+        hand = draw;
+    }
+
+    @Override
+    public void temp() {
+        System.out.println("player 0 clicked ready");
+        host.ready(0, hand, hand);
     }
 }

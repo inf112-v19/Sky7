@@ -23,4 +23,6 @@ public interface IClient {
      * @param draw
      */
     void getCards(Stack<ICard> draw);
+
+    void temp();
 }
