@@ -82,6 +82,7 @@ public class Board implements IBoard {
         
         for (int i=1; i<=move; i++) {
             possibleMove = (isMovePossible(player, i, dir)) ? i : possibleMove;
+            if (possibleMove < i) break;
         }
         
         
