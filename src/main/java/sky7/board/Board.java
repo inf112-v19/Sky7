@@ -1,14 +1,17 @@
 package sky7.board;
     
+import java.util.Arrays;
 import java.util.TreeSet;
 
+import com.badlogic.gdx.graphics.Texture;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.robots.RobotTile;
 
 public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
     private int width, height;
-    public Board(int width, int height) {
+
+     public Board(int width, int height) {
         this.width = width;
         this.height = height;
         grid = new TreeSet[width][height];
@@ -25,15 +28,16 @@ public class Board implements IBoard {
         grid[5][4].add(new RobotTile());
         
     }
+
+    public Board(TreeSet<ICell>[][] grid,int height, int width){
+        this.grid = grid;
+        this.width = width;
+        this.height = height;
+
+    }
     @Override
-    public String[] getTileTexture(int x, int y) {
-        String[] tiles = new String[grid[x][y].size()];
-        int i = 0;
-        for (ICell tile : grid[x][y]) {
-            tiles[i++] = tile.getTexture();
-        }
-        
-        return tiles;
+    public TreeSet<ICell> getTileTexture(int x, int y) {
+         return grid[x][y];
     }
     
     @Override
@@ -45,6 +49,9 @@ public class Board implements IBoard {
     public int getHeight() {
         return height;
     }
-    
 
+    @Override
+    public String toString() {
+        return Arrays.deepToString(grid);
+    }
 }

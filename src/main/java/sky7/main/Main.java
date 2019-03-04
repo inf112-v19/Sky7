@@ -9,6 +9,8 @@ import sky7.gui.GUI;
 import sky7.host.Host;
 import sky7.host.IHost;
 
+import java.io.FileNotFoundException;
+
 public class Main {
     
     private static IClient cli;
@@ -47,12 +49,18 @@ public class Main {
 
         @Override
         public void run() {
+            // TODO Refactor cfg
             LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
             cfg.title = "Sky7 Games";
+            // TODO Width and Height should adapt to the resolution of a screen.
             cfg.width = 1280;
             cfg.height = 1024;
-            
-            new LwjglApplication(new GUI(cli), cfg);
+
+            try {
+                new LwjglApplication(new GUI(cli), cfg);
+            } catch (FileNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
         }
      }
     
