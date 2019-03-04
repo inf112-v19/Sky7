@@ -33,7 +33,7 @@ public class Host implements IHost {
         queue = new TreeSet<>();
         pDeck = new ProgramDeck();
         
-        cli.connect((IHost)this);
+        cli.connect((IHost)this, 0); //TODO do this for each client and give each client a unique ID.
         
         run();
     }
