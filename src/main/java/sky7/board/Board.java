@@ -3,17 +3,23 @@ package sky7.board;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
+
+import org.hamcrest.DiagnosingMatcher;
 
 import com.badlogic.gdx.math.Vector2;
 
+import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Inactive.FloorTile;
+import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
 
 public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
     private int width, height;
     private HashMap<Integer, Vector2> robotPos;
+    private List<RobotTile> robots;
 
      public Board(int width, int height) {
         this.width = width;
@@ -38,6 +44,7 @@ public class Board implements IBoard {
         this.width = width;
         this.height = height;
         this.robotPos = new HashMap<>();
+        this.robots = new ArrayList<>();
 
     }
     @Override
@@ -63,23 +70,114 @@ public class Board implements IBoard {
     @Override
     public void placeRobot(int playerNr, int x, int y) {
         robotPos.put(playerNr, new Vector2(x,y));
-        grid[x][y].add(new RobotTile(playerNr));
+        robots.add(playerNr, new RobotTile(playerNr));
+        grid[x][y].add(robots.get(playerNr));
     }
 
     @Override
     public void moveRobot(int player, int move) {
-        Vector2 pos = robotPos.get(player);
+        
         int possibleMove = 0;
-        if ((possibleMove = isMovePossible(player, move)) > 0) {
+        DIRECTION dir = robots.get(player).getOrientation();
+        
+        for (int i=1; i<=move; i++) {
+            possibleMove = (isMovePossible(player, i, dir)) ? i : possibleMove;
+        }
+        
+        
+        if (possibleMove > 0) {
             
+            Vector2 target = new Vector2(0,0);
+            
+            switch (dir) {
+            case NORTH:
+                target = new Vector2(robotPos.get(player).x, robotPos.get(player).y+possibleMove);
+                break;
+            case EAST:
+                target = new Vector2(robotPos.get(player).x+possibleMove, robotPos.get(player).y);
+                break;
+            case SOUTH:
+                target = new Vector2(robotPos.get(player).x, robotPos.get(player).y-possibleMove);
+                break;
+            case WEST:
+                target = new Vector2(robotPos.get(player).x-possibleMove, robotPos.get(player).y);
+                break;
+            default:
+                throw new IllegalStateException("Found no orientation for robot " + player);
+            }
+            
+            updateRobotPos(player, target);
         }
     }
+    
+    private boolean isMovePossible(int player, int move, DIRECTION dir) {
+        
+        // return false if there's a wall in tile which the robot is in (same direction as robot is going to move)
+        for (ICell item : grid[(int) robotPos.get(player).x][(int) robotPos.get(player).y]) {
+            if (item instanceof Wall) {
+                if (((Wall)item).getDirection() == dir) return false;
+            }
+        }
+        
+        Vector2 target = new Vector2(0,0);
+        
+        switch (dir) {
+        case NORTH:
+            target = new Vector2(robotPos.get(player).x, robotPos.get(player).y+move);
+            break;
+        case EAST:
+            target = new Vector2(robotPos.get(player).x+move, robotPos.get(player).y);
+            break;
+        case SOUTH:
+            target = new Vector2(robotPos.get(player).x, robotPos.get(player).y-move);
+            break;
+        case WEST:
+            target = new Vector2(robotPos.get(player).x-move, robotPos.get(player).y);
+            break;
+        default:
+            throw new IllegalStateException("Found no orientation for robot " + player);
+        }
+        
+        // check that new pos is within grid
+        if (target.x < 0 || target.y < 0) return false;
+        if (target.x >= grid.length || target.y >= grid[0].length) return false;
+        
+        // check what is in the target cell
+        for(ICell item : grid[(int) target.x][(int) target.y]) {
+            
+            // if it's a wall facing the robot, return false
+            if (item instanceof Wall && ((Wall) item).getDirection() == dir.inverse(dir)) return false;
+            
+            if (item instanceof RobotTile) {
+                
+                int blockingRobot = -1;
+                
+                // get the playerNr of the blocking robot
+                for (int i=0; i<robotPos.size(); i++) {
+                    if (i != player && robotPos.get(i) == target) {
+                        blockingRobot = i;
+                    }
+                }
+                
+                // recursively check if the robot can be pushed in the current direction
+                boolean canMove = isMovePossible(blockingRobot, 1, dir);
+                if (canMove) updateRobotPos(blockingRobot, target);
+                return canMove;
+            }
+        }
+        
+        return true;
+    }
 
-    private int isMovePossible(int player, int move) {
-        
-        
-        
-        return 0;
+    private void updateRobotPos(int player, Vector2 target) {
+        Vector2 pos = robotPos.get(player);
+        for (ICell item : grid[(int) pos.x][(int) pos.y]) {
+            if (item instanceof RobotTile) {
+                grid[(int) target.x][(int) target.y].add(item);
+                grid[(int) pos.x][(int) pos.y].remove(item);
+                return;
+            }
+        }
     }
 
 
