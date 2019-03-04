@@ -29,4 +29,5 @@ public interface IBoard {
      * @return  The height of the board by the number of tiles on the board.
      */
     int getHeight();
+
 }

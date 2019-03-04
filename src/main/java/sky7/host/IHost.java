@@ -1,5 +1,6 @@
 package sky7.host;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 import sky7.card.ICard;
@@ -19,5 +20,5 @@ public interface IHost {
      * @param registry the chosen cards to play
      * @param discard the discarded cards
      */
-    void ready(int pN,  Stack<ICard> registry, Stack<ICard> discard);
+    void ready(int pN,  ArrayList<ICard> registry, ArrayList<ICard> discard);
 }

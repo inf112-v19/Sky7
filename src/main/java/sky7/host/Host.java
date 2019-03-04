@@ -47,7 +47,7 @@ public class Host implements IHost {
             
             // give 9 cards to each player
             for (int i=0; i<nPlayers; i++) {
-                players[i].getCards(pDeck.draw(9));
+                players[i].chooseCards(pDeck.draw(9));
             }
             
             // wait for all players to be ready
@@ -99,7 +99,7 @@ public class Host implements IHost {
     }
 
     @Override
-    public synchronized void ready(int pN, Stack<ICard> registry, Stack<ICard> discard) {
+    public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
         playerRegs.get(pN).addAll(registry);
         pDeck.returnCards(discard);
         readyPlayers++;
