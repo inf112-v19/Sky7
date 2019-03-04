@@ -6,6 +6,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import sky7.game.Client;
 import sky7.game.IClient;
 import sky7.gui.GUI;
+import sky7.host.Host;
+import sky7.host.IHost;
 
 import java.io.FileNotFoundException;
 
@@ -22,6 +24,16 @@ public class Main {
         startGUI g = new startGUI();
         Thread gui = new Thread(g);
         gui.start();
+        
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        startHost h = new startHost();
+        Thread host = new Thread(h);
+        host.start();
     }
     
     public static class clientThread implements Runnable {
@@ -51,4 +63,13 @@ public class Main {
             }
         }
      }
+    
+    public static class startHost implements Runnable {
+
+        @Override
+        public void run() {
+            
+            new Host(cli);
+        }
+    }
 }
