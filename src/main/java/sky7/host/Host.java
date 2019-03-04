@@ -45,10 +45,12 @@ public class Host implements IHost {
             
             System.out.println("Start of round");
             
+            // give 9 cards to each player
             for (int i=0; i<nPlayers; i++) {
                 players[i].getCards(pDeck.draw(9));
             }
             
+            // wait for all players to be ready
             while(readyPlayers < nPlayers) {
                 try {
                     System.out.println("host sleeping");
@@ -64,6 +66,7 @@ public class Host implements IHost {
                 //need to compare the leftmost card of each registry and store which order the players will move in (queue)
                 // then pop one from each reg, and repeat
                 queue.add(new PlayerCard(0));
+                
                 
                 for (int j=1; j<nPlayers; j++) {
                     queue.add(new PlayerCard(j));
@@ -92,13 +95,12 @@ public class Host implements IHost {
     }
 
     private void move(PlayerCard current) {
-        
+//        board.movePlayer(current.playerNr, current.card);
     }
 
     @Override
     public synchronized void ready(int pN, Stack<ICard> registry, Stack<ICard> discard) {
         playerRegs.get(pN).addAll(registry);
-        if (pDeck == null) System.out.println("pDeck is null");
         pDeck.returnCards(discard);
         readyPlayers++;
         notify();
@@ -107,14 +109,16 @@ public class Host implements IHost {
     private class PlayerCard implements Comparable<PlayerCard> {
         
         int playerNr;
+        ICard card;
         
         public PlayerCard(int playerNr) {
             this.playerNr = playerNr;
+            this.card = playerRegs.get(playerNr).pop();
         }
         
         @Override
         public int compareTo(PlayerCard other) {
-            return ((ProgramCard)playerRegs.get(playerNr).peek()).compareTo(((ProgramCard)playerRegs.get(other.playerNr).peek()));
+            return ((ProgramCard)card).compareTo(((ProgramCard)other.card));
         }
         
     }

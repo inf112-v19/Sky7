@@ -11,9 +11,13 @@ public interface IHost {
      */
     void run();
     
+
     /**
-     * @param pN
-     * @param registry
+     * Method to be called by players, to inform host of which cards are chosen to play, and in what order
+     * 
+     * @param pN player number
+     * @param registry the chosen cards to play
+     * @param discard the discarded cards
      */
     void ready(int pN,  Stack<ICard> registry, Stack<ICard> discard);
 }
