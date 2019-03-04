@@ -1,6 +1,9 @@
 package sky7.player;
 
+import sky7.card.ICard;
 import sky7.card.IProgramCard;
+
+import java.util.ArrayList;
 
 public interface IPlayer {
 
@@ -37,20 +40,43 @@ public interface IPlayer {
     /**
      * @return a list of cards chosen by player
      */
-    IProgramCard[] getRegistry();
+    ArrayList<ICard> getRegistry();
 
     /**
      * @param programCards the program cards the player can choose from.
      */
-    void setHand(IProgramCard[] programCards);
+    void setHand(ArrayList<ICard>  programCards);
 
     /**
      * @param chosenCards the cards the player has chosen.
      */
-    void setRegistry(IProgramCard[] chosenCards);
+    void setRegistry(ArrayList<ICard>  chosenCards);
 
     /**
      * @return the hand that the player was dealt.
      */
-    IProgramCard[] getHand();
+    ArrayList<ICard> getHand();
+
+    /**
+     *
+     * @return the id of this player
+     */
+    public int getPlayerNumber();
+
+    /**
+     * @param playerNumber the id of this player.
+     */
+    void setPlayerNumber(int playerNumber);
+
+    /**
+     * @return the card not choosen by the player.
+     */
+    ArrayList<ICard> getDiscard();
+
+    /**
+     * Put in the register a new chosen card at a position.
+     * @param chosenCard the card that the player chose
+     * @param positionInRegistry the position of the card in the registry.
+     */
+    void setCard(ICard chosenCard, int positionInRegistry);
 }

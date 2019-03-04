@@ -1,7 +1,6 @@
 package sky7.game;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 import sky7.board.IBoard;
 import sky7.card.ICard;
@@ -20,7 +19,12 @@ public interface IClient {
      */
     IBoard gameBoard();
 
-    void connect(IHost host);
+
+    /**
+     * @param host the host that this client is playing at.
+     * @param playerNumber the number of the player on this client.
+     */
+    void connect(IHost host, int playerNumber);
 
     /**
      * A method called by host to give the player program cards
@@ -28,8 +32,6 @@ public interface IClient {
      * @param draw
      */
     void chooseCards(ArrayList<ICard> draw);
-
-    void temp();
 
     /**
      * Generate a board (TODO by reading in a JSON file)
@@ -44,16 +46,6 @@ public interface IClient {
     IPlayer getPlayer();
 
     /**
-     * @return clients player registry
-     */
-    String getRegistry();
-
-    /**
-     * register cards, (called by host)
-     */
-    void newCards(String programCards);
-
-    /**
      * @return the state of this client.
      */
     STATE getState();
@@ -61,13 +53,13 @@ public interface IClient {
     /**
      * @return the cards that the player can choose from. (called by gui)
      */
-    IProgramCard[] getHand();
+    ArrayList<ICard> getHand();
 
     /**
      * @param chosenCard         the cards chosen by the player. (called by gui)
      * @param positionInRegistry the position of the card chosen in the registry.
      */
-    void setCard(IProgramCard chosenCard, int positionInRegistry);
+    void setCard(ICard chosenCard, int positionInRegistry);
 
     /**
      * locked the registry, such that the player cannot choose cards anymore for the current round.

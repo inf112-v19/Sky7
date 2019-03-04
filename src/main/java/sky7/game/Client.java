@@ -13,14 +13,12 @@ import sky7.player.IPlayer;
 import sky7.player.Player;
 
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 
 public class Client implements IClient {
 
     public static final int MAX_NUMBER_OF_REGISTRY = 6;
     private IBoard board; //TODO double check the code, might contain problems.
     private IHost host;
-    private ArrayList<ICard> hand;
     private IPlayer player;
     private STATE state;
 
@@ -28,7 +26,6 @@ public class Client implements IClient {
     public Client() {
         //board = new Board(10,8);
         board = new Board(10, 8);
-        hand = new ArrayList<>(MAX_NUMBER_OF_REGISTRY);
         this.player = new Player();
         state = STATE.LOADING;
     }
@@ -39,21 +36,18 @@ public class Client implements IClient {
     }
 
     @Override
-    public void connect(IHost host) {
+    public void connect(IHost host, int playerNumber) {
         this.host = host;
+        player.setPlayerNumber(playerNumber);
 
     }
 
     @Override
-    public void chooseCards(ArrayList<ICard> draw) { // Same as get registery
-        hand = draw;
+    public void chooseCards(ArrayList<ICard> hand) { // Same as get registery
+        player.setHand(hand);
+        state = STATE.CHOOSING_CARDS;
     }
 
-    @Override
-    public void temp() {
-        System.out.println("player 0 clicked ready");
-        host.ready(0, hand, hand);
-    }
 
     public void generateBoard() throws FileNotFoundException {
         IBoardGenerator generator = new BoardGenerator();
@@ -66,16 +60,6 @@ public class Client implements IClient {
         return player;
     }
 
-    @Override
-    public String getRegistry() {
-        return Arrays.deepToString(player.getRegistry());
-    }
-
-    @Override
-    public void newCards(String programCards) {
-        state = STATE.CHOOSING_CARDS;
-        player.setHand(convertStringToProgramCards(programCards));
-    }
 
     @Override
     public STATE getState() {
@@ -83,26 +67,30 @@ public class Client implements IClient {
     }
 
     @Override
-    public IProgramCard[] getHand() {
+    public ArrayList<ICard> getHand() {
         return player.getHand(); //TODO
     }
 
     @Override
-    public void setCard(IProgramCard chosenCard, int positionInRegistry) {
+    public void setCard(ICard chosenCard, int positionInRegistry) {
         //choosingCards[positionInRegistry] = chosenCard;
+        player.setCard(chosenCard,positionInRegistry);
     }
 
     @Override
     public void lockRegistry() {
         //TODO to check, what if the player did not choose 6 cards?
-        //player.setRegistry(choosingCards);
+        //player.setRegistry(choosingCards)
+
+        state = STATE.READY;
+        host.ready(player.getPlayerNumber(),player.getRegistry(),player.getDiscard());
     }
 
     /**
      * @param programCardsString a string representation of programcards
      * @return a list of IProgramCards
      */
-    private IProgramCard[] convertStringToProgramCards(String programCardsString) {
-        return new IProgramCard[0];//TODO
+    private ArrayList<ICard> convertStringToProgramCards(String programCardsString) {
+        return null ;//TODO
     }
 }
