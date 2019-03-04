@@ -159,7 +159,7 @@ public class GUI implements ApplicationListener {
 
 		IProgramCard[] hand = game.getHand();
 		for (int i=0; i<9; i++) {
-			batch.draw(hand[i], i*128, 0);
+//			batch.draw(hand[i], i*128, 0);
 		}
 	}
 }
