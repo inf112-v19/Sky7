@@ -33,6 +33,7 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
     @Override
     public int compareTo(ProgramCard other) {
         return Integer.compare(this.priority, other.priorityN());
+    }
 
     @Override
     public String toString() {

@@ -1,11 +1,13 @@
 package sky7.host;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 import java.util.TreeSet;
 
 import sky7.board.Board;
+import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.card.ICard;
 import sky7.card.IDeck;
@@ -22,16 +24,22 @@ public class Host implements IHost {
     IBoard board;
     List<Stack<ICard>> playerRegs;
     TreeSet<PlayerCard> queue;
+    BoardGenerator bg;
     
 
     public Host(IClient cli) {
         players = new Client[8];
         players[0] = cli;
-        board = new Board(10, 8);
         playerRegs = new ArrayList<Stack<ICard>>();
         playerRegs.add(new Stack<ICard>());
         queue = new TreeSet<>();
         pDeck = new ProgramDeck();
+        bg = new BoardGenerator();
+        try {
+            board = bg.getBoardFromFile("assets/Boards/board1.json");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         
         cli.connect((IHost)this);
         
