@@ -30,4 +30,8 @@ public interface IBoard {
      */
     int getHeight();
 
+    void placeRobot(int playerNr, int x, int y);
+
+    void moveRobot(int currentPlayer, int move);
+
 }

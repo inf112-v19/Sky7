@@ -1,15 +1,19 @@
 package sky7.board;
     
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.TreeSet;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.robots.RobotTile;
 
 public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
     private int width, height;
+    private HashMap<Integer, Vector2> robotPos;
 
      public Board(int width, int height) {
         this.width = width;
@@ -25,7 +29,7 @@ public class Board implements IBoard {
         }
         
         //add 1 robot
-        grid[5][4].add(new RobotTile());
+        grid[5][4].add(new RobotTile(0));
         
     }
 
@@ -33,6 +37,7 @@ public class Board implements IBoard {
         this.grid = grid;
         this.width = width;
         this.height = height;
+        this.robotPos = new HashMap<>();
 
     }
     @Override
@@ -53,6 +58,28 @@ public class Board implements IBoard {
     @Override
     public String toString() {
         return Arrays.deepToString(grid);
+    }
+
+    @Override
+    public void placeRobot(int playerNr, int x, int y) {
+        robotPos.put(playerNr, new Vector2(x,y));
+        grid[x][y].add(new RobotTile(playerNr));
+    }
+
+    @Override
+    public void moveRobot(int player, int move) {
+        Vector2 pos = robotPos.get(player);
+        int possibleMove = 0;
+        if ((possibleMove = isMovePossible(player, move)) > 0) {
+            
+        }
+    }
+
+    private int isMovePossible(int player, int move) {
+        
+        
+        
+        return 0;
     }
 
 
