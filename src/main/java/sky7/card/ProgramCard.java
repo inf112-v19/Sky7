@@ -89,7 +89,7 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 //				return new Sprite(tex);
 				return "RotateLeft";
 			}
-			if (rotate == -2) {
+			if (rotate == 2) {
 //				Texture tex = new Texture("assets/cards/uTurn.png");
 //				return new Sprite(tex);
 				return "uTurn";

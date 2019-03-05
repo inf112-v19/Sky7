@@ -191,7 +191,7 @@ public class GUI implements ApplicationListener {
 			drawSprite(card8.GetSpriteRef(), 8*128, 0);
 			
 			if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-				cardsChoosen = false;
+//				cardsChoosen = false;
 			}
 //			game.setCard(chosenCard, positionInRegistry);
 		}
