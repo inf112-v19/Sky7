@@ -2,22 +2,16 @@ package sky7.game;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.Arrays;
-
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
 import sky7.card.ICard;
-import sky7.card.IProgramCard;
 import sky7.host.IHost;
 import sky7.player.IPlayer;
 import sky7.player.Player;
 
-import java.io.FileNotFoundException;
-
 public class Client implements IClient {
 
-    public static final int MAX_NUMBER_OF_REGISTRY = 6;
     private IBoard board; //TODO double check the code, might contain problems.
     private IHost host;
     private IPlayer player;
@@ -26,8 +20,6 @@ public class Client implements IClient {
 
     public Client() {
         //board = new Board(10,8);
-        board = new Board(10, 8);
-        hand = new ArrayList<>(MAX_NUMBER_OF_REGISTRY);
         this.player = new Player();
         state = STATE.LOADING;
     }
@@ -45,7 +37,7 @@ public class Client implements IClient {
     }
 
     @Override
-    public void chooseCards(ArrayList<ICard> hand) { // Same as get registery
+    public void chooseCards(ArrayList<ICard> hand) {
         player.setHand(hand);
         state = STATE.CHOOSING_CARDS;
     }
@@ -70,7 +62,7 @@ public class Client implements IClient {
 
     @Override
     public ArrayList<ICard> getHand() {
-        return player.getHand(); //TODO
+        return player.getHand();
     }
 
     @Override

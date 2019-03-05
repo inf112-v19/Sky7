@@ -154,12 +154,12 @@ public class GUI implements ApplicationListener {
 //			batch.draw(textures.get("unmarkedCard"), i * 128, 0);
 //		}
 
-		String chosen = game.getRegistry();
-		font.draw(batch, chosen, 200, 200);
+		//String chosen = game.getRegistry();
+		//font.draw(batch, chosen, 200, 200);
 
-		IProgramCard[] hand = game.getHand();
-		for (int i=0; i<9; i++) {
+		//IProgramCard[] hand = game.getHand();
+		//for (int i=0; i<9; i++) {
 //			batch.draw(hand[i], i*128, 0);
-		}
+		//}
 	}
 }
