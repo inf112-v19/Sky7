@@ -2,11 +2,6 @@ package sky7.player;
 
 import sky7.card.IProgramCard;
 
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Collections;
-
 public class Player implements IPlayer {
 
     private int health = 10;
