@@ -1,9 +1,7 @@
 package sky7.gui;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
+import java.util.*;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -21,8 +19,6 @@ import com.badlogic.gdx.utils.viewport.*;
 
 import sky7.board.ICell;
 import sky7.card.ICard;
-import sky7.card.IProgramCard;
-import sky7.card.ProgramCard;
 import sky7.game.IClient;
 
 public class GUI implements ApplicationListener {
@@ -35,10 +31,10 @@ public class GUI implements ApplicationListener {
 	private HashMap<String, Sprite> sprites;
 	private ExtendViewport viewport;
 	private OrthographicCamera camera;
-//	private Sprite emptyCard, Move1, Move2, Move3, MoveBack, RotateLeft, RotateRight, uTurn;
+	//	private Sprite emptyCard, Move1, Move2, Move3, MoveBack, RotateLeft, RotateRight, uTurn;
 	private Vector3 clickPos = new Vector3();
 	TextureAtlas textureAtlas;
-	private boolean cardsChoosen = true;
+	private boolean cardsChoosen = false;
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -67,9 +63,8 @@ public class GUI implements ApplicationListener {
 
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
 
-//			emptyCard = textureAtlas.createSprite("EmptyCard");
 			addSprites();
-	        
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -86,7 +81,6 @@ public class GUI implements ApplicationListener {
 
 	@Override
 	public void pause() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -148,9 +142,7 @@ public class GUI implements ApplicationListener {
 
 	public void Dock() {
 		for (int i = 0; i < width; i++) {
-			//draw lower dock
 			batch.draw(textures.get("dock"), i * 128, 0);
-			//draw higher dock
 			batch.draw(textures.get("dock"), i * 128, 128);
 		}
 		//draw outline of 5 selected cards
@@ -160,43 +152,54 @@ public class GUI implements ApplicationListener {
 	}
 
 	public void chooseCards() {
-		if (cardsChoosen) {	
-			String[] chosenCards = new String[5];
+		if (!cardsChoosen) {	
+			ICard[] chosenCards = new ICard[5];
 
 			ArrayList<ICard> hand = game.getHand();
 
-//			for (int i=0; i<hand.size(); i++) {
-//				System.out.println(hand.get(i).GetSpriteRef());
-//			}
 			ICard card0 = hand.get(0);
 			drawSprite(card0.GetSpriteRef(), 0, 0);
-			
+
 			ICard card1 = hand.get(1);
 			drawSprite(card1.GetSpriteRef(), 1*128, 0);
-			
+
 			ICard card2 = hand.get(2);
 			drawSprite(card2.GetSpriteRef(), 2*128, 0);
-			
+
 			ICard card3 = hand.get(3);
 			drawSprite(card3.GetSpriteRef(), 3*128, 0);
+
 			ICard card4 = hand.get(4);
 			drawSprite(card4.GetSpriteRef(), 4*128, 0);
+
 			ICard card5 = hand.get(5);
 			drawSprite(card5.GetSpriteRef(), 5*128, 0);
+
 			ICard card6 = hand.get(6);
 			drawSprite(card6.GetSpriteRef(), 6*128, 0);
+
 			ICard card7 = hand.get(7);
 			drawSprite(card7.GetSpriteRef(), 7*128, 0);
+
 			ICard card8 = hand.get(8);
 			drawSprite(card8.GetSpriteRef(), 8*128, 0);
-			
+
 			if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-//				cardsChoosen = false;
+				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+				if(clickPos.x <= 128 && clickPos.y <= 128) {
+					chosenCards[1] = card0;
+				}
 			}
-//			game.setCard(chosenCard, positionInRegistry);
+			
+			if (chosenCards[4] != null) {
+				for (int i=0; i<chosenCards.length; i++) {
+					game.setCard(chosenCards[i], i);
+				}
+				cardsChoosen = true;
+			}
 		}
 	}
-	
+
 	public void playerCards() {
 		// TODO: print string[] chosenCards
 	}
