@@ -38,7 +38,7 @@ public class Host implements IHost {
         pDeck = new ProgramDeck();
         bg = new BoardGenerator();
         try {
-            board = bg.getBoardFromFile("assets/Boards/board1.json");
+            board = bg.getBoardFromFile("assets/Boards/emptyBoard.json");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -105,6 +105,8 @@ public class Host implements IHost {
     private void execute(int currentPlayer, ProgramCard card) {
         if (card.moveType()) {
             board.moveRobot(currentPlayer, card.move());
+        } else {
+            board.rotateRobot(currentPlayer, card.rotate());
         }
     }
 

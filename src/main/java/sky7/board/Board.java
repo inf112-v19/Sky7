@@ -80,6 +80,7 @@ public class Board implements IBoard {
         int possibleMove = 0;
         DIRECTION dir = robots.get(player).getOrientation();
         
+        // check how far in the given direction it is possible to move (up to the move value)
         for (int i=1; i<=move; i++) {
             possibleMove = (isMovePossible(player, i, dir)) ? i : possibleMove;
             if (possibleMove < i) break;
@@ -179,6 +180,36 @@ public class Board implements IBoard {
                 return;
             }
         }
+    }
+
+    @Override
+    public void rotateRobot(int currentPlayer, int rotate) {
+        
+        switch (rotate) {
+        case -1:
+            robots.get(currentPlayer).rotateCCW();
+            break;
+        case 1:
+            robots.get(currentPlayer).rotateCW();
+            break;
+        case 2:
+            robots.get(currentPlayer).rotate180();
+            break;
+        default:
+            throw new IllegalStateException("Invalid rotation value.");
+        }
+    }
+
+    @Override
+    public void rotateCogs() {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void moveConveyors() {
+        // TODO Auto-generated method stub
+        
     }
 
 

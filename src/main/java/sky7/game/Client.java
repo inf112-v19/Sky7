@@ -27,7 +27,7 @@ public class Client implements IClient {
 
     public Client() {
         //board = new Board(10,8);
-        board = new Board(10, 8);
+
         hand = new ArrayList<>(MAX_NUMBER_OF_REGISTRY);
         this.player = new Player();
         state = STATE.LOADING;

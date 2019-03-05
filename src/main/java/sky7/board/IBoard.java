@@ -30,8 +30,33 @@ public interface IBoard {
      */
     int getHeight();
 
+    /**
+     * Place a robot on the board
+     * 
+     * @param playerNr
+     * @param x
+     * @param y
+     */
     void placeRobot(int playerNr, int x, int y);
 
+    /**
+     * Attempt to move a robot forward or backward
+     * 
+     * @param currentPlayer the player/robot number to move
+     * @param move should be between -1 and 3
+     */
     void moveRobot(int currentPlayer, int move);
+
+    /**
+     * Rotate a robot
+     * 
+     * @param currentPlayer
+     * @param rotate -1 = CCW, 1 = CW, 2 = turn 180
+     */
+    void rotateRobot(int currentPlayer, int rotate);
+
+    void rotateCogs();
+
+    void moveConveyors();
 
 }

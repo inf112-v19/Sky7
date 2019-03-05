@@ -11,11 +11,15 @@ public class FloorTile implements IInactive {
     private int priority = 1;
 
     public FloorTile(){
-        texture = new Texture("assets/Floor.png");
+        
     }
 
     @Override
     public Texture getTexture() {
+        if (texture == null) {
+            texture = new Texture("assets/Floor.png");
+        }
+        
         return texture;
     }
 
