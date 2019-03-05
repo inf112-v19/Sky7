@@ -1,6 +1,7 @@
 package sky7.gui;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -16,7 +17,9 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.*;
 
 import sky7.board.ICell;
+import sky7.card.ICard;
 import sky7.card.IProgramCard;
+import sky7.card.ProgramCard;
 import sky7.game.IClient;
 
 public class GUI implements ApplicationListener {
@@ -152,17 +155,15 @@ public class GUI implements ApplicationListener {
 		}
 	}
 	public void chooseCards() {
-//		if (cardsChoosen) {	
-//			String[] chosen = new String[5];
-//			//			font.draw(batch, chosen, 200, 200);
-//
-////			String chosen = game.getRegistry();
-////			font.draw(batch, chosen, 200, 200);
-////
-////			IProgramCard[] hand = game.getHand();
-////			for (int i=0; i<9; i++) {
-//				//			batch.draw(hand[i], i*128, 0);
-//			}
-//		}
+		if (cardsChoosen) {	
+			String[] chosenCards = new String[5];
+			
+			ArrayList<ICard> hand = game.getHand();
+			ICard card = hand.get(1);
+			Sprite sprite = card.GetSprite();
+			
+//			game.setCard(chosenCard, positionInRegistry);
+		}
+		cardsChoosen = false;
 	}
 }
