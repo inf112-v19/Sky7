@@ -1,5 +1,6 @@
 package sky7.card;
 
+import java.util.ArrayList;
 import java.util.Stack;
 
 public interface IDeck {
@@ -9,7 +10,7 @@ public interface IDeck {
      * @param n number of cards to draw
      * @return a stack of the drawn cards
      */
-    Stack<ICard> draw (int n);
+    ArrayList<ICard> draw (int n);
     
     /**
      * Return used cards to the deck. <br>
@@ -17,7 +18,7 @@ public interface IDeck {
      * 
      * @param cards stack of cards returned
      */
-    void returnCards (Stack<ICard> cards);
+    void returnCards (ArrayList<ICard> cards);
     
     void shuffle();
 }
