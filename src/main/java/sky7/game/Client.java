@@ -1,19 +1,17 @@
 package sky7.game;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import sky7.board.Board;
-import sky7.card.ICard;
-import sky7.host.IHost;
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
+import sky7.card.ICard;
 import sky7.card.IProgramCard;
+import sky7.host.IHost;
 import sky7.player.IPlayer;
 import sky7.player.Player;
-
-import java.io.FileNotFoundException;
-import java.util.Arrays;
 
 public class Client implements IClient {
 

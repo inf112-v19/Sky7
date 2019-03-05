@@ -1,18 +1,24 @@
 package sky7.board;
 
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
-import sky7.board.cellContents.Active.Belt;
-import sky7.board.cellContents.Active.CogWheel;
-import sky7.board.cellContents.DIRECTION;
-import sky7.board.cellContents.Inactive.*;
-
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.TreeSet;
+
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+
+import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Active.Belt;
+import sky7.board.cellContents.Active.CogWheel;
+import sky7.board.cellContents.Inactive.Flag;
+import sky7.board.cellContents.Inactive.FloorTile;
+import sky7.board.cellContents.Inactive.Hole;
+import sky7.board.cellContents.Inactive.Laser;
+import sky7.board.cellContents.Inactive.StartPosition;
+import sky7.board.cellContents.Inactive.Wall;
+import sky7.board.cellContents.Inactive.Wrench;
 
 public class BoardGenerator implements IBoardGenerator {
     private static HashMap<String, String> json = new HashMap<>();

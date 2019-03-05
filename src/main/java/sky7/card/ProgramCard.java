@@ -48,8 +48,7 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 
     @Override
     public boolean moveType() {
-        // TODO Auto-generated method stub
-        return false;
+        return moveType;
     }
 
 }

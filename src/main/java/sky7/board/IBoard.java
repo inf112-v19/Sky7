@@ -1,7 +1,5 @@
 package sky7.board;
 
-import com.badlogic.gdx.graphics.Texture;
-
 import java.util.TreeSet;
 
 public interface IBoard {

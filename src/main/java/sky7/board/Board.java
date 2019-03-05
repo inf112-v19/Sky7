@@ -6,12 +6,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
-import org.hamcrest.DiagnosingMatcher;
-
 import com.badlogic.gdx.math.Vector2;
 
 import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Active.CogWheel;
+import sky7.board.cellContents.Active.IConveyorBelt;
 import sky7.board.cellContents.Inactive.FloorTile;
+import sky7.board.cellContents.Inactive.Laser;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
 
@@ -20,6 +21,12 @@ public class Board implements IBoard {
     private int width, height;
     private HashMap<Integer, Vector2> robotPos;
     private List<RobotTile> robots;
+    private HashMap<Integer, CogWheel> cogs;
+    private List<Vector2> cogPos;
+    private HashMap<Integer, IConveyorBelt> convs;
+    private List<Vector2> convPos;
+    private HashMap<Integer, Laser> lasers;
+    private List<Vector2> laserPos;
 
      public Board(int width, int height) {
         this.width = width;
@@ -45,6 +52,27 @@ public class Board implements IBoard {
         this.height = height;
         this.robotPos = new HashMap<>();
         this.robots = new ArrayList<>();
+        
+        int cogN = 0, convN = 0, laserN = 0;
+        // find and store locations of cogwheels, conveyor belts
+        for (int i=0; i<grid.length; i++) {
+            for (int j=0; j<grid[0].length; j++) {
+                for (ICell item : grid[i][j]) {
+                    if (item instanceof CogWheel) { 
+                        cogPos.add(new Vector2(i,j));
+                        cogs.put(cogN++, (CogWheel)item);
+                    }
+                    if (item instanceof IConveyorBelt) {
+                        convPos.add(new Vector2(i,j));
+                        convs.put(convN++, (IConveyorBelt)item);
+                    }
+                    if (item instanceof Laser) {
+                        laserPos.add(new Vector2(i,j));
+                        lasers.put(laserN++, (Laser)item);
+                    }
+                }
+            }
+        }
 
     }
     @Override
@@ -202,14 +230,17 @@ public class Board implements IBoard {
 
     @Override
     public void rotateCogs() {
-        // TODO Auto-generated method stub
-        
+        for (int i=0; i<cogPos.size(); i++) {
+            for (int j=0; j<robotPos.size(); j++) {
+                if (cogPos.get(i).equals(robotPos.get(i))) 
+                    rotateRobot(i, cogs.get(i).getRotation());
+            }
+        }
     }
 
     @Override
     public void moveConveyors() {
         // TODO Auto-generated method stub
-        
     }
 
 

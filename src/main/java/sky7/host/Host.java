@@ -2,11 +2,8 @@ package sky7.host;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.badlogic.gdx.math.Vector2;
 
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
@@ -62,15 +59,16 @@ public class Host implements IHost {
             // give 9 cards to each player
             for (int i=0; i<nPlayers; i++) {
                 players[i].chooseCards(pDeck.draw(9));
+                System.out.println("Cards given to player " + i);
             }
             
             // wait for all players to be ready
             while(readyPlayers < nPlayers) {
                 try {
-                    System.out.println("host sleeping");
+                    System.out.println("Host is waiting for players to click ready");
                     this.wait();
                 } catch (InterruptedException e) {
-                    System.out.println("host was notified");
+                    System.out.println("host was interrupted");
                 }
             }
             
@@ -129,7 +127,6 @@ public class Host implements IHost {
     }
     
     private void lasersFire() {
-        // TODO Auto-generated method stub
         
     }
 
