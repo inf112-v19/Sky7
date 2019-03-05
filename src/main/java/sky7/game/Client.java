@@ -8,7 +8,6 @@ import sky7.host.IHost;
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
-import sky7.card.IProgramCard;
 import sky7.player.IPlayer;
 import sky7.player.Player;
 
@@ -73,7 +72,6 @@ public class Client implements IClient {
 
     @Override
     public void setCard(ICard chosenCard, int positionInRegistry) {
-        //choosingCards[positionInRegistry] = chosenCard;
         player.setCard(chosenCard,positionInRegistry);
     }
 
