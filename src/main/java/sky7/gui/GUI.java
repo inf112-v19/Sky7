@@ -31,6 +31,7 @@ public class GUI implements ApplicationListener {
 	private Sprite emptyCard;
 	private Vector3 clickPos = new Vector3();
 	TextureAtlas textureAtlas;
+	private boolean cardsChoosen = true;
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -104,7 +105,7 @@ public class GUI implements ApplicationListener {
 		}
 
 		Dock();
-
+		chooseCards();
 		emptyCard.draw(batch);
 
 		if (Gdx.input.isTouched()){
@@ -145,21 +146,23 @@ public class GUI implements ApplicationListener {
 			//draw higher dock
 			batch.draw(textures.get("dock"), i * 128, 128);
 		}
-//		//draw outline of 4 discarded cards
-//		for (int i = 5; i < 9; i++) {
-//			batch.draw(textures.get("outline"), i * 128, 0);
+		//draw outline of 5 selected cards
+		for (int i = 0; i < 5; i++) {
+			batch.draw(textures.get("outline"), i * 128, 128);
+		}
+	}
+	public void chooseCards() {
+//		if (cardsChoosen) {	
+//			String[] chosen = new String[5];
+//			//			font.draw(batch, chosen, 200, 200);
+//
+////			String chosen = game.getRegistry();
+////			font.draw(batch, chosen, 200, 200);
+////
+////			IProgramCard[] hand = game.getHand();
+////			for (int i=0; i<9; i++) {
+//				//			batch.draw(hand[i], i*128, 0);
+//			}
 //		}
-//		//draw faded/not selected card
-//		for (int i = 0; i < 5; i++) {
-//			batch.draw(textures.get("unmarkedCard"), i * 128, 0);
-//		}
-
-		//String chosen = game.getRegistry();
-		//font.draw(batch, chosen, 200, 200);
-
-		//IProgramCard[] hand = game.getHand();
-		//for (int i=0; i<9; i++) {
-//			batch.draw(hand[i], i*128, 0);
-		//}
 	}
 }
