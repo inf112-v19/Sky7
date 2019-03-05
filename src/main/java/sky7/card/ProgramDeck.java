@@ -1,5 +1,6 @@
 package sky7.card;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
@@ -31,21 +32,21 @@ public class ProgramDeck implements IDeck {
     }
 
     @Override
-    public Stack<ICard> draw(int n) {
+    public ArrayList<ICard> draw(int n) {
         if (n<1) throw new IllegalArgumentException("Cannot draw less than 1 card.");
         if (n>72) throw new IllegalArgumentException("Cannot draw more than 72 cards (8 players * 9 cards)");
         if (n>availableCards.size()) throw new IllegalArgumentException("Attempting to draw more cards than available");
         
-        Stack<ICard> drawn = new Stack<>();
+        ArrayList<ICard> drawn = new ArrayList<>();
         for (int i=0; i<n; i++) {
-            drawn.push(availableCards.pop());
+            drawn.add(availableCards.pop());
         }
-        
+
         return drawn;
     }
 
     @Override
-    public void returnCards(Stack<ICard> cards) {
+    public void returnCards(ArrayList<ICard> cards) {
         for (ICard card : cards) {
             availableCards.push((ProgramCard)card);
         }
