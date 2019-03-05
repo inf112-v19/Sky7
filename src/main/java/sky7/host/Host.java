@@ -81,13 +81,13 @@ public class Host implements IHost {
                 // execute 1 card from each player in order of descending card priority number
                 for (int j=0; j<nPlayers ; j++) {
                     currentPlayer = pQueue.get(j);
-                    execute(currentPlayer, (ProgramCard)playerRegs.get(currentPlayer).get(i));
+                    activateCard(currentPlayer, (ProgramCard)playerRegs.get(currentPlayer).get(i));
                 }
                 
                 pQueue.clear();
                 
-                boardElementsMove();
-                lasersFire();
+                activateBoardElements();
+                activateLasers();
                 
                 // return registry cards to deck - need to implement locked cards later
                 for (int j=0; j<nPlayers; j++) {
@@ -99,7 +99,7 @@ public class Host implements IHost {
         }
     }
 
-    private void execute(int currentPlayer, ProgramCard card) {
+    private void activateCard(int currentPlayer, ProgramCard card) {
         if (card.moveType()) {
             board.moveRobot(currentPlayer, card.move());
         } else {
@@ -120,12 +120,12 @@ public class Host implements IHost {
         }
     }
 
-    private void boardElementsMove() {
-        board.rotateCogs();
+    private void activateBoardElements() {
         board.moveConveyors();
+        board.rotateCogs();
     }
     
-    private void lasersFire() {
+    private void activateLasers() {
         
     }
 
