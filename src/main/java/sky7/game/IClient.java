@@ -65,4 +65,37 @@ public interface IClient {
      * locked the registry, such that the player cannot choose cards anymore for the current round.
      */
     void lockRegistry();
+
+    /**
+     * Calls board.placeRobot
+     * called from host
+     *
+     * @param playerNr
+     * @param xPos
+     * @param yPos
+     */
+    void placeRobot (int playerNr, int xPos, int yPos);
+
+    /**
+     * check if card is of type move or rotate, if move then move robot, else rotate robot
+     * called from host
+     *
+     * @param playerNr id of the current player
+     * @param card the card that should be played
+     */
+    void activateCard (int playerNr, IProgramCard card);
+
+    /**
+     * activate the board elements by calling board method
+     * called from host
+     */
+    void activateBoardElements ();
+
+    /**
+     * activate the lasers by calling board method.
+     * called from host
+     */
+    void activateLasers();
+
+
 }
