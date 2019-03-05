@@ -193,34 +193,38 @@ public class GUI implements ApplicationListener {
 			//				}
 			//			}
 
+			// check if user has chosen all 5 cards
+			// and put the chosen cards in the game-client, and lock the registry
 			if (chosenCards[4] != null) {
 				for (int i=0; i<chosenCards.length; i++) {
 					game.setCard(chosenCards[i], i);
 				}
+				game.lockRegistry();
 				cardsChoosen = true;
 			}
-
+			
+			//print cards and increment the x location of the cards
 			int cardX = 0;
 			for (ICard card : hand) {
 				card.setX(cardX);
 				cardX+=128;
 				drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
 			}
-			
-//			for (ICard card : hand) {
-//				drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
-//				
-//				if (Gdx.input.justTouched()) {
-//					camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-//					if(clickPos.x <= card.getX() && clickPos.y <= card.getY()) {
-//						card.setY(128);
-//						chosenCards[pointer] = card;
-//						pointer++;
-//						System.out.println(pointer + " card(s) choosen");
-//
-//					}
-//				}
-//			}
+
+			if (!cardsChoosen) {
+				if (Gdx.input.justTouched()) {
+					camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+
+					for (ICard card :hand) {
+						if(clickPos.x <= card.getX() && clickPos.y <= card.getY()) {
+							card.setY(128);
+							chosenCards[pointer] = card;
+							pointer++;
+							System.out.println(pointer + " card(s) choosen");
+						}
+					}
+				}
+			}
 		}
 	}
 
