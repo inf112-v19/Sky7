@@ -69,7 +69,7 @@ public class GUI implements ApplicationListener {
 
 //			emptyCard = textureAtlas.createSprite("EmptyCard");
 			addSprites();
-
+	        
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -165,6 +165,9 @@ public class GUI implements ApplicationListener {
 
 			ArrayList<ICard> hand = game.getHand();
 
+//			for (int i=0; i<hand.size(); i++) {
+//				System.out.println(hand.get(i).GetSpriteRef());
+//			}
 			ICard card0 = hand.get(0);
 			drawSprite(card0.GetSpriteRef(), 0, 0);
 			
@@ -192,7 +195,10 @@ public class GUI implements ApplicationListener {
 			}
 //			game.setCard(chosenCard, positionInRegistry);
 		}
-		//		cardsChoosen = false;
+	}
+	
+	public void playerCards() {
+		// TODO: print string[] chosenCards
 	}
 
 	public void addSprites() {
