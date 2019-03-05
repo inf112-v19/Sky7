@@ -124,8 +124,8 @@ public class Host implements IHost {
     }
 
     private void boardElementsMove() {
-        // TODO Auto-generated method stub
-        
+        board.rotateCogs();
+        board.moveConveyors();
     }
     
     private void lasersFire() {
