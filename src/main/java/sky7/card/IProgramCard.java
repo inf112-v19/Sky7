@@ -23,7 +23,12 @@ public interface IProgramCard extends ICard {
      */
     int rotate();
 
-
+    /**
+     * Check if the card is a movement or rotation card
+     * 
+     * @return true if move (forward or backward), false if it's a rotation card
+     */
+    boolean moveType();
 
 
 }

@@ -26,4 +26,8 @@ public class CogWheel implements IActive {
     public int compareTo(ICell o) {
         return 0;
     }
+    
+    public int getRotation() {
+        return this.rotDirection;
+    }
 }

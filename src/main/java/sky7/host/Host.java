@@ -1,11 +1,11 @@
 package sky7.host;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
-import java.util.TreeSet;
 
-import sky7.board.Board;
+import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.card.ICard;
 import sky7.card.IDeck;
@@ -20,26 +20,36 @@ public class Host implements IHost {
     int nPlayers = 1, readyPlayers = 0;
     IDeck pDeck;
     IBoard board;
-    List<Stack<ICard>> playerRegs;
-    TreeSet<PlayerCard> queue;
+    List<ArrayList<ICard>> playerRegs;
+//    TreeSet<PlayerCard> queue;
+    List<Integer> pQueue;
+    BoardGenerator bg;
     
 
     public Host(IClient cli) {
         players = new Client[8];
         players[0] = cli;
-        board = new Board(10, 8);
-        playerRegs = new ArrayList<Stack<ICard>>();
-        playerRegs.add(new Stack<ICard>());
-        queue = new TreeSet<>();
+        playerRegs = new ArrayList<ArrayList<ICard>>();
+//        queue = new TreeSet<>();
+        pQueue = new LinkedList<>();
         pDeck = new ProgramDeck();
+        bg = new BoardGenerator();
+        try {
+            board = bg.getBoardFromFile("assets/Boards/emptyBoard.json");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         
         cli.connect((IHost)this, 0); //TODO do this for each client and give each client a unique ID.
+        
+        board.placeRobot(0, 0, 0);
         
         run();
     }
 
     @Override
     public synchronized void run() {
+        int currentPlayer = 0;
         
         while(true) {
             
@@ -48,15 +58,16 @@ public class Host implements IHost {
             // give 9 cards to each player
             for (int i=0; i<nPlayers; i++) {
                 players[i].chooseCards(pDeck.draw(9));
+                System.out.println("Cards given to player " + i);
             }
             
             // wait for all players to be ready
             while(readyPlayers < nPlayers) {
                 try {
-                    System.out.println("host sleeping");
+                    System.out.println("Host is waiting for players to click ready");
                     this.wait();
                 } catch (InterruptedException e) {
-                    System.out.println("host was notified");
+                    System.out.println("host was interrupted");
                 }
             }
             
@@ -65,61 +76,64 @@ public class Host implements IHost {
                 System.out.println("phase " + i);
                 //need to compare the leftmost card of each registry and store which order the players will move in (queue)
                 // then pop one from each reg, and repeat
-                queue.add(new PlayerCard(0));
+                findPlayerSequence(i);
                 
-                
-                for (int j=1; j<nPlayers; j++) {
-                    queue.add(new PlayerCard(j));
-                }
-                
+                // execute 1 card from each player in order of descending card priority number
                 for (int j=0; j<nPlayers ; j++) {
-                    move(queue.pollLast());
+                    currentPlayer = pQueue.get(j);
+                    execute(currentPlayer, (ProgramCard)playerRegs.get(currentPlayer).get(i));
                 }
+                
+                pQueue.clear();
                 
                 boardElementsMove();
                 lasersFire();
+                
+                // return registry cards to deck - need to implement locked cards later
+                for (int j=0; j<nPlayers; j++) {
+                    pDeck.returnCards(playerRegs.remove(j));
+                }
             }
             
             readyPlayers = 0;
         }
     }
 
-    private void lasersFire() {
-        // TODO Auto-generated method stub
-        
+    private void execute(int currentPlayer, ProgramCard card) {
+        if (card.moveType()) {
+            board.moveRobot(currentPlayer, card.move());
+        } else {
+            board.rotateRobot(currentPlayer, card.rotate());
+        }
+    }
+
+    private void findPlayerSequence(int roundNr) {
+        for (int i=0; i<nPlayers; i++) {
+            ProgramCard thisPlayersCard = (ProgramCard)playerRegs.get(i).get(roundNr);
+            for (int j=0; j<pQueue.size(); j++) {
+                ProgramCard thatPlayersCard = (ProgramCard)playerRegs.get(pQueue.get(j)).get(roundNr);
+                if (thisPlayersCard.priorityN() > thatPlayersCard.priorityN())
+                    pQueue.add(j, i);
+            }
+            
+            pQueue.add(i);
+        }
     }
 
     private void boardElementsMove() {
-        // TODO Auto-generated method stub
-        
+        board.rotateCogs();
+        board.moveConveyors();
     }
-
-    private void move(PlayerCard current) {
-//        board.movePlayer(current.playerNr, current.card);
+    
+    private void lasersFire() {
+        
     }
 
     @Override
     public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
-        playerRegs.get(pN).addAll(registry);
+        playerRegs.add(pN, registry);
         pDeck.returnCards(discard);
         readyPlayers++;
         notify();
-    }
-    
-    private class PlayerCard implements Comparable<PlayerCard> {
-        
-        int playerNr;
-        ICard card;
-        
-        public PlayerCard(int playerNr) {
-            this.playerNr = playerNr;
-            this.card = playerRegs.get(playerNr).pop();
-        }
-        
-        @Override
-        public int compareTo(PlayerCard other) {
-            return ((ProgramCard)card).compareTo(((ProgramCard)other.card));
-        }
-        
     }
 }

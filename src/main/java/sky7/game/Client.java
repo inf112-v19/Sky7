@@ -1,13 +1,15 @@
 package sky7.game;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
-import sky7.board.Board;
-import sky7.card.ICard;
-import sky7.host.IHost;
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
+import sky7.card.ICard;
+import sky7.card.IProgramCard;
+import sky7.host.IHost;
 import sky7.player.IPlayer;
 import sky7.player.Player;
 
@@ -25,6 +27,7 @@ public class Client implements IClient {
     public Client() {
         //board = new Board(10,8);
         board = new Board(10, 8);
+        hand = new ArrayList<>(MAX_NUMBER_OF_REGISTRY);
         this.player = new Player();
         state = STATE.LOADING;
     }

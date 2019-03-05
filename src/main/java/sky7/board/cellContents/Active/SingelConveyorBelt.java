@@ -4,7 +4,7 @@ import sky7.board.Board;
 import sky7.board.ICell;
 import sky7.board.cellContents.DIRECTION;
 
-public class SingelConveyorBelt implements ConveyorBelt {
+public class SingelConveyorBelt implements IConveyorBelt {
     private DIRECTION fromDirectionOne;
     private DIRECTION fromDirectionTwo; // Can be non, if conveyor belt only has one entry
     private DIRECTION toDirection; // Change robot to face this way when done
