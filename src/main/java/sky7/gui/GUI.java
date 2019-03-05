@@ -31,7 +31,6 @@ public class GUI implements ApplicationListener {
 	private HashMap<String, Sprite> sprites;
 	private ExtendViewport viewport;
 	private OrthographicCamera camera;
-	//	private Sprite emptyCard, Move1, Move2, Move3, MoveBack, RotateLeft, RotateRight, uTurn;
 	private Vector3 clickPos = new Vector3();
 	TextureAtlas textureAtlas;
 	private boolean cardsChoosen = false;
@@ -152,51 +151,76 @@ public class GUI implements ApplicationListener {
 	}
 
 	public void chooseCards() {
-		if (!cardsChoosen) {	
+		if (!cardsChoosen) {
+			int pointer = 0;
 			ICard[] chosenCards = new ICard[5];
 
 			ArrayList<ICard> hand = game.getHand();
+			//			ICard card0 = hand.get(0);
+			//			drawSprite(card0.GetSpriteRef(), card0.getX(), card0.getY());
+			//
+			//			ICard card1 = hand.get(1);
+			//			drawSprite(card1.GetSpriteRef(), 1*128, 0);
+			//
+			//			ICard card2 = hand.get(2);
+			//			drawSprite(card2.GetSpriteRef(), 2*128, 0);
+			//
+			//			ICard card3 = hand.get(3);
+			//			drawSprite(card3.GetSpriteRef(), 3*128, 0);
+			//
+			//			ICard card4 = hand.get(4);
+			//			drawSprite(card4.GetSpriteRef(), 4*128, 0);
+			//
+			//			ICard card5 = hand.get(5);
+			//			drawSprite(card5.GetSpriteRef(), 5*128, 0);
+			//
+			//			ICard card6 = hand.get(6);
+			//			drawSprite(card6.GetSpriteRef(), 6*128, 0);
+			//
+			//			ICard card7 = hand.get(7);
+			//			drawSprite(card7.GetSpriteRef(), 7*128, 0);
+			//
+			//			ICard card8 = hand.get(8);
+			//			drawSprite(card8.GetSpriteRef(), 8*128, 0);
+			//
+			//			if (Gdx.input.justTouched()) {
+			//				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+			//				if(clickPos.x <= 128 && clickPos.y <= 128) {
+			//					chosenCards[pointer] = card0;
+			//					pointer++;
+			//					System.out.println(pointer + " card(s) choosen");
+			//					card0.setY(128);
+			//				}
+			//			}
 
-			ICard card0 = hand.get(0);
-			drawSprite(card0.GetSpriteRef(), 0, 0);
-
-			ICard card1 = hand.get(1);
-			drawSprite(card1.GetSpriteRef(), 1*128, 0);
-
-			ICard card2 = hand.get(2);
-			drawSprite(card2.GetSpriteRef(), 2*128, 0);
-
-			ICard card3 = hand.get(3);
-			drawSprite(card3.GetSpriteRef(), 3*128, 0);
-
-			ICard card4 = hand.get(4);
-			drawSprite(card4.GetSpriteRef(), 4*128, 0);
-
-			ICard card5 = hand.get(5);
-			drawSprite(card5.GetSpriteRef(), 5*128, 0);
-
-			ICard card6 = hand.get(6);
-			drawSprite(card6.GetSpriteRef(), 6*128, 0);
-
-			ICard card7 = hand.get(7);
-			drawSprite(card7.GetSpriteRef(), 7*128, 0);
-
-			ICard card8 = hand.get(8);
-			drawSprite(card8.GetSpriteRef(), 8*128, 0);
-
-			if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-				if(clickPos.x <= 128 && clickPos.y <= 128) {
-					chosenCards[1] = card0;
-				}
-			}
-			
 			if (chosenCards[4] != null) {
 				for (int i=0; i<chosenCards.length; i++) {
 					game.setCard(chosenCards[i], i);
 				}
 				cardsChoosen = true;
 			}
+
+			int cardX = 0;
+			for (ICard card : hand) {
+				card.setX(cardX);
+				cardX+=128;
+				drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
+			}
+			
+//			for (ICard card : hand) {
+//				drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
+//				
+//				if (Gdx.input.justTouched()) {
+//					camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+//					if(clickPos.x <= card.getX() && clickPos.y <= card.getY()) {
+//						card.setY(128);
+//						chosenCards[pointer] = card;
+//						pointer++;
+//						System.out.println(pointer + " card(s) choosen");
+//
+//					}
+//				}
+//			}
 		}
 	}
 

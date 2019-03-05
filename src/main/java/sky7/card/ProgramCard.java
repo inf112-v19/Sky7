@@ -8,6 +8,7 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 	private int priority, move, rotate;
 	private boolean moveType;
 	private String sprite;
+	public int x, y;
 
 	/**
 	 * @param priority Card priority number
@@ -82,6 +83,26 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 			}
 		}
 		return "null";
+	}
+
+	@Override
+	public int getX() {
+		return x;
+	}
+
+	@Override
+	public int getY() {
+		return y;
+	}
+	
+	@Override
+	public void setX(int input) {
+		this.x = input;
+	}
+	
+	@Override
+	public void setY(int input) {
+		this.y = input;
 	}
 
 }
