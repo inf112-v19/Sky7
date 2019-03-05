@@ -152,16 +152,17 @@ public class GUI implements ApplicationListener {
 		}
 	}
 	public void chooseCards() {
-		if (cardsChoosen) {	
-			String[] chosen = new String[5];
-//			font.draw(batch, chosen, 200, 200);
-
-		String chosen = game.getRegistry();
-		font.draw(batch, chosen, 200, 200);
-
-		IProgramCard[] hand = game.getHand();
-		for (int i=0; i<9; i++) {
-//			batch.draw(hand[i], i*128, 0);
-		}
+//		if (cardsChoosen) {	
+//			String[] chosen = new String[5];
+//			//			font.draw(batch, chosen, 200, 200);
+//
+////			String chosen = game.getRegistry();
+////			font.draw(batch, chosen, 200, 200);
+////
+////			IProgramCard[] hand = game.getHand();
+////			for (int i=0; i<9; i++) {
+//				//			batch.draw(hand[i], i*128, 0);
+//			}
+//		}
 	}
 }
