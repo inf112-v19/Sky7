@@ -33,10 +33,10 @@ public class GUI implements ApplicationListener {
 	private ExtendViewport viewport;
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
-	TextureAtlas textureAtlas;
-
+	private TextureAtlas textureAtlas;
+	private Sprite reset, confirm;
 	private boolean cardsChoosen = false;
-	private int pointer, yPos = 0;
+	private int pointer, yPos, cardXpos = 0;
 	private int scaler = 128;
 	private ICard[] chosenCards = new ICard[5];
 	private ArrayList<ICard> hand;
@@ -65,8 +65,15 @@ public class GUI implements ApplicationListener {
 			textures.put("outline", new Texture("assets/cards/Outline.png"));
 			textures.put("dock", new Texture("assets/dock.png"));
 			textures.put("unmarkedCard", new Texture("assets/cards/EmptyCard.png"));
+			textures.put("reset", new Texture("assets/dock/Reset.png"));
+			textures.put("confirm", new Texture("assets/dock/Confirm.png"));
 
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
+
+			reset = new Sprite(textures.get("reset"));
+			confirm = new Sprite(textures.get("confirm"));
+			reset.setPosition(scaler*9, 0);
+			confirm.setPosition(1330, 0);
 
 			hand = game.getHand();
 			addSprites();
@@ -104,31 +111,20 @@ public class GUI implements ApplicationListener {
 					batch.draw(cell.getTexture(), i * scaler, (j + 2) * scaler, scaler, scaler);
 				}
 			}
-			/*String[] texturesRef = game.gameBoard().getTileTexture(i, j); // Which texture belongs at position i,j
-                for (String tex : texturesRef) {
-                    // batch.draw(textures.get(tex), i*128, j*128);
-
-                    // need extra parameters (last 2 128s to scale each texture to 128x128 instead of original 300x300)
-                    // (j+2) leaves space for dock
-                    batch.draw(textures.get(tex), i * 128, (j + 2) * 128, 128, 128);
-
-                }*/
 		}
 
 		Dock();
 		chooseCards();
-		playerCards();
 
-		//		emptyCard.draw(batch);
-		//		
-		//		if (Gdx.input.isTouched()){
-		//			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-		//			if (clickPos.x > emptyCard.getX() && clickPos.x < emptyCard.getX() + emptyCard.getWidth()) {
-		//				if (clickPos.y > emptyCard.getY() && clickPos.y < emptyCard.getY() + emptyCard.getHeight()) {
-		//					emptyCard.setX(emptyCard.getX() + 128);
-		//				}
-		//			}
-		//		}
+		reset.draw(batch);
+		if (isClicked(reset)) {
+			reset();
+		}
+
+		confirm.draw(batch);
+		if (isClicked(confirm)) {
+			playerCards();
+		}
 
 		batch.end();
 	}
@@ -185,9 +181,9 @@ public class GUI implements ApplicationListener {
 
 	// set the x position for the cards to spread them accross the map
 	private void initiateCards(ArrayList<ICard> hand) {
-		int cardXpos = 0;
 		for (ICard card : hand) {
 			card.setX(cardXpos);
+			card.setY(0);
 			cardXpos+=scaler;
 		}	
 	}
@@ -217,7 +213,7 @@ public class GUI implements ApplicationListener {
 			if (Gdx.input.justTouched()) {
 				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				for(ICard card : hand) {
-					
+
 					if(clickPos.x <= scaler+card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
 						if (card.getY() != scaler) {
 							chosenCards[pointer] = card;
@@ -231,5 +227,31 @@ public class GUI implements ApplicationListener {
 				}
 			}
 		}
+	}
+
+	//reset chosen cards, reset position etc
+	public void reset() {
+		System.out.println("Resetting");
+		cardsChoosen = false;
+		pointer = 0;
+		yPos = 0;
+		cardXpos = 0;
+		for (int i=0; i<chosenCards.length; i++) {
+			chosenCards[i] = null;
+		}
+		initiateCards(hand);
+		chooseCards();
+	}
+
+	public boolean isClicked(Sprite sprite) {
+		if (Gdx.input.justTouched()){
+			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+			if (clickPos.x > sprite.getX() && clickPos.x < sprite.getX() + sprite.getWidth()) {
+				if (clickPos.y > sprite.getY() && clickPos.y < sprite.getY() + sprite.getHeight()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
