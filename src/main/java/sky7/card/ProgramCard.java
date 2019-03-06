@@ -7,7 +7,8 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 
 	private int priority, move, rotate;
 	private boolean moveType;
-	private Sprite sprite;
+	private String sprite;
+	public int x, y;
 
 	/**
 	 * @param priority Card priority number
@@ -57,38 +58,51 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 	}
 
 	@Override
-	public Sprite GetSprite() { // Auto-generated method stub
+	public String GetSpriteRef() {
 		if (sprite == null) {
 			if (move == 1) {
-				Texture tex = new Texture("assets/cards/Move1.png");
-				return new Sprite(tex);
+				return "Move1";
 			}
 			if (move == 2) {
-				Texture tex = new Texture("assets/cards/Move2.png");
-				return new Sprite(tex);
+				return "Move2";
 			}
 			if (move == 3) {
-				Texture tex = new Texture("assets/cards/Move3.png");
-				return new Sprite(tex);
+				return "Move3";
 			}
 			if (move == -1) {
-				Texture tex = new Texture("assets/cards/MoveBack.png");
-				return new Sprite(tex);
+				return "MoveBack";
 			}
 			if (rotate == 1) {
-				Texture tex = new Texture("assets/cards/RotateRight.png");
-				return new Sprite(tex);
+				return "RotateRight";
 			}
 			if (rotate == -1) {
-				Texture tex = new Texture("assets/cards/RotateLeft.png");
-				return new Sprite(tex);
+				return "RotateLeft";
 			}
-			if (rotate == -2) {
-				Texture tex = new Texture("assets/cards/uTurn.png");
-				return new Sprite(tex);
+			if (rotate == 2) {
+				return "uTurn";
 			}
 		}
-		return sprite;
+		return "null";
+	}
+
+	@Override
+	public int getX() {
+		return x;
+	}
+
+	@Override
+	public int getY() {
+		return y;
+	}
+	
+	@Override
+	public void setX(int input) {
+		this.x = input;
+	}
+	
+	@Override
+	public void setY(int input) {
+		this.y = input;
 	}
 
 }

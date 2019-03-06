@@ -66,3 +66,10 @@ uTurn
   orig: 128, 128
   offset: 0, 0
   index: -1
+null
+  rotate: false
+  xy: 128, 0
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1

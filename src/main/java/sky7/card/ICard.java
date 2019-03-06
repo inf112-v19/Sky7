@@ -1,8 +1,11 @@
 package sky7.card;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
-
 public interface ICard {
+	
+	int getX();
+	int getY();
 
-	Sprite GetSprite();
+	String GetSpriteRef();
+	void setX(int input);
+	void setY(int input);
 }
