@@ -35,8 +35,10 @@ public class GUI implements ApplicationListener {
 	TextureAtlas textureAtlas;
 
 	private boolean cardsChoosen = false;
-	public int pointer = 0;
-	ICard[] chosenCards = new ICard[5];
+	private int pointer = 0;
+	private int yPos = 0;
+	private ICard[] chosenCards = new ICard[5];
+	private ArrayList<ICard> hand;
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -64,8 +66,10 @@ public class GUI implements ApplicationListener {
 			textures.put("unmarkedCard", new Texture("assets/cards/EmptyCard.png"));
 
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
-
+			
+			hand = game.getHand();
 			addSprites();
+			initiateCards(hand);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -137,7 +141,6 @@ public class GUI implements ApplicationListener {
 
 	@Override
 	public void resume() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -146,7 +149,6 @@ public class GUI implements ApplicationListener {
 			batch.draw(textures.get("dock"), i * 128, 0);
 			batch.draw(textures.get("dock"), i * 128, 128);
 		}
-		//draw outline of 5 selected cards
 		for (int i = 0; i < 5; i++) {
 			batch.draw(textures.get("outline"), i * 128, 128);
 		}
@@ -154,13 +156,6 @@ public class GUI implements ApplicationListener {
 
 	public void chooseCards() {
 		if (!cardsChoosen) {
-
-			ArrayList<ICard> hand = game.getHand();
-			int cardX = 0;
-			for (ICard card : hand) {
-				card.setX(cardX);
-				cardX+=128;
-			}
 			ICard card0 = hand.get(0);
 			drawSprite(card0.GetSpriteRef(), card0.getX(), card0.getY());
 			ICard card1 = hand.get(1);
@@ -186,23 +181,25 @@ public class GUI implements ApplicationListener {
 					chosenCards[pointer] = card0;
 					pointer++;
 					System.out.println(pointer + " card(s) choosen " + card0.GetSpriteRef());
-					card0.setX(pointer*128);
+					card0.setX(yPos);
 					card0.setY(128);
+					yPos += 128;
 				}
 				if(clickPos.x <= 2*128 && clickPos.y <= 128 && clickPos.x > 128) {
 					chosenCards[pointer] = card1;
 					pointer++;
 					System.out.println(pointer + " card(s) choosen " + card1.GetSpriteRef());
+					card1.setX(yPos);
 					card1.setY(128);
-					card1.setX(pointer*128);
+					yPos += 128;
 				}
 			}
 		}
 	}
 
+	// check if user has chosen all 5 cards
+	// and put the chosen cards in the game-client, and lock the registry
 	public void playerCards() {
-		// check if user has chosen all 5 cards
-		// and put the chosen cards in the game-client, and lock the registry
 		if (chosenCards[4] != null) {
 			cardsChoosen = true;
 			
@@ -213,6 +210,7 @@ public class GUI implements ApplicationListener {
 		}
 	}
 
+	// add sprites to a texturemap
 	public void addSprites() {
 		Array<AtlasRegion> regions = textureAtlas.getRegions();
 		for (AtlasRegion region : regions) {
@@ -221,9 +219,19 @@ public class GUI implements ApplicationListener {
 		}
 	}
 
+	// draw sprites
 	public void drawSprite(String name, float x, float y) {
 		Sprite sprite = sprites.get(name);
 		sprite.setPosition(x, y);
 		sprite.draw(batch);
+	}
+	
+// set the x position for the cards to spread them accross the map
+	private void initiateCards(ArrayList<ICard> hand) {
+		int cardX = 0;
+		for (ICard card : hand) {
+			card.setX(cardX);
+			cardX+=128;
+		}	
 	}
 }
