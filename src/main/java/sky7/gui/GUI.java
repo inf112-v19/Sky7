@@ -26,6 +26,7 @@ public class GUI implements ApplicationListener {
 	private int width, height;
 	private SpriteBatch batch;
 	private BitmapFont font;
+	
 	//abstract the name of textures.
 	private HashMap<String, Texture> textures;
 	private HashMap<String, Sprite> sprites;
