@@ -47,8 +47,7 @@ public class Host implements IHost {
         run();
     }
 
-    @Override
-    public synchronized void run() {
+    private synchronized void run() {
         int currentPlayer = 0;
         
         while(true) {
