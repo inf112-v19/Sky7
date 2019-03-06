@@ -5,6 +5,7 @@ import java.util.*;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,7 +27,7 @@ public class GUI implements ApplicationListener {
 	private int width, height;
 	private SpriteBatch batch;
 	private BitmapFont font;
-
+	public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
 	//abstract the name of textures.
 	private HashMap<String, Texture> textures;
 	private HashMap<String, Sprite> sprites;
@@ -35,6 +36,7 @@ public class GUI implements ApplicationListener {
 	private Vector3 clickPos = new Vector3();
 	private TextureAtlas textureAtlas;
 	private Sprite reset, confirm;
+	
 	private boolean cardsChoosen = false;
 	private int pointer, yPos, cardXpos = 0;
 	private int scaler = 128;
@@ -56,7 +58,10 @@ public class GUI implements ApplicationListener {
 
 			batch = new SpriteBatch();
 			font = new BitmapFont();
-
+			
+			font.getData().setScale(2, 2);
+			font.setColor(Color.GOLDENROD);
+			
 			camera = new OrthographicCamera();
 			viewport = new ExtendViewport(width * scaler, height * scaler, camera);
 
@@ -189,24 +194,29 @@ public class GUI implements ApplicationListener {
 	}
 
 	public void chooseCards() {
-		ICard card0 = hand.get(0);
-		drawSprite(card0.GetSpriteRef(), card0.getX(), card0.getY());
-		ICard card1 = hand.get(1);
-		drawSprite(card1.GetSpriteRef(), card1.getX(), card1.getY());
-		ICard card2 = hand.get(2);
-		drawSprite(card2.GetSpriteRef(), card2.getX(), card2.getY());
-		ICard card3 = hand.get(3);
-		drawSprite(card3.GetSpriteRef(), card3.getX(), card3.getY());
-		ICard card4 = hand.get(4);
-		drawSprite(card4.GetSpriteRef(), card4.getX(), card4.getY());
-		ICard card5 = hand.get(5);
-		drawSprite(card5.GetSpriteRef(), card5.getX(), card5.getY());
-		ICard card6 = hand.get(6);
-		drawSprite(card6.GetSpriteRef(), card6.getX(), card6.getY());
-		ICard card7 = hand.get(7);
-		drawSprite(card7.GetSpriteRef(), card7.getX(), card7.getY());
-		ICard card8 = hand.get(8);
-		drawSprite(card8.GetSpriteRef(), card8.getX(), card8.getY());
+		for (ICard card : hand) {
+			drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
+			font.draw(batch, card.getPriority(), card.getX()+42, card.getY()+93);
+		}
+//		ICard card0 = hand.get(0);
+//		drawSprite(card0.GetSpriteRef(), card0.getX(), card0.getY());
+//		font.draw(batch, card0.getPriority(), card0.getX()+55, card0.getY()+88);
+//		ICard card1 = hand.get(1);
+//		drawSprite(card1.GetSpriteRef(), card1.getX(), card1.getY());
+//		ICard card2 = hand.get(2);
+//		drawSprite(card2.GetSpriteRef(), card2.getX(), card2.getY());
+//		ICard card3 = hand.get(3);
+//		drawSprite(card3.GetSpriteRef(), card3.getX(), card3.getY());
+//		ICard card4 = hand.get(4);
+//		drawSprite(card4.GetSpriteRef(), card4.getX(), card4.getY());
+//		ICard card5 = hand.get(5);
+//		drawSprite(card5.GetSpriteRef(), card5.getX(), card5.getY());
+//		ICard card6 = hand.get(6);
+//		drawSprite(card6.GetSpriteRef(), card6.getX(), card6.getY());
+//		ICard card7 = hand.get(7);
+//		drawSprite(card7.GetSpriteRef(), card7.getX(), card7.getY());
+//		ICard card8 = hand.get(8);
+//		drawSprite(card8.GetSpriteRef(), card8.getX(), card8.getY());
 
 		if (!cardsChoosen && pointer != 5) {
 			//check if card is clicked

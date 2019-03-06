@@ -105,4 +105,10 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 		this.y = input;
 	}
 
+	@Override
+	public CharSequence getPriority() {
+		String pri = Integer.toString(priority);
+		return pri;
+	}
+
 }

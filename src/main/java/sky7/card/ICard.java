@@ -2,6 +2,8 @@ package sky7.card;
 
 public interface ICard {
 	
+	CharSequence getPriority();
+	
 	int getX();
 	int getY();
 
