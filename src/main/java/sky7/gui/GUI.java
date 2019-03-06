@@ -33,7 +33,10 @@ public class GUI implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	TextureAtlas textureAtlas;
+
 	private boolean cardsChoosen = false;
+	public int pointer = 0;
+	ICard[] chosenCards = new ICard[5];
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -63,11 +66,9 @@ public class GUI implements ApplicationListener {
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
 
 			addSprites();
-
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
@@ -111,6 +112,7 @@ public class GUI implements ApplicationListener {
 
 		Dock();
 		chooseCards();
+		playerCards();
 
 		//		emptyCard.draw(batch);
 		//		
@@ -152,84 +154,63 @@ public class GUI implements ApplicationListener {
 
 	public void chooseCards() {
 		if (!cardsChoosen) {
-			int pointer = 0;
-			ICard[] chosenCards = new ICard[5];
 
 			ArrayList<ICard> hand = game.getHand();
-			//			ICard card0 = hand.get(0);
-			//			drawSprite(card0.GetSpriteRef(), card0.getX(), card0.getY());
-			//
-			//			ICard card1 = hand.get(1);
-			//			drawSprite(card1.GetSpriteRef(), 1*128, 0);
-			//
-			//			ICard card2 = hand.get(2);
-			//			drawSprite(card2.GetSpriteRef(), 2*128, 0);
-			//
-			//			ICard card3 = hand.get(3);
-			//			drawSprite(card3.GetSpriteRef(), 3*128, 0);
-			//
-			//			ICard card4 = hand.get(4);
-			//			drawSprite(card4.GetSpriteRef(), 4*128, 0);
-			//
-			//			ICard card5 = hand.get(5);
-			//			drawSprite(card5.GetSpriteRef(), 5*128, 0);
-			//
-			//			ICard card6 = hand.get(6);
-			//			drawSprite(card6.GetSpriteRef(), 6*128, 0);
-			//
-			//			ICard card7 = hand.get(7);
-			//			drawSprite(card7.GetSpriteRef(), 7*128, 0);
-			//
-			//			ICard card8 = hand.get(8);
-			//			drawSprite(card8.GetSpriteRef(), 8*128, 0);
-			//
-			//			if (Gdx.input.justTouched()) {
-			//				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-			//				if(clickPos.x <= 128 && clickPos.y <= 128) {
-			//					chosenCards[pointer] = card0;
-			//					pointer++;
-			//					System.out.println(pointer + " card(s) choosen");
-			//					card0.setY(128);
-			//				}
-			//			}
-
-			// check if user has chosen all 5 cards
-			// and put the chosen cards in the game-client, and lock the registry
-			if (chosenCards[4] != null) {
-				for (int i=0; i<chosenCards.length; i++) {
-					game.setCard(chosenCards[i], i);
-				}
-				game.lockRegistry();
-				cardsChoosen = true;
-			}
-			
-			//print cards and increment the x location of the cards
 			int cardX = 0;
 			for (ICard card : hand) {
 				card.setX(cardX);
 				cardX+=128;
-				drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
 			}
+			ICard card0 = hand.get(0);
+			drawSprite(card0.GetSpriteRef(), card0.getX(), card0.getY());
+			ICard card1 = hand.get(1);
+			drawSprite(card1.GetSpriteRef(), card1.getX(), card1.getY());
+			ICard card2 = hand.get(2);
+			drawSprite(card2.GetSpriteRef(), card2.getX(), card2.getY());
+			ICard card3 = hand.get(3);
+			drawSprite(card3.GetSpriteRef(), card3.getX(), card3.getY());
+			ICard card4 = hand.get(4);
+			drawSprite(card4.GetSpriteRef(), card4.getX(), card4.getY());
+			ICard card5 = hand.get(5);
+			drawSprite(card5.GetSpriteRef(), card5.getX(), card5.getY());
+			ICard card6 = hand.get(6);
+			drawSprite(card6.GetSpriteRef(), card6.getX(), card6.getY());
+			ICard card7 = hand.get(7);
+			drawSprite(card7.GetSpriteRef(), card7.getX(), card7.getY());
+			ICard card8 = hand.get(8);
+			drawSprite(card8.GetSpriteRef(), card8.getX(), card8.getY());
 
-			if (!cardsChoosen) {
-				if (Gdx.input.justTouched()) {
-					camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-
-					for (ICard card :hand) {
-						if(clickPos.x <= card.getX() && clickPos.y <= card.getY()) {
-							card.setY(128);
-							chosenCards[pointer] = card;
-							pointer++;
-							System.out.println(pointer + " card(s) choosen");
-						}
-					}
+			if (Gdx.input.justTouched()) {
+				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+				if(clickPos.x <= 128 && clickPos.y <= 128) {
+					chosenCards[pointer] = card0;
+					pointer++;
+					System.out.println(pointer + " card(s) choosen " + card0.GetSpriteRef());
+					card0.setX(pointer*128);
+					card0.setY(128);
+				}
+				if(clickPos.x <= 2*128 && clickPos.y <= 128 && clickPos.x > 128) {
+					chosenCards[pointer] = card1;
+					pointer++;
+					System.out.println(pointer + " card(s) choosen " + card1.GetSpriteRef());
+					card1.setY(128);
+					card1.setX(pointer*128);
 				}
 			}
 		}
 	}
 
 	public void playerCards() {
-		// TODO: print string[] chosenCards
+		// check if user has chosen all 5 cards
+		// and put the chosen cards in the game-client, and lock the registry
+		if (chosenCards[4] != null) {
+			cardsChoosen = true;
+			
+			for (int i=0; i<chosenCards.length; i++) {
+				game.setCard(chosenCards[i], i);
+			}
+			game.lockRegistry();
+		}
 	}
 
 	public void addSprites() {
