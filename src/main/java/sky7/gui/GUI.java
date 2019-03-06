@@ -72,8 +72,8 @@ public class GUI implements ApplicationListener {
 
 			reset = new Sprite(textures.get("reset"));
 			confirm = new Sprite(textures.get("confirm"));
-			reset.setPosition(scaler*9, 0);
-			confirm.setPosition(1330, 0);
+			reset.setPosition(scaler*9, 20);
+			confirm.setPosition(scaler*10, 20);
 
 			hand = game.getHand();
 			addSprites();
@@ -189,7 +189,6 @@ public class GUI implements ApplicationListener {
 	}
 
 	public void chooseCards() {
-		if (!cardsChoosen) {
 			ICard card0 = hand.get(0);
 			drawSprite(card0.GetSpriteRef(), card0.getX(), card0.getY());
 			ICard card1 = hand.get(1);
@@ -208,7 +207,8 @@ public class GUI implements ApplicationListener {
 			drawSprite(card7.GetSpriteRef(), card7.getX(), card7.getY());
 			ICard card8 = hand.get(8);
 			drawSprite(card8.GetSpriteRef(), card8.getX(), card8.getY());
-
+			
+			if (!cardsChoosen) {
 			//check if card is clicked
 			if (Gdx.input.justTouched()) {
 				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
