@@ -36,8 +36,8 @@ public class GUI implements ApplicationListener {
 	TextureAtlas textureAtlas;
 
 	private boolean cardsChoosen = false;
-	private int pointer = 0;
-	private int yPos = 0;
+	private int pointer, yPos = 0;
+	private int scaler = 128;
 	private ICard[] chosenCards = new ICard[5];
 	private ArrayList<ICard> hand;
 
@@ -58,7 +58,7 @@ public class GUI implements ApplicationListener {
 			font = new BitmapFont();
 
 			camera = new OrthographicCamera();
-			viewport = new ExtendViewport(width * 128, height * 128, camera);
+			viewport = new ExtendViewport(width * scaler, height * scaler, camera);
 
 			textures.put("robot", new Texture("assets/robot1.png"));
 			textures.put("floor", new Texture("assets/floor/plain.png"));
@@ -101,7 +101,7 @@ public class GUI implements ApplicationListener {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
-					batch.draw(cell.getTexture(), i * 128, (j + 2) * 128, 128, 128);
+					batch.draw(cell.getTexture(), i * scaler, (j + 2) * scaler, scaler, scaler);
 				}
 			}
 			/*String[] texturesRef = game.gameBoard().getTileTexture(i, j); // Which texture belongs at position i,j
@@ -137,7 +137,6 @@ public class GUI implements ApplicationListener {
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		batch.setProjectionMatrix(camera.combined);
-
 	}
 
 	@Override
@@ -147,11 +146,11 @@ public class GUI implements ApplicationListener {
 
 	public void Dock() {
 		for (int i = 0; i < width; i++) {
-			batch.draw(textures.get("dock"), i * 128, 0);
-			batch.draw(textures.get("dock"), i * 128, 128);
+			batch.draw(textures.get("dock"), i * scaler, 0);
+			batch.draw(textures.get("dock"), i * scaler, scaler);
 		}
 		for (int i = 0; i < 5; i++) {
-			batch.draw(textures.get("outline"), i * 128, 128);
+			batch.draw(textures.get("outline"), i * scaler, scaler);
 		}
 	}
 
@@ -186,10 +185,10 @@ public class GUI implements ApplicationListener {
 
 	// set the x position for the cards to spread them accross the map
 	private void initiateCards(ArrayList<ICard> hand) {
-		int cardX = 0;
+		int cardXpos = 0;
 		for (ICard card : hand) {
-			card.setX(cardX);
-			cardX+=128;
+			card.setX(cardXpos);
+			cardXpos+=scaler;
 		}	
 	}
 
@@ -214,116 +213,23 @@ public class GUI implements ApplicationListener {
 			ICard card8 = hand.get(8);
 			drawSprite(card8.GetSpriteRef(), card8.getX(), card8.getY());
 
+			//check if card is clicked
 			if (Gdx.input.justTouched()) {
 				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				for(ICard card : hand) {
 					
-					if(clickPos.x <= 128+card.getX() && clickPos.x > card.getX() && clickPos.y <= 128) {
-						if (card.getY() != 128) {
+					if(clickPos.x <= scaler+card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
+						if (card.getY() != scaler) {
 							chosenCards[pointer] = card;
 							pointer++;
 							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef());
 							card.setX(yPos);
-							card.setY(128);
-							yPos += 128;
+							card.setY(scaler);
+							yPos += scaler;
 						}
 					}
 				}
 			}
-//
-//			if (Gdx.input.justTouched()) {
-//				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-//				if(clickPos.x <= 128 && clickPos.y <= 128) {
-//					if (card0.getY() != 128) {
-//						chosenCards[pointer] = card0;
-//						pointer++;
-//						System.out.println(pointer + " card(s) choosen " + card0.GetSpriteRef());
-//						card0.setX(yPos);
-//						card0.setY(128);
-//						yPos += 128;
-//					}
-//				}
-//				if(clickPos.x <= 2*128 && clickPos.y <= 128 && clickPos.x > 128) {
-//					if (card1.getY() != 128) {
-//						chosenCards[pointer] = card1;
-//						pointer++;
-//						System.out.println(pointer + " card(s) choosen " + card1.GetSpriteRef());
-//						card1.setX(yPos);
-//						card1.setY(128);
-//						yPos += 128;
-//					}
-//				}
-//				if(clickPos.x <= 3*128 && clickPos.y <= 128 && clickPos.x > 128*2) {
-//					if (card2.getY() != 128) {
-//						chosenCards[pointer] = card1;
-//						pointer++;
-//						System.out.println(pointer + " card(s) choosen " + card2.GetSpriteRef());
-//						card2.setX(yPos);
-//						card2.setY(128);
-//						yPos += 128;
-//					}
-//				}
-//				if(clickPos.x <= 4*128 && clickPos.y <= 128 && clickPos.x > 128*3) {
-//					if (card3.getY() != 128) {
-//						chosenCards[pointer] = card3;
-//						pointer++;
-//						System.out.println(pointer + " card(s) choosen " + card3.GetSpriteRef());
-//						card3.setX(yPos);
-//						card3.setY(128);
-//						yPos += 128;
-//					}
-//				}
-//				if(clickPos.x <= 5*128 && clickPos.y <= 128 && clickPos.x > 128*4) {
-//					if (card4.getY() != 128) {
-//						chosenCards[pointer] = card4;
-//						pointer++;
-//						System.out.println(pointer + " card(s) choosen " + card4.GetSpriteRef());
-//						card4.setX(yPos);
-//						card4.setY(128);
-//						yPos += 128;
-//					}
-//				}
-//				if(clickPos.x <= 6*128 && clickPos.y <= 128 && clickPos.x > 128*5) {
-//					if (card5.getY() != 128) {
-//						chosenCards[pointer] = card5;
-//						pointer++;
-//						System.out.println(pointer + " card(s) choosen " + card5.GetSpriteRef());
-//						card5.setX(yPos);
-//						card5.setY(128);
-//						yPos += 128;
-//					}
-//				}
-//				if(clickPos.x <= 7*128 && clickPos.y <= 128 && clickPos.x > 128*6) {
-//					if (card6.getY() != 128) {
-//						chosenCards[pointer] = card6;
-//						pointer++;
-//						System.out.println(pointer + " card(s) choosen " + card6.GetSpriteRef());
-//						card6.setX(yPos);
-//						card6.setY(128);
-//						yPos += 128;
-//					}
-//				}
-//				if(clickPos.x <= 8*128 && clickPos.y <= 128 && clickPos.x > 128*7) {
-//					if (card7.getY() != 128) {
-//						chosenCards[pointer] = card7;
-//						pointer++;
-//						System.out.println(pointer + " card(s) choosen " + card7.GetSpriteRef());
-//						card7.setX(yPos);
-//						card7.setY(128);
-//						yPos += 128;
-//					}
-//				}
-//				if(clickPos.x <= 9*128 && clickPos.y <= 128 && clickPos.x > 128*8) {
-//					if (card8.getY() != 128) {
-//						chosenCards[pointer] = card8;
-//						pointer++;
-//						System.out.println(pointer + " card(s) choosen " + card8.GetSpriteRef());
-//						card8.setX(yPos);
-//						card8.setY(128);
-//						yPos += 128;
-//					}
-//				}
-//			}
 		}
 	}
 }
