@@ -6,6 +6,7 @@ import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
 import sky7.card.ICard;
+import sky7.card.IProgramCard;
 import sky7.host.IHost;
 import sky7.player.IPlayer;
 import sky7.player.Player;
@@ -77,6 +78,34 @@ public class Client implements IClient {
 
         state = STATE.READY;
         host.ready(player.getPlayerNumber(),player.getRegistry(),player.getDiscard());
+    }
+
+    @Override
+    public void placeRobot(int playerNr, int xPos, int yPos) {
+        board.placeRobot(playerNr, xPos, yPos);
+
+    }
+
+    @Override
+    public void activateCard(int playerNr, IProgramCard card) {
+        if( card.moveType() )
+            board.moveRobot(playerNr, card.move());
+        else
+            board.rotateRobot(playerNr, card.rotate());
+
+    }
+
+    @Override
+    public void activateBoardElements() {
+        //board.moveConveyors();
+        board.rotateCogs();
+
+    }
+
+    @Override
+    public void activateLasers() {
+        //TODO should call board.activateLasers
+
     }
 
     /**

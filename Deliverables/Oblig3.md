@@ -20,72 +20,85 @@ Deloppgave 1: Prosjekt og prosjektstruktur
 - Skriv ned noen linjer om hva de ulike rollene faktisk innebærer for dere.
     Kunde kontakt blir ikke så mye brukt, tar opp hvordan logikk skal fungere i plenum,
     og spør gruppe ledere etc.
-    Teamlead har tatt ansvar for ryddighet for 
+    Teamlead har tatt ansvar for ryddighet i repo. 
     
     
 -Er det noen erfaringer enten team-messig eller mtp prosjektmetodikk som er verdt å nevne? 
-
-
+    Parprogrammering: Tar tid å bli vant til det, og må jobbe med å ha en positiv innstiling til det, pleiere å commite fra ca          annene hver sin git gbruker, men dette kan utgjøre en forskjell ved lange parprogramerings sprints.
+    Experimental branch: Vi merker at vi begynner å jobbe med ting som er innviklet i hverandre nå (mye kommunikasjon mellom                            klassene vi jobber med). Derfor bestemte vi oss for å opprette en branch for folk kan pushe                                    halvferdig arbeid som andre kan bentytte seg av. 
+    Bli flinker til å bruke tester
+    
 -Synes teamet at de valgene dere har tatt er gode? Hvis ikke, hva kan dere gjøre annerledes for å forbedre måten teamet
 fungerer på?
+    Vi vurderte å bruke TiledMap, men konkluderte med at det var for mye arbeid å skrive om koden vi har.
+    har ikke tatt "dårlige" valg, men lærer underveis, skal f.eks. bruke en "Experimental branch",
+    vi deler opp oppgaven i midre deler, som gjør det lettere for en enkelt person å angripe. 
 
 
 - Hvordan er gruppedynamikken?
+    Bra, god kommunikasjon, og jobber med å bli bedre.
+
 -Hvordan fungerer kommunikasjonen for dere?
+    Vi blir mer og mer vant til å burke Slack og Git Projects, noe som gjør komminikasjon lettere.
+    Er også flink til å ta opp felles "probemer"/"knutepunkt" på møter.
+
 - Gjør et kort retrospektiv hvor dere vurderer hva dere har klart til nå, og hva som kan forbedres. Dette skal
 handle om prosjektstruktur, ikke kode. Dere kan selvsagt diskutere kode, men dette handler ikke om
 feilretting, men om hvordan man jobber og kommuniserer.
+    Går for det meste bra, som skrevet over, gjør forandringer nå fortløpende, men ut  
+    
+
 -Under vurdering vil det vektlegges at alle bidrar til kodebasen. Hvis det er stor forskjell i hvem som
 committer, må dere legge ved en kort forklaring for hvorfor det er sånn. husk å committe alt. (Også
 designfiler)
+    parprogrammering (forklart over)
+
 
 -Referat fra møter siden forrige leveranse skal legges ved.
--Sett opp 4-5 punkter som skal følges opp.
+
+
+-Bli enige om maks tre forbedringspunkter fra retrospektivet, som skal følges opp under neste sprint.
+    
+    - Tester
+    - Forbedring av sammarbeid mellom branches (herav ny Experimental branch)
 
 
 Deloppgave 2: krav
 
-Presisering av krav som har kommet fra kunden. Hva blir de faktiske oppgavene?
-Teamets prioritering av oppgavene
-Hvis det er gjort endringer i rekkefølge utfra hva som er gitt fra kunde, hvorfor er dette gjort?
-Hvordan vil dere verifisere at kravene er oppfylt? (Hva er akseptansekriteriene?)
-Oppdatere hvilke krav dere har prioritert, hvor langt dere har kommet og hva dere har gjort siden forrige
+-Presisering av krav som har kommet fra kunden. Hva blir de faktiske oppgavene?
+    Kravet vi skal nå:
+        - Få en brikke til å bevege seg basert på valg av kort. 
+    Oppgavene vi setter mål om:
+        - implementer Clinet og Host som styrer spillet mellom de to.¨
+        - flytte brikke ut fra kort
+        - tester
+    
+        
+-Teamets prioritering av oppgavene
+    Få en brikke til å bevege seg basert på valg av kort. 
+
+
+-Hvis det er gjort endringer i rekkefølge utfra hva som er gitt fra kunde, hvorfor er dette gjort?
+    - Følger rekke følgen som er gitt, med untakk av at man kan få nye kort til hver runde, siden dette kommer 
+        som en naturlig side effekt av måten vi løser problemet på
+
+-Hvordan vil dere verifisere at kravene er oppfylt? (Hva er akseptansekriteriene?)
+    - Brukertester og jUnit
+
+
+-Oppdatere hvilke krav dere har prioritert, hvor langt dere har kommet og hva dere har gjort siden forrige
 gang
-Kravlista er lang, men det er ikke nødvendig å levere på alle kravene hvis det ikke er realistisk. Det er
-viktigere at de oppgavene som er utført holder høy kvalitet. Jamf deloppgave 4: Utførte oppgaver skal
-være ferdige.
+    - Viser til punkt over hvor vi har svarte på prioritering og projects board.
+
+
 
 
 Deloppgave 4: kode
 
-Dere må dokumentere hvordan prosjektet bygger, testes og kjøres, slik at det er lett å teste koden. Under
+-Dere må dokumentere hvordan prosjektet bygger, testes og kjøres, slik at det er lett å teste koden. Under
 vurdering kommer koden også til å brukertestes.
-Dokumentér også hvordan testene skal kjøres.
+
+
+
+-Dokumentér også hvordan testene skal kjøres.
 Kodekvalitet og testdekning vektlegges. Merk at testene dere skriver skal brukes i produktet.
-Utførte oppgaver skal være ferdige.
-Lever klassediagram. (Hvis det er veldig mange klasser, lager dere for de viktigste.)
-Vurderingskriterier og vekting
-I denne leveransen blir det ingen presentasjon.
-Om teamet ønsker, kan all tekst leveres på engelsk.
-Vurderingskriterier vil bli publisert før deadline.
-
-
-
-Innleveringsfrist: 1. mars 2019, klokken 16.00
-For å få oppgaven godkjent, må gruppen:
-Skrive fornuftige Commit meldinger når endringer lastes opp i gruppens repo.
-Laste opp de etterspurte resultatene i repo.
-Laste opp leveransen til github i markdown-format.
-Leveransen skal lastes opp i egen mappe i repoet, som heter "Deliverables". Hver oblig blir da "ObligX.md"
-i den mappen. Eventuelle slides kan lastes inn opp til samme mappe.
-Tag en commit av kildekoden som er leveransen til hver oblig. Dette gjør det enklere for de som skal
-vurdere å gjøre det på riktig tidspunkt.
-I tillegg til koden, vil dere også vurderes på teamarbeidet gjennom semesteret.
-For å få oppdraget godkjent, må hvert lagmedlem:
-Møte og delta aktivt i minst 75% av ukentlige møter med deres TA og oblig.2 presentasjonen.
-Utføre de tildelte oppgavene under og mellom disse ukentlige møtene, som avtalt i teamet.
-Rapportere tilbake til teamet om framdrift og/eller problemer som oppstår, som avtalt i teamet.
-Vektlegging: Denne leveransen teller 12,5% av sluttkarakteren.
-Tips
-Mockito kan være et bra mock-rammeverk i tillegg til JUnit. Generelt sett er det også mulig å skrive manuelle
-tester. Husk at testene dere skriver skal brukes. (Som nevnt i deloppgave 3)

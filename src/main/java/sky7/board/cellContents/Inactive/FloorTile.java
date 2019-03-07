@@ -17,7 +17,7 @@ public class FloorTile implements IInactive {
     @Override
     public Texture getTexture() {
         if (texture == null) {
-            texture = new Texture("assets/Floor.png");
+            texture = new Texture("assets/floor/plain.png");
         }
         
         return texture;

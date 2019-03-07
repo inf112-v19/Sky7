@@ -29,6 +29,7 @@ public class ProgramDeck implements IDeck {
             availableCards.push(new ProgramCard(430+10*i, -1, 0)); //move backward 1 
         }
         
+        shuffle();
     }
 
     @Override
