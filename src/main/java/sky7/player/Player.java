@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class Player implements IPlayer {
 
-    public static final int MAX_CARDS_IN_REGISTRY = 6;
+    public static final int MAX_CARDS_IN_REGISTRY = 5;
     private int health = 10;
     private int lifeTokens = 3;
     private ArrayList<ICard> hand;
@@ -107,10 +107,12 @@ public class Player implements IPlayer {
     @Override
     public void setCard(ICard chosenCard, int positionInRegistry) {
         if (positionInRegistry >= 0 && positionInRegistry < MAX_CARDS_IN_REGISTRY) {
-            ICard temp = registry.get(positionInRegistry); // TODO add test for this.
-            if (temp != null) discard.add(temp);
-            discard.remove(chosenCard);
-            registry.add(positionInRegistry, chosenCard);
+            if (registry.size() != 0) {
+                ICard temp = registry.get(positionInRegistry); // TODO add test for this.
+                if (temp != null) discard.add(temp);
+                discard.remove(chosenCard);
+                registry.add(positionInRegistry, chosenCard);
+            }
         }
 
     }
