@@ -62,6 +62,7 @@ public class Main {
             cfg.width = 1024;
             cfg.height = 1024;
             cfg.foregroundFPS = 30;
+            cfg.backgroundFPS = 30;
             
             try {
                 new LwjglApplication(new GUI(cli), cfg);

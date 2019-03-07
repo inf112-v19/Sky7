@@ -27,7 +27,7 @@ public class GUI implements ApplicationListener {
 	private int width, height;
 	private SpriteBatch batch;
 	private BitmapFont font;
-	public static final String FONT_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789][_!$%#@|\\/?-+=()*&.;,{}\"´`'<>";
+
 	//abstract the name of textures.
 	private HashMap<String, Texture> textures;
 	private HashMap<String, Sprite> sprites;
@@ -123,20 +123,15 @@ public class GUI implements ApplicationListener {
 
 		reset.draw(batch);
 		if (isClicked(reset)) {
-			reset.setColor(Color.BLACK);
-			reset.draw(batch);
-			reset.setColor(Color.WHITE);
 			reset();
 		}
 
-		confirm.draw(batch);
-		if (isClicked(confirm)) {
-			confirm.setColor(Color.BLACK);
+		if (pointer == 5) {
 			confirm.draw(batch);
-			confirm.setColor(Color.WHITE);
-			playerCards();
+			if (isClicked(confirm)) {
+				playerCards();
+			}
 		}
-
 		batch.end();
 	}
 
@@ -166,7 +161,6 @@ public class GUI implements ApplicationListener {
 	public void playerCards() {
 		if (chosenCards[4] != null) {
 			cardsChoosen = true;
-
 			for (int i=0; i<chosenCards.length; i++) {
 				game.setCard(chosenCards[i], i);
 			}
@@ -209,7 +203,6 @@ public class GUI implements ApplicationListener {
 			if (Gdx.input.justTouched()) {
 				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 				for(ICard card : hand) {
-
 					if(clickPos.x <= scaler+card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
 						if (card.getY() != scaler) {
 							chosenCards[pointer] = card;
@@ -244,6 +237,10 @@ public class GUI implements ApplicationListener {
 			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 			if (clickPos.x > sprite.getX() && clickPos.x < sprite.getX() + sprite.getWidth()) {
 				if (clickPos.y > sprite.getY() && clickPos.y < sprite.getY() + sprite.getHeight()) {
+					sprite.setColor(Color.BLACK);
+					sprite.draw(batch);
+					sprite.draw(batch);
+					sprite.setColor(Color.WHITE);
 					return true;
 				}
 			}
