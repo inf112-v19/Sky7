@@ -2,6 +2,7 @@ package sky7.host;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class Host implements IHost {
     int nPlayers = 1, readyPlayers = 0;
     IDeck pDeck;
     IBoard board;
-    List<ArrayList<ICard>> playerRegs;
+    HashMap<Integer, ArrayList<ICard>> playerRegs;
 //    TreeSet<PlayerCard> queue;
     List<Integer> pQueue;
     BoardGenerator bg;
@@ -29,7 +30,7 @@ public class Host implements IHost {
     public Host(IClient cli) {
         players = new Client[8];
         players[0] = cli;
-        playerRegs = new ArrayList<ArrayList<ICard>>();
+        playerRegs = new HashMap<Integer, ArrayList<ICard>>();
 //        queue = new TreeSet<>();
         pQueue = new LinkedList<>();
         pDeck = new ProgramDeck();
@@ -130,7 +131,8 @@ public class Host implements IHost {
 
     @Override
     public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
-        playerRegs.add(pN, registry);
+        if (registry.size() < 5) throw new IllegalArgumentException("registry does not contain 5 cards");
+        playerRegs.put(pN, registry);
         pDeck.returnCards(discard);
         readyPlayers++;
         notify();
