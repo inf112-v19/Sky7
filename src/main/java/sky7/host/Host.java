@@ -2,6 +2,7 @@ package sky7.host;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class Host implements IHost {
     int nPlayers = 1, readyPlayers = 0;
     IDeck pDeck;
     IBoard board;
-    List<ArrayList<ICard>> playerRegs;
+    HashMap<Integer, ArrayList<ICard>> playerRegs;
 //    TreeSet<PlayerCard> queue;
     List<Integer> pQueue;
     BoardGenerator bg;
@@ -29,7 +30,7 @@ public class Host implements IHost {
     public Host(IClient cli) {
         players = new Client[8];
         players[0] = cli;
-        playerRegs = new ArrayList<ArrayList<ICard>>();
+        playerRegs = new HashMap<Integer, ArrayList<ICard>>();
 //        queue = new TreeSet<>();
         pQueue = new LinkedList<>();
         pDeck = new ProgramDeck();
@@ -47,8 +48,7 @@ public class Host implements IHost {
         run();
     }
 
-    @Override
-    public synchronized void run() {
+    private synchronized void run() {
         int currentPlayer = 0;
         
         while(true) {
@@ -89,10 +89,12 @@ public class Host implements IHost {
                 activateBoardElements();
                 activateLasers();
                 
-                // return registry cards to deck - need to implement locked cards later
-                for (int j=0; j<nPlayers; j++) {
-                    pDeck.returnCards(playerRegs.remove(j));
-                }
+
+            }
+            
+            // return registry cards to deck - need to implement locked cards later
+            for (int j=0; j<nPlayers; j++) {
+                pDeck.returnCards(playerRegs.remove(j));
             }
             
             readyPlayers = 0;
@@ -100,6 +102,9 @@ public class Host implements IHost {
     }
 
     private void activateCard(int currentPlayer, ProgramCard card) {
+        
+        System.out.println("Activating card " + card.toString() + " for player " + currentPlayer);
+        
         if (card.moveType()) {
             board.moveRobot(currentPlayer, card.move());
         } else {
@@ -109,7 +114,7 @@ public class Host implements IHost {
 
     private void findPlayerSequence(int roundNr) {
         for (int i=0; i<nPlayers; i++) {
-            ProgramCard thisPlayersCard = (ProgramCard)playerRegs.get(i).get(roundNr);
+        ProgramCard thisPlayersCard = (ProgramCard)playerRegs.get(i).get(roundNr);
             for (int j=0; j<pQueue.size(); j++) {
                 ProgramCard thatPlayersCard = (ProgramCard)playerRegs.get(pQueue.get(j)).get(roundNr);
                 if (thisPlayersCard.priorityN() > thatPlayersCard.priorityN())
@@ -131,7 +136,8 @@ public class Host implements IHost {
 
     @Override
     public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
-        playerRegs.add(pN, registry);
+        if (registry.size() < 5) throw new IllegalArgumentException("registry does not contain 5 cards");
+        playerRegs.put(pN, registry);
         pDeck.returnCards(discard);
         readyPlayers++;
         notify();
