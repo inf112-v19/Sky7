@@ -5,6 +5,7 @@ import java.util.*;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -26,17 +27,19 @@ public class GUI implements ApplicationListener {
 	private int width, height;
 	private SpriteBatch batch;
 	private BitmapFont font;
+
 	//abstract the name of textures.
 	private HashMap<String, Texture> textures;
 	private HashMap<String, Sprite> sprites;
 	private ExtendViewport viewport;
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
-	TextureAtlas textureAtlas;
+	private TextureAtlas textureAtlas;
+	private Sprite reset, confirm;
 
 	private boolean cardsChoosen = false;
-	private int pointer = 0;
-	private int yPos = 0;
+	private int pointer, yPos, cardXpos = 0;
+	private int scaler = 128;
 	private ICard[] chosenCards = new ICard[5];
 	private ArrayList<ICard> hand;
 
@@ -56,16 +59,26 @@ public class GUI implements ApplicationListener {
 			batch = new SpriteBatch();
 			font = new BitmapFont();
 
+			font.getData().setScale(2, 2);
+			font.setColor(Color.GOLDENROD);
+
 			camera = new OrthographicCamera();
-			viewport = new ExtendViewport(width * 128, height * 128, camera);
+			viewport = new ExtendViewport(width * scaler, height * scaler, camera);
 
 			textures.put("robot", new Texture("assets/robot1.png"));
 			textures.put("floor", new Texture("assets/floor/plain.png"));
 			textures.put("outline", new Texture("assets/cards/Outline.png"));
 			textures.put("dock", new Texture("assets/dock.png"));
 			textures.put("unmarkedCard", new Texture("assets/cards/EmptyCard.png"));
+			textures.put("reset", new Texture("assets/dock/Reset.png"));
+			textures.put("confirm", new Texture("assets/dock/Confirm.png"));
 
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
+
+			reset = new Sprite(textures.get("reset"));
+			confirm = new Sprite(textures.get("confirm"));
+			reset.setPosition(scaler*9, 20);
+			confirm.setPosition(scaler*10, 20);
 
 			hand = game.getHand();
 			addSprites();
@@ -100,35 +113,25 @@ public class GUI implements ApplicationListener {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
-					batch.draw(cell.getTexture(), i * 128, (j + 2) * 128, 128, 128);
+					batch.draw(cell.getTexture(), i * scaler, (j + 2) * scaler, scaler, scaler);
 				}
 			}
-			/*String[] texturesRef = game.gameBoard().getTileTexture(i, j); // Which texture belongs at position i,j
-                for (String tex : texturesRef) {
-                    // batch.draw(textures.get(tex), i*128, j*128);
-
-                    // need extra parameters (last 2 128s to scale each texture to 128x128 instead of original 300x300)
-                    // (j+2) leaves space for dock
-                    batch.draw(textures.get(tex), i * 128, (j + 2) * 128, 128, 128);
-
-                }*/
 		}
 
 		Dock();
 		chooseCards();
-		playerCards();
 
-		//		emptyCard.draw(batch);
-		//		
-		//		if (Gdx.input.isTouched()){
-		//			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-		//			if (clickPos.x > emptyCard.getX() && clickPos.x < emptyCard.getX() + emptyCard.getWidth()) {
-		//				if (clickPos.y > emptyCard.getY() && clickPos.y < emptyCard.getY() + emptyCard.getHeight()) {
-		//					emptyCard.setX(emptyCard.getX() + 128);
-		//				}
-		//			}
-		//		}
+		reset.draw(batch);
+		if (isClicked(reset)) {
+			reset();
+		}
 
+		if (pointer == 5) {
+			confirm.draw(batch);
+			if (isClicked(confirm)) {
+				playerCards();
+			}
+		}
 		batch.end();
 	}
 
@@ -136,7 +139,6 @@ public class GUI implements ApplicationListener {
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		batch.setProjectionMatrix(camera.combined);
-
 	}
 
 	@Override
@@ -146,20 +148,19 @@ public class GUI implements ApplicationListener {
 
 	public void Dock() {
 		for (int i = 0; i < width; i++) {
-			batch.draw(textures.get("dock"), i * 128, 0);
-			batch.draw(textures.get("dock"), i * 128, 128);
+			batch.draw(textures.get("dock"), i * scaler, 0);
+			batch.draw(textures.get("dock"), i * scaler, scaler);
 		}
 		for (int i = 0; i < 5; i++) {
-			batch.draw(textures.get("outline"), i * 128, 128);
+			batch.draw(textures.get("outline"), i * scaler, scaler);
 		}
 	}
-	
+
 	// check if user has chosen all 5 cards
 	// and put the chosen cards in the game-client, and lock the registry
 	public void playerCards() {
 		if (chosenCards[4] != null) {
 			cardsChoosen = true;
-
 			for (int i=0; i<chosenCards.length; i++) {
 				game.setCard(chosenCards[i], i);
 			}
@@ -185,127 +186,65 @@ public class GUI implements ApplicationListener {
 
 	// set the x position for the cards to spread them accross the map
 	private void initiateCards(ArrayList<ICard> hand) {
-		int cardX = 0;
 		for (ICard card : hand) {
-			card.setX(cardX);
-			cardX+=128;
+			card.setX(cardXpos);
+			card.setY(0);
+			cardXpos+=scaler;
 		}	
 	}
 
 	public void chooseCards() {
-		if (!cardsChoosen) {
-			ICard card0 = hand.get(0);
-			drawSprite(card0.GetSpriteRef(), card0.getX(), card0.getY());
-			ICard card1 = hand.get(1);
-			drawSprite(card1.GetSpriteRef(), card1.getX(), card1.getY());
-			ICard card2 = hand.get(2);
-			drawSprite(card2.GetSpriteRef(), card2.getX(), card2.getY());
-			ICard card3 = hand.get(3);
-			drawSprite(card3.GetSpriteRef(), card3.getX(), card3.getY());
-			ICard card4 = hand.get(4);
-			drawSprite(card4.GetSpriteRef(), card4.getX(), card4.getY());
-			ICard card5 = hand.get(5);
-			drawSprite(card5.GetSpriteRef(), card5.getX(), card5.getY());
-			ICard card6 = hand.get(6);
-			drawSprite(card6.GetSpriteRef(), card6.getX(), card6.getY());
-			ICard card7 = hand.get(7);
-			drawSprite(card7.GetSpriteRef(), card7.getX(), card7.getY());
-			ICard card8 = hand.get(8);
-			drawSprite(card8.GetSpriteRef(), card8.getX(), card8.getY());
-
+		for (ICard card : hand) {
+			drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
+			font.draw(batch, card.getPriority(), card.getX()+42, card.getY()+93);
+		}
+		if (!cardsChoosen && pointer != 5) {
+			//check if card is clicked
 			if (Gdx.input.justTouched()) {
 				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-				if(clickPos.x <= 128 && clickPos.y <= 128) {
-					if (card0.getY() != 128) {
-						chosenCards[pointer] = card0;
-						pointer++;
-						System.out.println(pointer + " card(s) choosen " + card0.GetSpriteRef());
-						card0.setX(yPos);
-						card0.setY(128);
-						yPos += 128;
-					}
-				}
-				if(clickPos.x <= 2*128 && clickPos.y <= 128 && clickPos.x > 128) {
-					if (card1.getY() != 128) {
-						chosenCards[pointer] = card1;
-						pointer++;
-						System.out.println(pointer + " card(s) choosen " + card1.GetSpriteRef());
-						card1.setX(yPos);
-						card1.setY(128);
-						yPos += 128;
-					}
-				}
-				if(clickPos.x <= 3*128 && clickPos.y <= 128 && clickPos.x > 128*2) {
-					if (card2.getY() != 128) {
-						chosenCards[pointer] = card1;
-						pointer++;
-						System.out.println(pointer + " card(s) choosen " + card2.GetSpriteRef());
-						card2.setX(yPos);
-						card2.setY(128);
-						yPos += 128;
-					}
-				}
-				if(clickPos.x <= 4*128 && clickPos.y <= 128 && clickPos.x > 128*3) {
-					if (card3.getY() != 128) {
-						chosenCards[pointer] = card3;
-						pointer++;
-						System.out.println(pointer + " card(s) choosen " + card3.GetSpriteRef());
-						card3.setX(yPos);
-						card3.setY(128);
-						yPos += 128;
-					}
-				}
-				if(clickPos.x <= 5*128 && clickPos.y <= 128 && clickPos.x > 128*4) {
-					if (card4.getY() != 128) {
-						chosenCards[pointer] = card4;
-						pointer++;
-						System.out.println(pointer + " card(s) choosen " + card4.GetSpriteRef());
-						card4.setX(yPos);
-						card4.setY(128);
-						yPos += 128;
-					}
-				}
-				if(clickPos.x <= 6*128 && clickPos.y <= 128 && clickPos.x > 128*5) {
-					if (card5.getY() != 128) {
-						chosenCards[pointer] = card5;
-						pointer++;
-						System.out.println(pointer + " card(s) choosen " + card5.GetSpriteRef());
-						card5.setX(yPos);
-						card5.setY(128);
-						yPos += 128;
-					}
-				}
-				if(clickPos.x <= 7*128 && clickPos.y <= 128 && clickPos.x > 128*6) {
-					if (card6.getY() != 128) {
-						chosenCards[pointer] = card6;
-						pointer++;
-						System.out.println(pointer + " card(s) choosen " + card6.GetSpriteRef());
-						card6.setX(yPos);
-						card6.setY(128);
-						yPos += 128;
-					}
-				}
-				if(clickPos.x <= 8*128 && clickPos.y <= 128 && clickPos.x > 128*7) {
-					if (card7.getY() != 128) {
-						chosenCards[pointer] = card7;
-						pointer++;
-						System.out.println(pointer + " card(s) choosen " + card7.GetSpriteRef());
-						card7.setX(yPos);
-						card7.setY(128);
-						yPos += 128;
-					}
-				}
-				if(clickPos.x <= 9*128 && clickPos.y <= 128 && clickPos.x > 128*8) {
-					if (card8.getY() != 128) {
-						chosenCards[pointer] = card8;
-						pointer++;
-						System.out.println(pointer + " card(s) choosen " + card8.GetSpriteRef());
-						card8.setX(yPos);
-						card8.setY(128);
-						yPos += 128;
+				for(ICard card : hand) {
+					if(clickPos.x <= scaler+card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
+						if (card.getY() != scaler) {
+							chosenCards[pointer] = card;
+							pointer++;
+							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef());
+							card.setX(yPos);
+							card.setY(scaler);
+							yPos += scaler;
+						}
 					}
 				}
 			}
 		}
+	}
+
+	//reset chosen cards, reset position etc
+	public void reset() {
+		System.out.println("Resetting");
+		cardsChoosen = false;
+		pointer = 0;
+		yPos = 0;
+		cardXpos = 0;
+		for (int i=0; i<chosenCards.length; i++) {
+			chosenCards[i] = null;
+		}
+		initiateCards(hand);
+		chooseCards();
+	}
+
+	public boolean isClicked(Sprite sprite) {
+		if (Gdx.input.justTouched()){
+			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+			if (clickPos.x > sprite.getX() && clickPos.x < sprite.getX() + sprite.getWidth()) {
+				if (clickPos.y > sprite.getY() && clickPos.y < sprite.getY() + sprite.getHeight()) {
+					sprite.setColor(Color.BLACK);
+					sprite.draw(batch);
+					sprite.draw(batch);
+					sprite.setColor(Color.WHITE);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
