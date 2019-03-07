@@ -3,102 +3,93 @@
 
 ## Deloppgave 1: Prosjekt og prosjektstruktur
 
-- Hvordan funker rollene i teamet? 
+### Hvordan funker rollene i teamet? 
     Rollene fungerer bra, men er ikke av stor betydning da vi har en ganske demokratisk tilnærming.
-    Brukes i praktis ikke så veldig mye, men greit å ha.
+    Brukes i praksis ikke så veldig mye, men greit å ha.
     Initielt var ideen at "kundekontakt" skulle være den som har full kontroll på spillets regler,
 	men dette har vi alle lest oss opp på. 
     
-- Trenger dere å oppdatere hvem som er teamlead eller kundekontakt?
-    nei
+### Trenger dere å oppdatere hvem som er teamlead eller kundekontakt?
+    Nei
     
     
-- Trenger dere andre roller?
-    Henrik er grafikk master
+### Trenger dere andre roller?
+    Vi har opprettet en ny rolle "grafikksjef" (Henrik).
+	Det har ikke vært tid for alle til å lese like mye om Libgdx, så Henrik har fått overordnet ansvar for GUI-klassen. 
+    
+### Skriv ned noen linjer om hva de ulike rollene faktisk innebærer for dere.
+    Kunde kontakt blir ikke så mye brukt, tar opp hvordan logikk skal fungere i plenum, og spør gruppe ledere etc.
+    Teamlead har tatt ansvar for ryddighet i repo, branches og project board.
     
     
-- Skriv ned noen linjer om hva de ulike rollene faktisk innebærer for dere.
-    Kunde kontakt blir ikke så mye brukt, tar opp hvordan logikk skal fungere i plenum,
-    og spør gruppe ledere etc.
-    Teamlead har tatt ansvar for ryddighet i repo. 
+### Er det noen erfaringer enten team-messig eller mtp prosjektmetodikk som er verdt å nevne? 
+    Parprogrammering: Tar tid å bli vant til det, og må jobbe med å ha en positiv innstiling til det, 
+	forsøker å bytte på hvilken bruker som commiter fra sin git bruker, 
+	men dette kan utgjøre en forskjell ved lange parprogramerings-sprints.
+    Experimental branch: Vi merker at vi begynner å jobbe med ting som er avhengig av arbeid andre jobber med samtidig (mye kommunikasjon mellom klassene vi jobber med). 
+	Derfor bestemte vi oss for å opprette en branch hvor folk kan pushe halvferdig arbeid som andre kan bentytte seg av. 
+    Vi opplever at vi blir "pushet" til å implementere funksjonalitet for raskt med tanke på oblig'ene, 
+	slik at vi ikke får skrevet dokumentasjon og tester i den grad vi egentlig vil.
     
-    
--Er det noen erfaringer enten team-messig eller mtp prosjektmetodikk som er verdt å nevne? 
-    Parprogrammering: Tar tid å bli vant til det, og må jobbe med å ha en positiv innstiling til det, pleiere å commite fra ca          annene hver sin git gbruker, men dette kan utgjøre en forskjell ved lange parprogramerings sprints.
-    Experimental branch: Vi merker at vi begynner å jobbe med ting som er innviklet i hverandre nå (mye kommunikasjon mellom                            klassene vi jobber med). Derfor bestemte vi oss for å opprette en branch for folk kan pushe                                    halvferdig arbeid som andre kan bentytte seg av. 
-    Bli flinker til å bruke tester
-    
--Synes teamet at de valgene dere har tatt er gode? Hvis ikke, hva kan dere gjøre annerledes for å forbedre måten teamet
+### Synes teamet at de valgene dere har tatt er gode? Hvis ikke, hva kan dere gjøre annerledes for å forbedre måten teamet
 fungerer på?
     Vi vurderte å bruke TiledMap, men konkluderte med at det var for mye arbeid å skrive om koden vi har.
-    har ikke tatt "dårlige" valg, men lærer underveis, skal f.eks. bruke en "Experimental branch",
-    vi deler opp oppgaven i midre deler, som gjør det lettere for en enkelt person å angripe. 
+    har ikke tatt "dårlige" valg, men lærer underveis, vi bruker nå f.eks. en "Experimental branch",
+    vi deler opp oppgaver i midre deler, som gjør det lettere for en enkelt person å angripe. 
 
-
-- Hvordan er gruppedynamikken?
+### Hvordan er gruppedynamikken?
     Bra, god kommunikasjon, og jobber med å bli bedre.
 
--Hvordan fungerer kommunikasjonen for dere?
-    Vi blir mer og mer vant til å burke Slack og Git Projects, noe som gjør komminikasjon lettere.
-    Er også flink til å ta opp felles "probemer"/"knutepunkt" på møter.
+### Hvordan fungerer kommunikasjonen for dere?
+    Vi blir mer og mer vant til å burke Slack og Git, noe som gjør kommunikasjon lettere.
+    Er også flink til å ta opp felles "problemer"/"knutepunkt" på møter.
 
-- Gjør et kort retrospektiv hvor dere vurderer hva dere har klart til nå, og hva som kan forbedres. Dette skal
-handle om prosjektstruktur, ikke kode. Dere kan selvsagt diskutere kode, men dette handler ikke om
-feilretting, men om hvordan man jobber og kommuniserer.
-    Går for det meste bra, som skrevet over, gjør forandringer nå fortløpende, men ut  
-    
+### Gjør et kort retrospektiv hvor dere vurderer hva dere har klart til nå, og hva som kan forbedres. Dette skal handle om prosjektstruktur, ikke kode. Dere kan selvsagt diskutere kode, men dette handler ikke om feilretting, men om hvordan man jobber og kommuniserer.
+    Går for det meste bra, som skrevet over, gjør forandringer nå fortløpende.
+	Vi vurderer å planlegge med færre mål per sprint for å kunne ta oss bedre tid til implementasjon, dokumentasjon og testing, 
+	men det er da samtidig en mulighet for at vi ikke har nok tid til å komme i mål på lang sikt.
 
--Under vurdering vil det vektlegges at alle bidrar til kodebasen. Hvis det er stor forskjell i hvem som
-committer, må dere legge ved en kort forklaring for hvorfor det er sånn. husk å committe alt. (Også
-designfiler)
-    parprogrammering (forklart over)
+### Under vurdering vil det vektlegges at alle bidrar til kodebasen. Hvis det er stor forskjell i hvem som committer, må dere legge ved en kort forklaring for hvorfor det er sånn. husk å committe alt. (Også designfiler) 
+	Parprogrammering (forklart over).
+	Per dato 07.03.19, står det ingen ting om Henrik sine bidrag i "contributors" på github, selv om han har en god del commits på master.
+	Brigt jobber med tester på egen branch som ikke er på master enda.
 
+### Referat fra møter siden forrige leveranse skal legges ved.
+	Referater legges i prosjekt root /Documents
 
--Referat fra møter siden forrige leveranse skal legges ved.
-
-
--Bli enige om maks tre forbedringspunkter fra retrospektivet, som skal følges opp under neste sprint.
-    
-    - Tester
+### Bli enige om maks tre forbedringspunkter fra retrospektivet, som skal følges opp under neste sprint.
+    - Testing
     - Forbedring av sammarbeid mellom branches (herav ny Experimental branch)
+	- Dokumentasjon (spesielt skrive utfyllende Readme.md)
 
+## Deloppgave 2: krav
 
-Deloppgave 2: krav
-
--Presisering av krav som har kommet fra kunden. Hva blir de faktiske oppgavene?
+### Presisering av krav som har kommet fra kunden. Hva blir de faktiske oppgavene?
     Kravet vi skal nå:
         - Få en brikke til å bevege seg basert på valg av kort. 
     Oppgavene vi setter mål om:
-        - implementer Clinet og Host som styrer spillet mellom de to.¨
-        - flytte brikke ut fra kort
-        - tester
+        - implementer Client og Host som styrer spillet mellom de to.
+        - flytte brikke basert på valg av kort.
+        - Tester til ICell objekter
     
         
--Teamets prioritering av oppgavene
-    Få en brikke til å bevege seg basert på valg av kort. 
+### Teamets prioritering av oppgavene
+    Få en brikke til å bevege seg basert på valg av kort.
+	
+### Hvis det er gjort endringer i rekkefølge utfra hva som er gitt fra kunde, hvorfor er dette gjort?
+    - Følger rekkefølgen som er gitt
 
-
--Hvis det er gjort endringer i rekkefølge utfra hva som er gitt fra kunde, hvorfor er dette gjort?
-    - Følger rekke følgen som er gitt, med untakk av at man kan få nye kort til hver runde, siden dette kommer 
-        som en naturlig side effekt av måten vi løser problemet på
-
--Hvordan vil dere verifisere at kravene er oppfylt? (Hva er akseptansekriteriene?)
+### Hvordan vil dere verifisere at kravene er oppfylt? (Hva er akseptansekriteriene?)
     - Brukertester og jUnit
 
 
--Oppdatere hvilke krav dere har prioritert, hvor langt dere har kommet og hva dere har gjort siden forrige
-gang
+### Oppdatere hvilke krav dere har prioritert, hvor langt dere har kommet og hva dere har gjort siden forrige gang
     - Viser til punkt over hvor vi har svarte på prioritering og projects board.
 
+## Deloppgave 4: kode
 
-
-
-Deloppgave 4: kode
-
--Dere må dokumentere hvordan prosjektet bygger, testes og kjøres, slik at det er lett å teste koden. Under
+### Dere må dokumentere hvordan prosjektet bygger, testes og kjøres, slik at det er lett å teste koden. Under
 vurdering kommer koden også til å brukertestes.
 
-
-
--Dokumentér også hvordan testene skal kjøres.
+### Dokumentér også hvordan testene skal kjøres.
 Kodekvalitet og testdekning vektlegges. Merk at testene dere skriver skal brukes i produktet.
