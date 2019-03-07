@@ -121,9 +121,11 @@ public class GUI implements ApplicationListener {
 		Dock();
 		chooseCards();
 
-		reset.draw(batch);
-		if (isClicked(reset)) {
-			reset();
+		if(!cardsChoosen) {
+			reset.draw(batch);
+			if (isClicked(reset)) {
+				reset();
+			}
 		}
 
 		if (pointer == 5) {
