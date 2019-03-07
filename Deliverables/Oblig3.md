@@ -1,13 +1,13 @@
 
-Obligatorisk øvelse 3
+# Obligatorisk øvelse 3
 
-Deloppgave 1: Prosjekt og prosjektstruktur
+## Deloppgave 1: Prosjekt og prosjektstruktur
 
 - Hvordan funker rollene i teamet? 
-    Rolle ok, men ikke praktisk betydning
+    Rollene fungerer bra, men er ikke av stor betydning da vi har en ganske demokratisk tilnærming.
     Brukes i praktis ikke så veldig mye, men greit å ha.
-    Henrik er grafikk master (men har lånepc hvor GUi ikke fungerer, så mp gjøre all jobb hjemmefra)
-    
+    Initielt var ideen at "kundekontakt" skulle være den som har full kontroll på spillets regler,
+	men dette har vi alle lest oss opp på. 
     
 - Trenger dere å oppdatere hvem som er teamlead eller kundekontakt?
     nei
