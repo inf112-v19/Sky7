@@ -89,10 +89,12 @@ public class Host implements IHost {
                 activateBoardElements();
                 activateLasers();
                 
-                // return registry cards to deck - need to implement locked cards later
-                for (int j=0; j<nPlayers; j++) {
-                    pDeck.returnCards(playerRegs.remove(j));
-                }
+
+            }
+            
+            // return registry cards to deck - need to implement locked cards later
+            for (int j=0; j<nPlayers; j++) {
+                pDeck.returnCards(playerRegs.remove(j));
             }
             
             readyPlayers = 0;
@@ -100,6 +102,9 @@ public class Host implements IHost {
     }
 
     private void activateCard(int currentPlayer, ProgramCard card) {
+        
+        System.out.println("Activating card " + card.toString() + " for player " + currentPlayer);
+        
         if (card.moveType()) {
             board.moveRobot(currentPlayer, card.move());
         } else {
@@ -109,7 +114,7 @@ public class Host implements IHost {
 
     private void findPlayerSequence(int roundNr) {
         for (int i=0; i<nPlayers; i++) {
-            ProgramCard thisPlayersCard = (ProgramCard)playerRegs.get(i).get(roundNr);
+        ProgramCard thisPlayersCard = (ProgramCard)playerRegs.get(i).get(roundNr);
             for (int j=0; j<pQueue.size(); j++) {
                 ProgramCard thatPlayersCard = (ProgramCard)playerRegs.get(pQueue.get(j)).get(roundNr);
                 if (thisPlayersCard.priorityN() > thatPlayersCard.priorityN())
