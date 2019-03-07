@@ -26,7 +26,8 @@
     Parprogrammering: Tar tid å bli vant til det, og må jobbe med å ha en positiv innstiling til det, 
 	forsøker å bytte på hvilken bruker som commiter fra sin git bruker, 
 	men dette kan utgjøre en forskjell ved lange parprogramerings-sprints.
-    Experimental branch: Vi merker at vi begynner å jobbe med ting som er avhengig av arbeid andre jobber med samtidig (mye kommunikasjon mellom klassene vi jobber med). 
+    Experimental branch: Vi merker at vi begynner å jobbe med ting som er avhengig av arbeid andre jobber med samtidig 
+	(mye kommunikasjon mellom klassene vi jobber med). 
 	Derfor bestemte vi oss for å opprette en branch hvor folk kan pushe halvferdig arbeid som andre kan bentytte seg av. 
     Vi opplever at vi blir "pushet" til å implementere funksjonalitet for raskt med tanke på oblig'ene, 
 	slik at vi ikke får skrevet dokumentasjon og tester i den grad vi egentlig vil.
@@ -46,12 +47,14 @@ fungerer på?
 
 ### Gjør et kort retrospektiv hvor dere vurderer hva dere har klart til nå, og hva som kan forbedres. Dette skal handle om prosjektstruktur, ikke kode. Dere kan selvsagt diskutere kode, men dette handler ikke om feilretting, men om hvordan man jobber og kommuniserer.
     Går for det meste bra, som skrevet over, gjør forandringer nå fortløpende.
-	Vi vurderer å planlegge med færre mål per sprint for å kunne ta oss bedre tid til implementasjon, dokumentasjon og testing, 
+	Vi vurderer å planlegge med færre mål per sprint for å kunne ta oss bedre tid til implementasjon, 
+	dokumentasjon og testing, 
 	men det er da samtidig en mulighet for at vi ikke har nok tid til å komme i mål på lang sikt.
 
 ### Under vurdering vil det vektlegges at alle bidrar til kodebasen. Hvis det er stor forskjell i hvem som committer, må dere legge ved en kort forklaring for hvorfor det er sånn. husk å committe alt. (Også designfiler) 
 	Parprogrammering (forklart over).
-	Per dato 07.03.19, står det ingen ting om Henrik sine bidrag i "contributors" på github, selv om han har en god del commits på master.
+	Per dato 07.03.19, står det ingen ting om Henrik sine bidrag i "contributors" på github, 
+	selv om han har en god del commits på master.
 	Brigt jobber med tester på egen branch som ikke er på master enda.
 
 ### Referat fra møter siden forrige leveranse skal legges ved.
