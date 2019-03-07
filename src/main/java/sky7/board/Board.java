@@ -18,14 +18,14 @@ import sky7.board.cellContents.robots.RobotTile;
 
 public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
-    private int width, height;
-    private HashMap<Integer, Vector2> robotPos;
-    private List<RobotTile> robots;
-    private HashMap<Integer, CogWheel> cogs;
+    private int width, height, nPlayers;
+    private Vector2[] robotPos;
+    private RobotTile[] robots;
+    private List<CogWheel> cogs;
     private List<Vector2> cogPos;
-    private HashMap<Integer, IConveyorBelt> convs;
+    private List<IConveyorBelt> convs;
     private List<Vector2> convPos;
-    private HashMap<Integer, Laser> lasers;
+    private List<Laser> lasers;
     private List<Vector2> laserPos;
 
      public Board(int width, int height) {
@@ -43,6 +43,7 @@ public class Board implements IBoard {
         
         //add 1 robot
         grid[5][4].add(new RobotTile(0));
+        nPlayers = 1;
         
     }
 
@@ -50,25 +51,31 @@ public class Board implements IBoard {
         this.grid = grid;
         this.width = width;
         this.height = height;
-        this.robotPos = new HashMap<>();
-        this.robots = new ArrayList<>();
+        this.nPlayers = 1;
+        this.robotPos = new Vector2[8];
+        this.robots = new RobotTile[8];
+        this.cogs = new ArrayList<>();
+        this.cogPos = new ArrayList<>();
+        this.convs = new ArrayList<>();
+        this.convPos = new ArrayList<>();
+        this.lasers = new ArrayList<>();
+        this.laserPos = new ArrayList<>();
         
-        int cogN = 0, convN = 0, laserN = 0;
         // find and store locations of cogwheels, conveyor belts
         for (int i=0; i<grid.length; i++) {
             for (int j=0; j<grid[0].length; j++) {
                 for (ICell item : grid[i][j]) {
                     if (item instanceof CogWheel) { 
                         cogPos.add(new Vector2(i,j));
-                        cogs.put(cogN++, (CogWheel)item);
+                        cogs.add((CogWheel)item);
                     }
                     if (item instanceof IConveyorBelt) {
                         convPos.add(new Vector2(i,j));
-                        convs.put(convN++, (IConveyorBelt)item);
+                        convs.add((IConveyorBelt)item);
                     }
                     if (item instanceof Laser) {
                         laserPos.add(new Vector2(i,j));
-                        lasers.put(laserN++, (Laser)item);
+                        lasers.add((Laser)item);
                     }
                 }
             }
@@ -97,16 +104,16 @@ public class Board implements IBoard {
 
     @Override
     public void placeRobot(int playerNr, int x, int y) {
-        robotPos.put(playerNr, new Vector2(x,y));
-        robots.add(playerNr, new RobotTile(playerNr));
-        grid[x][y].add(robots.get(playerNr));
+        robotPos[playerNr] = new Vector2(x,y);
+        robots[playerNr] = new RobotTile(playerNr);
+        grid[x][y].add(robots[playerNr]);
     }
 
     @Override
     public void moveRobot(int player, int move) {
         
         int possibleMove = 0;
-        DIRECTION dir = robots.get(player).getOrientation();
+        DIRECTION dir = robots[player].getOrientation();
         
         // check how far in the given direction it is possible to move (up to the move value)
         for (int i=1; i<=move; i++) {
@@ -121,16 +128,16 @@ public class Board implements IBoard {
             
             switch (dir) {
             case NORTH:
-                target = new Vector2(robotPos.get(player).x, robotPos.get(player).y+possibleMove);
+                target = new Vector2(robotPos[player].x, robotPos[player].y+possibleMove);
                 break;
             case EAST:
-                target = new Vector2(robotPos.get(player).x+possibleMove, robotPos.get(player).y);
+                target = new Vector2(robotPos[player].x+possibleMove, robotPos[player].y);
                 break;
             case SOUTH:
-                target = new Vector2(robotPos.get(player).x, robotPos.get(player).y-possibleMove);
+                target = new Vector2(robotPos[player].x, robotPos[player].y-possibleMove);
                 break;
             case WEST:
-                target = new Vector2(robotPos.get(player).x-possibleMove, robotPos.get(player).y);
+                target = new Vector2(robotPos[player].x-possibleMove, robotPos[player].y);
                 break;
             default:
                 throw new IllegalStateException("Found no orientation for robot " + player);
@@ -143,7 +150,7 @@ public class Board implements IBoard {
     private boolean isMovePossible(int player, int move, DIRECTION dir) {
         
         // return false if there's a wall in tile which the robot is in (same direction as robot is going to move)
-        for (ICell item : grid[(int) robotPos.get(player).x][(int) robotPos.get(player).y]) {
+        for (ICell item : grid[(int) robotPos[player].x][(int) robotPos[player].y]) {
             if (item instanceof Wall) {
                 if (((Wall)item).getDirection() == dir) return false;
             }
@@ -153,16 +160,16 @@ public class Board implements IBoard {
         
         switch (dir) {
         case NORTH:
-            target = new Vector2(robotPos.get(player).x, robotPos.get(player).y+move);
+            target = new Vector2(robotPos[player].x, robotPos[player].y+move);
             break;
         case EAST:
-            target = new Vector2(robotPos.get(player).x+move, robotPos.get(player).y);
+            target = new Vector2(robotPos[player].x+move, robotPos[player].y);
             break;
         case SOUTH:
-            target = new Vector2(robotPos.get(player).x, robotPos.get(player).y-move);
+            target = new Vector2(robotPos[player].x, robotPos[player].y-move);
             break;
         case WEST:
-            target = new Vector2(robotPos.get(player).x-move, robotPos.get(player).y);
+            target = new Vector2(robotPos[player].x-move, robotPos[player].y);
             break;
         default:
             throw new IllegalStateException("Found no orientation for robot " + player);
@@ -183,8 +190,8 @@ public class Board implements IBoard {
                 int blockingRobot = -1;
                 
                 // get the playerNr of the blocking robot
-                for (int i=0; i<robotPos.size(); i++) {
-                    if (i != player && robotPos.get(i) == target) {
+                for (int i=0; i<nPlayers; i++) {
+                    if (i != player && robotPos[i] == target) {
                         blockingRobot = i;
                     }
                 }
@@ -200,11 +207,12 @@ public class Board implements IBoard {
     }
 
     private void updateRobotPos(int player, Vector2 target) {
-        Vector2 pos = robotPos.get(player);
+        Vector2 pos = robotPos[player];
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
                 grid[(int) target.x][(int) target.y].add(item);
                 grid[(int) pos.x][(int) pos.y].remove(item);
+                robotPos[player] = target;
                 return;
             }
         }
@@ -215,13 +223,13 @@ public class Board implements IBoard {
         
         switch (rotate) {
         case -1:
-            robots.get(currentPlayer).rotateCCW();
+            robots[currentPlayer].rotateCCW();
             break;
         case 1:
-            robots.get(currentPlayer).rotateCW();
+            robots[currentPlayer].rotateCW();
             break;
         case 2:
-            robots.get(currentPlayer).rotate180();
+            robots[currentPlayer].rotate180();
             break;
         default:
             throw new IllegalStateException("Invalid rotation value.");
@@ -231,8 +239,8 @@ public class Board implements IBoard {
     @Override
     public void rotateCogs() {
         for (int i=0; i<cogPos.size(); i++) {
-            for (int j=0; j<robotPos.size(); j++) {
-                if (cogPos.get(i).equals(robotPos.get(i))) 
+            for (int j=0; j<nPlayers; j++) {
+                if (cogPos.get(i).equals(robotPos[i])) 
                     rotateRobot(i, cogs.get(i).getRotation());
             }
         }
