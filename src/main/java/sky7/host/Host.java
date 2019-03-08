@@ -43,7 +43,7 @@ public class Host implements IHost {
         
         cli.connect((IHost)this, 0); //TODO do this for each client and give each client a unique ID.
         
-        board.placeRobot(0, 0, 0);
+        board.placeRobot(0, 5, 5);
         
         run();
     }
@@ -82,6 +82,15 @@ public class Host implements IHost {
                 for (int j=0; j<nPlayers ; j++) {
                     currentPlayer = pQueue.get(j);
                     activateCard(currentPlayer, (ProgramCard)playerRegs.get(currentPlayer).get(i));
+                    
+                    // wait after each step so that players can see what is going on
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    
                 }
                 
                 pQueue.clear();
@@ -89,7 +98,6 @@ public class Host implements IHost {
                 activateBoardElements();
                 activateLasers();
                 
-
             }
             
             // return registry cards to deck - need to implement locked cards later
@@ -103,7 +111,12 @@ public class Host implements IHost {
 
     private void activateCard(int currentPlayer, ProgramCard card) {
         
-        System.out.println("Activating card " + card.toString() + " for player " + currentPlayer);
+        System.out.println("Activating card " + card.GetSpriteRef() + " for player " + currentPlayer);
+        
+        // call all clients to perform the same action on their board
+        for (int i=0; i<nPlayers; i++) {
+            players[i].activateCard(currentPlayer, card);
+        }
         
         if (card.moveType()) {
             board.moveRobot(currentPlayer, card.move());
