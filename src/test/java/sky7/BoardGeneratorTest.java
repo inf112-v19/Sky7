@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package sky7;
 
 import com.badlogic.gdx.utils.Json;
 import com.google.gson.Gson;
@@ -20,7 +20,7 @@ import java.util.Random;
 
 import static org.junit.Assert.*;
 
-public class IBoardGeneratorTest {
+public class BoardGeneratorTest {
     private Random r = new Random();
 
     /**
