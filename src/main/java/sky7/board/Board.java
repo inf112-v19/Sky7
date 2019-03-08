@@ -113,6 +113,10 @@ public class Board implements IBoard {
         
         int possibleMove = 0;
         DIRECTION dir = robots[player].getOrientation();
+        if (move < 0) {
+            dir = dir.inverse(dir);
+            move = 1;
+        }
         
         // check how far in the given direction it is possible to move (up to the move value)
         for (int i=1; i<=move; i++) {

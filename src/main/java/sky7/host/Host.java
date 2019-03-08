@@ -86,7 +86,7 @@ public class Host implements IHost {
                     
                     // wait after each step so that players can see what is going on
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
