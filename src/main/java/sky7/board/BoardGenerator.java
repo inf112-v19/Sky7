@@ -50,6 +50,7 @@ public class BoardGenerator implements IBoardGenerator {
             for (int column = 0; column < width; column++) {
 
                 String cell = cells[row*width+column];
+
                 //TODO split cell in to partial codes
                 String[] partsOfCell = cell.split("_");
                 for (String part : partsOfCell) {
@@ -81,6 +82,7 @@ public class BoardGenerator implements IBoardGenerator {
                                         break;
                                 }
                             }
+
                             break;
                         case 'b': //TODO fill in belt (direction and type)
                             for (int k = 1; k < part.length(); k++) {
@@ -109,17 +111,17 @@ public class BoardGenerator implements IBoardGenerator {
                                         layers.add(new CogWheel(1));
                                         break;
                                     case 'A': //TODO against clock
-                                        layers.add(new CogWheel(2));
+                                        layers.add(new CogWheel(-1));
                                         break;
                                 }
                             }
                             break;
                         case 'g': //fill in flag (number)
-                            int flagNumber = Integer.parseInt(""+part.charAt(1));
+                            int flagNumber = Integer.parseInt("" + part.charAt(1));
                             layers.add(new Flag(flagNumber));
                             break;
                         case 't': // fill in wrench (2 types)
-                            int typeOfWrench = Integer.parseInt(""+part.charAt(1));
+                            int typeOfWrench = Integer.parseInt("" + part.charAt(1));
                             layers.add(new Wrench(typeOfWrench));
                             break;
                         case 'h': // fill in hole, essentially ignore
@@ -129,7 +131,7 @@ public class BoardGenerator implements IBoardGenerator {
                             layers.add(new Laser(false, 0, 1));
                             break;
                         case 's': //TODO fill in start cell for robot (number)
-                            int startNumber = Integer.parseInt(""+part.charAt(1));
+                            int startNumber = Integer.parseInt("" + part.charAt(1));
                             layers.add(new StartPosition(startNumber));
                             break;
                         default:
@@ -143,7 +145,7 @@ public class BoardGenerator implements IBoardGenerator {
         }
 
 
-        return new Board(grid,height,width);
+        return new Board(grid, height, width);
     }
 
     private static void getJson(String filePath) throws FileNotFoundException {
@@ -153,7 +155,7 @@ public class BoardGenerator implements IBoardGenerator {
         Gson j = new Gson();
 
         json = j.fromJson(boardReader, HashMap.class);
-        codes = j.fromJson(boardFormatReader, HashMap.class);
+        //codes = j.fromJson(boardFormatReader, HashMap.class);
 
 
         //System.out.println(json.get("name"));
