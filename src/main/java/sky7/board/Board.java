@@ -221,6 +221,8 @@ public class Board implements IBoard {
     @Override
     public void rotateRobot(int currentPlayer, int rotate) {
         
+        System.out.println("Attempting to rotate " + rotate);
+        
         switch (rotate) {
         case -1:
             robots[currentPlayer].rotateCCW();

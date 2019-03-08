@@ -103,7 +103,7 @@ public class Host implements IHost {
 
     private void activateCard(int currentPlayer, ProgramCard card) {
         
-        System.out.println("Activating card " + card.toString() + " for player " + currentPlayer);
+        System.out.println("Activating card " + card.GetSpriteRef() + " for player " + currentPlayer);
         
         if (card.moveType()) {
             board.moveRobot(currentPlayer, card.move());
