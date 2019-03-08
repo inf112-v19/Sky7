@@ -16,7 +16,8 @@ import sky7.game.Client;
 import sky7.game.IClient;
 
 public class Host implements IHost {
-    
+
+    private String boardName = "assets/Boards/mvp1Board.json";
     IClient[] players;
     int nPlayers = 1, readyPlayers = 0;
     IDeck pDeck;
@@ -25,7 +26,7 @@ public class Host implements IHost {
 //    TreeSet<PlayerCard> queue;
     List<Integer> pQueue;
     BoardGenerator bg;
-    
+
 
     public Host(IClient cli) {
         players = new Client[8];
@@ -36,12 +37,12 @@ public class Host implements IHost {
         pDeck = new ProgramDeck();
         bg = new BoardGenerator();
         try {
-            board = bg.getBoardFromFile("assets/Boards/emptyBoard.json");
+            board = bg.getBoardFromFile(boardName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         
-        cli.connect((IHost)this, 0); //TODO do this for each client and give each client a unique ID.
+        cli.connect((IHost)this, 0, boardName); //TODO do this for each client and give each client a unique ID.
         
         board.placeRobot(0, 5, 5);
         
