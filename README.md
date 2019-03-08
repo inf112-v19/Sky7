@@ -19,7 +19,8 @@
 - Tests ICell properties
     - Test that the priority of each ICell is correct
 - IBoardGenerator
-    - Generates random Json file that the IBoardGenerator tries to read
+    - Tests that IBoardGenerator can read a random Json file,
+    and that the height and width is correct.
 - ProgramDeck
     - Test that the values of ProgramDeck matches the number of different
      cards as shown in the rulebook
