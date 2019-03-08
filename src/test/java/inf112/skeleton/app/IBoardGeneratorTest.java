@@ -32,14 +32,12 @@ public class IBoardGeneratorTest {
      *
      * Then a IBoardGenerator tries to read it
      */
-    //@Test TODO: check that the test only check things that are implemented
+    @Test //TODO: check that the test only check things that are implemented
     public void checkThatRandomBoardCanBeRead(){
         try {
             generateLongStringWithRandomObjects();
             IBoardGenerator generator = new BoardGenerator();
             Board board = generator.getBoardFromFile("src/test/assets/checkForRadnomeInput.json");
-            System.out.println(board.getWidth());
-            System.out.println(board.getHeight());
             assertTrue(true); // if it gets here everthing okey
         }catch (FileNotFoundException e) {
             fail("did'nt pass");
@@ -58,23 +56,26 @@ public class IBoardGeneratorTest {
         String[] startPlace = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
         String[] wrenchtool = {"1","2"};
 
+        listOfAll.add("f");
+        addOneOf("w", direction, listOfAll);
         addOneOf("b", direction, listOfAll);
         addOneOf("c", clockWise, listOfAll);
-        listOfAll.add("f");
         addOneOf("g", flagNumbers, listOfAll);
+        addOneOf("t", wrenchtool, listOfAll);
         listOfAll.add("h");
-        addOneOf("lN", nrOfLasers, listOfAll);
+
+        /*addOneOf("lN", nrOfLasers, listOfAll);
         addOneOf("lW", nrOfLasers, listOfAll);
         addOneOf("lS", nrOfLasers, listOfAll);
-        addOneOf("lE", nrOfLasers, listOfAll);
-        addOneOf("r", playerNr, listOfAll);
+        addOneOf("lE", nrOfLasers, listOfAll);*/
+        // laser not added in boardgenerator
+        //addOneOf("r", playerNr, listOfAll); not added in boardGenerator
         addOneOf("s", startPlace, listOfAll);
-        addOneOf("t", wrenchtool, listOfAll);
-        addOneOf("w", direction, listOfAll);
 
 
-        int height = r.nextInt(100) +1;
-        int width = r.nextInt(100) +1;
+
+        int height = r.nextInt(200) +50;
+        int width = r.nextInt(200) +50;
 
         String string = "";
         for (int i = 0; i < height*width; i++) {
