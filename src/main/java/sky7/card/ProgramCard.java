@@ -1,8 +1,5 @@
 package sky7.card;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-
 public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 
 	private int priority, move, rotate;
@@ -20,7 +17,7 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 		this.move = move;
 		this.rotate = rotate;
 
-		if (move > 0)
+		if (move != 0)
 			moveType = true;
 		else
 			moveType = false;

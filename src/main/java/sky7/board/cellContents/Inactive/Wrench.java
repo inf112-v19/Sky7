@@ -6,26 +6,29 @@ import sky7.board.cellContents.IInactive;
 
 public class Wrench implements IInactive {
     private int type;
-    private int priority;
+    private final static int PRIORITY = 3;
     private Texture texture;
 
     public Wrench(int type) {
         this.type = type;
-        switch (type){
-            case 1: texture = new Texture("wrench/repair1.png"); break;
-            case 2: texture = new Texture("wrench/repair2.png"); break;
-            default: throw new IllegalArgumentException("unknown wrench type");
-        }
+
     }
 
     @Override
     public Texture getTexture() {
+        if(texture == null){
+            switch (type){
+                case 1: texture = new Texture("wrench/repair1.png"); break;
+                case 2: texture = new Texture("wrench/repair2.png"); break;
+                default: throw new IllegalStateException("unknown wrench type");
+            }
+        }
         return texture;
     }
 
     @Override
     public int drawPriority() {
-        return priority;
+        return PRIORITY;
     }
 
     @Override

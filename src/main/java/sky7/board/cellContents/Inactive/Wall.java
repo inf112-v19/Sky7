@@ -12,22 +12,23 @@ public class Wall implements IInactive {
 
     public Wall(DIRECTION direction) {
         this.direction = direction;
-        switch (direction) {
-            case NORTH:
-                texture = new Texture("wall/LaserStopT.png"); //TODO add wall images.
-            case EAST:
-                texture = new Texture("wall/LaserStopR.png"); //TODO add wall images.
-            case SOUTH:
-                texture = new Texture("wall/LaserStopB.png"); //TODO add wall images.
-            case WEST:
-                texture = new Texture("wall/LaserStopL.png"); //TODO add wall images.
-
-        }
-
     }
 
     @Override
     public Texture getTexture() {
+        if(texture == null){
+            switch (direction){
+                case EAST: texture = new Texture("assets/wall/WallE.png"); break;
+
+                case NORTH: texture = new Texture("assets/wall/WallN.png"); break;
+
+                case WEST: texture = new Texture("assets/wall/WallW.png"); break;
+
+                case SOUTH: texture = new Texture("assets/wall/WallS.png"); break;
+
+                default: throw new IllegalStateException("The directoion arguement of the wall is not in a valid state");
+            }
+        }
         return texture;
     }
 

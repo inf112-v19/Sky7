@@ -5,20 +5,24 @@ import sky7.board.ICell;
 import sky7.board.cellContents.IInactive;
 
 public class Hole implements IInactive{
-    private int priority;
+    private static final int PRIORITY = 1;
     private Texture texture;
 
     public Hole(){
-        texture = new Texture("floor/hole.png");
+
     }
     @Override
     public Texture getTexture() {
+        if (texture == null) {
+            texture = new Texture("floor/hole.png");
+        }
+
         return texture;
     }
 
     @Override
     public int drawPriority() {
-        return this.priority;
+        return this.PRIORITY;
     }
 
     @Override

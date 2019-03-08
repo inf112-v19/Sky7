@@ -9,7 +9,7 @@ import sky7.board.cellContents.IMoving;
 public class RobotTile implements IMoving {
     String textureRef = "robot";
     Texture texture;
-    int priority = 5;
+    private static final int PRIORITY = 5;
     int playerNr;
     DIRECTION dir;
     
@@ -28,7 +28,7 @@ public class RobotTile implements IMoving {
 
     @Override
     public int drawPriority() {
-        return priority;
+        return PRIORITY;
     }
     
     @Override
