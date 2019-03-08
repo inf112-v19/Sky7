@@ -14,5 +14,14 @@
 ## Known bugs
 - The robot does not move backward when activating a "MoveBack" card.
 
+## Tests
+- Located at in [test folder](src/test/java/inf112/skeleton/app)
+- Tests ICell properties
+    - Test that the priority of each ICell is correct
+- IBoardGenerator
+    - Generates random Json file that the IBoardGenerator tries to read
+- ProgramDeck
+    - Test that the values of ProgramDeck matches the number of different
+     cards as shown in the rulebook
 
 22e3450d273bd813e33374b470ca2e933aee2699
