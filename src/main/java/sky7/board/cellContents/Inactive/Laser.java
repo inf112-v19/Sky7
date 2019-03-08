@@ -8,7 +8,7 @@ public class Laser implements IInactive {
     private final boolean start;
     private final int direction;
     private final int numberOfLasers;
-    private int priority;
+    private final static int PRIORITY = 3;
 
     public Laser(boolean start, int direction, int numberOfLasers) {
 
@@ -24,7 +24,7 @@ public class Laser implements IInactive {
 
     @Override
     public int drawPriority() {
-        return 0;
+        return PRIORITY;
     }
 
     @Override

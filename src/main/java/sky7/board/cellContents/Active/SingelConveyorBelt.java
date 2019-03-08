@@ -19,7 +19,7 @@ public class SingelConveyorBelt implements IConveyorBelt {
         this.fromDirectionTwo = fromDirectionTwo;
         this.toDirection = toDirection;
 
-        texture = new Texture("assets/floor/Conv/yellow/" + textureName + ".png");
+
 
 
     }
@@ -30,6 +30,9 @@ public class SingelConveyorBelt implements IConveyorBelt {
     @Override
     public Texture getTexture() {
         // TODO: Change ICell to use Texture insted of String
+        if(texture == null){
+            //texture = new Texture("assets/floor/Conv/yellow/" + textureName + ".png"); TODO: fix belts
+        }
         return texture;
 
     }

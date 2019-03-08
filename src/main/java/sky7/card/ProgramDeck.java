@@ -59,4 +59,15 @@ public class ProgramDeck implements IDeck {
     public void shuffle() {
         Collections.shuffle(availableCards);
     }
+
+
+    public ProgramCard[] getProgramCardsForTesting(){
+        ProgramCard[] deck = new ProgramCard[availableCards.size()];
+        int i = 0;
+        while(!availableCards.isEmpty()){
+            deck[i++] = (ProgramCard) availableCards.pop();
+        }
+
+        return deck;
+    }
 }

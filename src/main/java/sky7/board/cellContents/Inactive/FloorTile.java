@@ -8,7 +8,7 @@ public class FloorTile implements IInactive {
 
     String textureRef = "floor";
     private Texture texture;
-    private int priority = 1;
+    private static final int PRIORITY = 1;
 
     public FloorTile(){
         
@@ -25,7 +25,7 @@ public class FloorTile implements IInactive {
 
     @Override
     public int drawPriority() {
-        return this.priority;
+        return this.PRIORITY;
     }
 
     @Override
