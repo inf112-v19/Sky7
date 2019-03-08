@@ -34,7 +34,7 @@ public class Client implements IClient {
     public void connect(IHost host, int playerNumber) {
         this.host = host;
         player.setPlayerNumber(playerNumber);
-
+        
     }
 
     @Override
@@ -48,6 +48,7 @@ public class Client implements IClient {
         IBoardGenerator generator = new BoardGenerator();
         board = generator.getBoardFromFile("assets/Boards/emptyBoard.json");
         state = STATE.MOVING_ROBOT;
+        board.placeRobot(0, 5, 5);
     }
 
     @Override
