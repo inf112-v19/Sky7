@@ -18,7 +18,7 @@ then click "Go" to have the game engine execute the plan.
 - Sometimes, only 8 cards appear in hand, and there seems to be an invisible card holding a slot in the registry (?)
 
 ## Tests
-- Located in [test folder](src/test/java/inf112/skeleton/app)
+- Located in [test folder](src/test/java/sky7)
 - Tests ICell properties
     - Test that the priority of each ICell is correct
 - BoardGenerator
