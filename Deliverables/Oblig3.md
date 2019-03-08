@@ -53,7 +53,8 @@
 ### Under vurdering vil det vektlegges at alle bidrar til kodebasen. Hvis det er stor forskjell i hvem som committer, må dere legge ved en kort forklaring for hvorfor det er sånn. husk å committe alt. (Også designfiler) 
 	- Parprogrammering (forklart over).
 	- Per dato 07.03.19, står det ingen ting om Henrik sine bidrag i "contributors" på github, 
-	selv om han har en god del commits på master. Vi finner ikke ut hvorfor Henrik sine bidrag ikke vises i git statistikken.
+	selv om han har en god del commits på master. Vi finner ikke ut hvorfor Henrik sine bidrag ikke vises i git 
+	statistikken.
 	- Brigt jobber med tester på egen branch (ikke pushet til git?)
 
 ### Referat fra møter siden forrige leveranse skal legges ved.
