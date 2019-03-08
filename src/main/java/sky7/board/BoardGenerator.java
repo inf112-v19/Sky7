@@ -46,11 +46,10 @@ public class BoardGenerator implements IBoardGenerator {
         int width = Integer.parseInt(json.get("width"));
         TreeSet<ICell>[][] grid = new TreeSet[height][width];
         String[] cells = json.get("grid").split(" ");
-
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
 
-                String cell = cells[height*row+column];
+                String cell = cells[row*width+column];
                 //TODO split cell in to partial codes
                 String[] partsOfCell = cell.split("_");
                 for (String part : partsOfCell) {
