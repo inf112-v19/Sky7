@@ -41,6 +41,7 @@ public class GUI implements ApplicationListener {
 	private int scaler = 128;
 	private ICard[] chosenCards = new ICard[5];
 	private ArrayList<ICard> hand;
+	private ArrayList<ICard> currentHand = new ArrayList<>(5);
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -119,7 +120,7 @@ public class GUI implements ApplicationListener {
 
 		Dock();
 		chooseCards();
-
+		showcurrenthand();
 		if(!cardsChoosen) {
 			reset.draw(batch);
 			if (isClicked(reset)) {
@@ -195,6 +196,12 @@ public class GUI implements ApplicationListener {
 	}
 
 	public void chooseCards() {
+		if(hand.get(1) != game.getHand().get(1)) {
+			hand.clear();
+			currentHand.clear();
+			hand = game.getHand();
+			reset();
+		}
 		for (ICard card : hand) {
 			drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
 			font.draw(batch, card.getPriority(), card.getX()+42, card.getY()+93);
@@ -206,12 +213,14 @@ public class GUI implements ApplicationListener {
 				for(ICard card : hand) {
 					if(clickPos.x <= scaler+card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
 						if (card.getY() != scaler) {
+							currentHand.add(card);
 							chosenCards[pointer] = card;
 							pointer++;
 							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef());
-							card.setX(yPos);
-							card.setY(scaler);
-							yPos += scaler;
+//							card.setX(yPos);
+							// just move them outside the map for now lol
+							card.setY(-scaler);
+//							yPos += scaler;
 						}
 					}
 				}
@@ -219,6 +228,23 @@ public class GUI implements ApplicationListener {
 		}
 	}
 
+	public void showcurrenthand() {
+		for (ICard currentCards : currentHand) {
+			drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
+			font.draw(batch, currentCards.getPriority(), currentCards.getX()+42, currentCards.getY()+93);
+		}
+
+		if (!cardsChoosen && pointer != 6) {
+			for (ICard currentCards : currentHand) {
+				if (currentCards.getY() != scaler) {
+					//				System.out.println(pointer + " card(s) choosen " + currentCards.GetSpriteRef());
+					currentCards.setX(yPos);
+					currentCards.setY(scaler);
+					yPos += scaler;
+				}
+			}
+		}
+	}
 	//reset chosen cards, reset position etc
 	public void reset() {
 		System.out.println("Resetting");
@@ -229,7 +255,9 @@ public class GUI implements ApplicationListener {
 		for (int i=0; i<chosenCards.length; i++) {
 			chosenCards[i] = null;
 		}
+		currentHand.clear();
 		initiateCards(hand);
+		initiateCards(currentHand);
 		chooseCards();
 	}
 
