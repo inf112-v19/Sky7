@@ -17,6 +17,7 @@ public class Client implements IClient {
     private IHost host;
     private IPlayer player;
     private STATE state;
+    private String boardName;
 
 
     public Client() {
@@ -32,9 +33,15 @@ public class Client implements IClient {
 
     @Override
     public void connect(IHost host, int playerNumber) {
+        connect(host,playerNumber,""); //TODO add a default board for the game or something.
+    }
+
+    @Override
+    public void connect(IHost host, int playerNumber, String boardName) {
         this.host = host;
         player.setPlayerNumber(playerNumber);
-
+        this.boardName = boardName;
+        
     }
 
     @Override
@@ -46,8 +53,9 @@ public class Client implements IClient {
 
     public void generateBoard() throws FileNotFoundException {
         IBoardGenerator generator = new BoardGenerator();
-        board = generator.getBoardFromFile("assets/Boards/emptyBoard.json");
+        board = generator.getBoardFromFile(boardName);
         state = STATE.MOVING_ROBOT;
+        board.placeRobot(0, 5, 5);
     }
 
     @Override

@@ -26,6 +26,8 @@ public interface IClient {
      */
     void connect(IHost host, int playerNumber);
 
+    void connect(IHost host, int playerNumber, String boardName);
+
     /**
      * A method called by host to give the player program cards
      *

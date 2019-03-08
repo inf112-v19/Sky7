@@ -16,7 +16,8 @@ import sky7.game.Client;
 import sky7.game.IClient;
 
 public class Host implements IHost {
-    
+
+    private String boardName = "assets/Boards/mvp1Board.json";
     IClient[] players;
     int nPlayers = 1, readyPlayers = 0;
     IDeck pDeck;
@@ -25,7 +26,7 @@ public class Host implements IHost {
 //    TreeSet<PlayerCard> queue;
     List<Integer> pQueue;
     BoardGenerator bg;
-    
+
 
     public Host(IClient cli) {
         players = new Client[8];
@@ -36,14 +37,14 @@ public class Host implements IHost {
         pDeck = new ProgramDeck();
         bg = new BoardGenerator();
         try {
-            board = bg.getBoardFromFile("assets/Boards/emptyBoard.json");
+            board = bg.getBoardFromFile(boardName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         
-        cli.connect((IHost)this, 0); //TODO do this for each client and give each client a unique ID.
+        cli.connect((IHost)this, 0, boardName); //TODO do this for each client and give each client a unique ID.
         
-        board.placeRobot(0, 0, 0);
+        board.placeRobot(0, 5, 5);
         
         run();
     }
@@ -82,6 +83,15 @@ public class Host implements IHost {
                 for (int j=0; j<nPlayers ; j++) {
                     currentPlayer = pQueue.get(j);
                     activateCard(currentPlayer, (ProgramCard)playerRegs.get(currentPlayer).get(i));
+                    
+                    // wait after each step so that players can see what is going on
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    
                 }
                 
                 pQueue.clear();
@@ -89,7 +99,6 @@ public class Host implements IHost {
                 activateBoardElements();
                 activateLasers();
                 
-
             }
             
             // return registry cards to deck - need to implement locked cards later
@@ -103,7 +112,12 @@ public class Host implements IHost {
 
     private void activateCard(int currentPlayer, ProgramCard card) {
         
-        System.out.println("Activating card " + card.toString() + " for player " + currentPlayer);
+        System.out.println("Activating card " + card.GetSpriteRef() + " for player " + currentPlayer);
+        
+        // call all clients to perform the same action on their board
+        for (int i=0; i<nPlayers; i++) {
+            players[i].activateCard(currentPlayer, card);
+        }
         
         if (card.moveType()) {
             board.moveRobot(currentPlayer, card.move());
