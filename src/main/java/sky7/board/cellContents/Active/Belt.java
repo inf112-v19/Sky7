@@ -7,7 +7,7 @@ import sky7.board.cellContents.IActive;
 public class Belt implements IActive{
     private int direction;
     private int type;
-    private int priority;
+    private static final int PRIORITY = 1;
 
     public Belt(int direction, int type){
 
@@ -17,12 +17,12 @@ public class Belt implements IActive{
 
     @Override
     public Texture getTexture() {
-        return null;
+        return null; //TODO: add Belt Texture
     }
 
     @Override
     public int drawPriority() {
-        return priority;
+        return PRIORITY;
     }
 
     @Override
