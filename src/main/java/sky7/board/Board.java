@@ -2,7 +2,6 @@ package sky7.board;
     
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -220,6 +219,8 @@ public class Board implements IBoard {
 
     @Override
     public void rotateRobot(int currentPlayer, int rotate) {
+        
+        System.out.println("Attempting to rotate " + rotate);
         
         switch (rotate) {
         case -1:

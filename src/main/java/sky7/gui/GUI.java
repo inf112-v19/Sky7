@@ -62,7 +62,7 @@ public class GUI implements ApplicationListener {
 			font.setColor(Color.GOLDENROD);
 
 			camera = new OrthographicCamera();
-			viewport = new ExtendViewport(width * scaler, height * scaler, camera);
+			viewport = new ExtendViewport(width * scaler, (height+2) * scaler, camera);
 
 			textures.put("robot", new Texture("assets/robot1.png"));
 			textures.put("floor", new Texture("assets/floor/plain.png"));

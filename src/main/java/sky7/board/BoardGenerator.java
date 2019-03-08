@@ -64,6 +64,7 @@ public class BoardGenerator implements IBoardGenerator {
                             layers.add(new FloorTile());
                             break;
                         case 'w': //TODO fill in wall (direction, can be multiple walls)
+                            layers.add(new FloorTile());
                             for (int k = 1; k < part.length(); k++) {
                                 char direction = part.charAt(k);
                                 switch (direction) {
