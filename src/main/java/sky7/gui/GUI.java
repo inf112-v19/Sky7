@@ -196,9 +196,9 @@ public class GUI implements ApplicationListener {
 	}
 
 	public void chooseCards() {
-		if(hand.get(1) != game.getHand().get(1)) {
-			hand.clear();
-			currentHand.clear();
+		if(!hand.equals(game.getHand())) {
+//			hand.clear();
+//			currentHand.clear();
 			hand = game.getHand();
 			reset();
 		}
@@ -217,10 +217,10 @@ public class GUI implements ApplicationListener {
 							chosenCards[pointer] = card;
 							pointer++;
 							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef());
-//							card.setX(yPos);
+							//							card.setX(yPos);
 							// just move them outside the map for now lol
 							card.setY(-scaler);
-//							yPos += scaler;
+							//							yPos += scaler;
 						}
 					}
 				}
@@ -247,7 +247,7 @@ public class GUI implements ApplicationListener {
 	}
 	//reset chosen cards, reset position etc
 	public void reset() {
-		System.out.println("Resetting");
+		System.out.println("----------- Resetting Cards -----------");
 		cardsChoosen = false;
 		pointer = 0;
 		yPos = 0;
@@ -256,6 +256,9 @@ public class GUI implements ApplicationListener {
 			chosenCards[i] = null;
 		}
 		currentHand.clear();
+		for (ICard card : hand) {
+			System.out.print(card.GetSpriteRef() + "\t");
+		}
 		initiateCards(hand);
 		initiateCards(currentHand);
 		chooseCards();
