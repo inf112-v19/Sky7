@@ -6,7 +6,8 @@ import sky7.board.cellContents.IActive;
 
 public class Belt implements IActive{
     private int direction;
-    private int type;
+    private int type;//1(blue belt) is double(two steps), 0(yellow belt) is simple(one step)
+    private Texture texture;
     private static final int PRIORITY = 1;
 
     public Belt(int direction, int type){
@@ -17,6 +18,7 @@ public class Belt implements IActive{
 
     @Override
     public Texture getTexture() {
+
         return null; //TODO: add Belt Texture
     }
 
@@ -26,7 +28,7 @@ public class Belt implements IActive{
     }
 
     @Override
-    public int compareTo(ICell o) {
-        return 0;
+    public int compareTo(ICell other) {
+        return Integer.compare(this.drawPriority(), other.drawPriority());
     }
 }
