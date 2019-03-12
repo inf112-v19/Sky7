@@ -240,7 +240,7 @@ public class GUI implements ApplicationListener {
 	}
 	//reset chosen cards, reset position etc
 	public void reset() {
-		System.out.println("----------- Resetting Cards -----------");
+		System.out.println("\n----------- Resetting Cards -----------");
 		cardsChoosen = false;
 		pointer = 0;
 		yPos = 0;
