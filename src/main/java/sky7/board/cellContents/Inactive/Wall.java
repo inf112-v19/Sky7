@@ -8,7 +8,7 @@ import sky7.board.cellContents.IInactive;
 public class Wall implements IInactive {
     private DIRECTION direction;
     private Texture texture;
-    private int priority = 3;
+    private final int PRIORITY = 4;
 
     public Wall(DIRECTION direction) {
         this.direction = direction;
@@ -34,7 +34,7 @@ public class Wall implements IInactive {
 
     @Override
     public int drawPriority() {
-        return priority;
+        return PRIORITY;
     }
 
     @Override

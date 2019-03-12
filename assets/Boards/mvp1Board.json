@@ -4,6 +4,6 @@
   "players": "5-8",
   "width": "12",
   "height": "12",
-  "grid": "f f f f f f f f f f f f f wE f f f f f f f f f f f f f f f f f f f f f f f f f f f f f wE f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f"
+  "grid": "f f f f f f f f f f f f f wE f f f f f f f f f f f f f f f f f f f f f f f f f f f f f wE f f f f f f f f f f f f f f f f f f f cA f f f f f f f f f f cC f f f f f f f f f f f f f f f f cA f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f"
 
 }

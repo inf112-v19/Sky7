@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package sky7;
 
 import org.junit.Test;
 import sky7.board.ICell;
@@ -29,12 +29,11 @@ public class ICellTest {
     }
 
     @Test
-    public void middelTilesShouldHaveSamePriority(){
+    public void middleTilesShouldHaveSamePriority(){
         ArrayList<ICell> list = new ArrayList<>();
         list.add(new Flag(1));
         list.add(new Laser(true, 1, 1));
-        list.add(new Wrench(1));
-        list.add(new Wall(DIRECTION.EAST));
+        list.add(new Wrench(1));;
         final int middel = 3;
         for (int i = 0; i < list.size(); i++) {
             assertEquals(middel, list.get(i).drawPriority());
@@ -42,7 +41,7 @@ public class ICellTest {
     }
 
     @Test
-    public void toppLevelShouldHaveSamePriority() {
+    public void topLevelShouldHaveSamePriority() {
         ArrayList<ICell> list = new ArrayList<>();
         list.add(new RobotTile(1));
 
@@ -51,5 +50,17 @@ public class ICellTest {
             assertEquals(top, list.get(i).drawPriority());
         }
     }
+
+    @Test
+    public void topMiddleLevelShouldHaveSamePriority(){
+        ArrayList<ICell> list = new ArrayList<>();
+        list.add(new Wall(DIRECTION.EAST));
+
+        final int inBetween = 4;
+        for (int i = 0; i < list.size(); i++) {
+            assertEquals(inBetween,list.get(i).drawPriority());
+        }
+    }
+
 
 }
