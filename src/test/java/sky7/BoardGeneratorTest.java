@@ -87,7 +87,7 @@ public class BoardGeneratorTest {
         Gson j = new Gson();
         String jsonFile = j.toJson(format);
         try {
-            PrintWriter wr = new PrintWriter("src/test/assets/checkForRadnomeInput.json");
+            PrintWriter wr = new PrintWriter("src/test/assets/checkForRandomInput.json");
             wr.println(jsonFile);
             wr.close();
         }catch (FileNotFoundException e){
