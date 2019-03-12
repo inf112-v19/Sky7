@@ -4,7 +4,7 @@ import sky7.board.Board;
 import sky7.board.ICell;
 import sky7.board.cellContents.DIRECTION;
 
-public class SingelConveyorBelt implements ConveyorBelt {
+public class SingelConveyorBelt implements IConveyorBelt {
     private DIRECTION fromDirectionOne;
     private DIRECTION fromDirectionTwo; // Can be non, if conveyor belt only has one entry
     private DIRECTION toDirection; // Change robot to face this way when done
@@ -19,7 +19,7 @@ public class SingelConveyorBelt implements ConveyorBelt {
         this.fromDirectionTwo = fromDirectionTwo;
         this.toDirection = toDirection;
 
-        texture = new Texture("assets/floor/Conv/yellow/" + textureName + ".png");
+
 
 
     }
@@ -28,9 +28,12 @@ public class SingelConveyorBelt implements ConveyorBelt {
 
 
     @Override
-    public String getTexture() {
+    public Texture getTexture() {
         // TODO: Change ICell to use Texture insted of String
-        return "conveyorBelt";
+        if(texture == null){
+            //texture = new Texture("assets/floor/Conv/yellow/" + textureName + ".png"); TODO: fix belts
+        }
+        return texture;
 
     }
 

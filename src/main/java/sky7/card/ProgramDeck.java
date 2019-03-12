@@ -1,5 +1,6 @@
 package sky7.card;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
@@ -28,24 +29,25 @@ public class ProgramDeck implements IDeck {
             availableCards.push(new ProgramCard(430+10*i, -1, 0)); //move backward 1 
         }
         
+        shuffle();
     }
 
     @Override
-    public Stack<ICard> draw(int n) {
+    public ArrayList<ICard> draw(int n) {
         if (n<1) throw new IllegalArgumentException("Cannot draw less than 1 card.");
         if (n>72) throw new IllegalArgumentException("Cannot draw more than 72 cards (8 players * 9 cards)");
         if (n>availableCards.size()) throw new IllegalArgumentException("Attempting to draw more cards than available");
         
-        Stack<ICard> drawn = new Stack<>();
+        ArrayList<ICard> drawn = new ArrayList<>();
         for (int i=0; i<n; i++) {
-            drawn.push(availableCards.pop());
+            drawn.add(availableCards.pop());
         }
-        
+
         return drawn;
     }
 
     @Override
-    public void returnCards(Stack<ICard> cards) {
+    public void returnCards(ArrayList<ICard> cards) {
         for (ICard card : cards) {
             availableCards.push((ProgramCard)card);
         }
@@ -56,5 +58,16 @@ public class ProgramDeck implements IDeck {
     @Override
     public void shuffle() {
         Collections.shuffle(availableCards);
+    }
+
+
+    public ProgramCard[] getProgramCardsForTesting(){
+        ProgramCard[] deck = new ProgramCard[availableCards.size()];
+        int i = 0;
+        while(!availableCards.isEmpty()){
+            deck[i++] = (ProgramCard) availableCards.pop();
+        }
+
+        return deck;
     }
 }
