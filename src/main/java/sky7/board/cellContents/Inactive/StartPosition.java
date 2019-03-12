@@ -6,24 +6,27 @@ import sky7.board.cellContents.IInactive;
 
 public class StartPosition implements IInactive{
     private int number;
-    private int priority;
+    private static final int PRIORITY = 4;
     private Texture texture;
 
     public StartPosition(int number){
 
         this.number = number;
-        texture = new Texture(""); //TODO add start position pictures
+
     }
 
 
     @Override
     public Texture getTexture() {
-        return null;
+        if(texture == null){
+            texture = new Texture("");//TODO add start position pictures
+        }
+        return texture;
     }
 
     @Override
     public int drawPriority() {
-        return priority;
+        return PRIORITY;
     }
 
     @Override

@@ -2,6 +2,7 @@ package sky7.host;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -15,34 +16,35 @@ import sky7.game.Client;
 import sky7.game.IClient;
 
 public class Host implements IHost {
-    
+
+    private String boardName = "assets/Boards/mvp1Board.json";
     IClient[] players;
     int nPlayers = 1, readyPlayers = 0;
     IDeck pDeck;
     IBoard board;
-    List<ArrayList<ICard>> playerRegs;
+    HashMap<Integer, ArrayList<ICard>> playerRegs;
 //    TreeSet<PlayerCard> queue;
     List<Integer> pQueue;
     BoardGenerator bg;
-    
+
 
     public Host(IClient cli) {
         players = new Client[8];
         players[0] = cli;
-        playerRegs = new ArrayList<ArrayList<ICard>>();
+        playerRegs = new HashMap<Integer, ArrayList<ICard>>();
 //        queue = new TreeSet<>();
         pQueue = new LinkedList<>();
         pDeck = new ProgramDeck();
         bg = new BoardGenerator();
         try {
-            board = bg.getBoardFromFile("assets/Boards/emptyBoard.json");
+            board = bg.getBoardFromFile(boardName);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         
-        cli.connect((IHost)this, 0); //TODO do this for each client and give each client a unique ID.
+        cli.connect((IHost)this, 0, boardName); //TODO do this for each client and give each client a unique ID.
         
-        board.placeRobot(0, 0, 0);
+        board.placeRobot(0, 5, 5);
         
         run();
     }
@@ -81,6 +83,15 @@ public class Host implements IHost {
                 for (int j=0; j<nPlayers ; j++) {
                     currentPlayer = pQueue.get(j);
                     activateCard(currentPlayer, (ProgramCard)playerRegs.get(currentPlayer).get(i));
+                    
+                    // wait after each step so that players can see what is going on
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    
                 }
                 
                 pQueue.clear();
@@ -88,10 +99,11 @@ public class Host implements IHost {
                 activateBoardElements();
                 activateLasers();
                 
-                // return registry cards to deck - need to implement locked cards later
-                for (int j=0; j<nPlayers; j++) {
-                    pDeck.returnCards(playerRegs.remove(j));
-                }
+            }
+            
+            // return registry cards to deck - need to implement locked cards later
+            for (int j=0; j<nPlayers; j++) {
+                pDeck.returnCards(playerRegs.remove(j));
             }
             
             readyPlayers = 0;
@@ -99,6 +111,14 @@ public class Host implements IHost {
     }
 
     private void activateCard(int currentPlayer, ProgramCard card) {
+        
+        System.out.println("Activating card " + card.GetSpriteRef() + " for player " + currentPlayer);
+        
+        // call all clients to perform the same action on their board
+        for (int i=0; i<nPlayers; i++) {
+            players[i].activateCard(currentPlayer, card);
+        }
+        
         if (card.moveType()) {
             board.moveRobot(currentPlayer, card.move());
         } else {
@@ -108,7 +128,7 @@ public class Host implements IHost {
 
     private void findPlayerSequence(int roundNr) {
         for (int i=0; i<nPlayers; i++) {
-            ProgramCard thisPlayersCard = (ProgramCard)playerRegs.get(i).get(roundNr);
+        ProgramCard thisPlayersCard = (ProgramCard)playerRegs.get(i).get(roundNr);
             for (int j=0; j<pQueue.size(); j++) {
                 ProgramCard thatPlayersCard = (ProgramCard)playerRegs.get(pQueue.get(j)).get(roundNr);
                 if (thisPlayersCard.priorityN() > thatPlayersCard.priorityN())
@@ -130,7 +150,8 @@ public class Host implements IHost {
 
     @Override
     public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
-        playerRegs.add(pN, registry);
+        if (registry.size() < 5) throw new IllegalArgumentException("registry does not contain 5 cards");
+        playerRegs.put(pN, registry);
         pDeck.returnCards(discard);
         readyPlayers++;
         notify();

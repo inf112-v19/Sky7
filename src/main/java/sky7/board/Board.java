@@ -2,7 +2,6 @@ package sky7.board;
     
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -114,6 +113,10 @@ public class Board implements IBoard {
         
         int possibleMove = 0;
         DIRECTION dir = robots[player].getOrientation();
+        if (move < 0) {
+            dir = dir.inverse(dir);
+            move = 1;
+        }
         
         // check how far in the given direction it is possible to move (up to the move value)
         for (int i=1; i<=move; i++) {
@@ -220,6 +223,8 @@ public class Board implements IBoard {
 
     @Override
     public void rotateRobot(int currentPlayer, int rotate) {
+        
+        System.out.println("Attempting to rotate " + rotate);
         
         switch (rotate) {
         case -1:
