@@ -39,9 +39,9 @@ public class GUI implements ApplicationListener {
 	private boolean cardsChoosen = false;
 	private int pointer, yPos, cardXpos = 0;
 	private int scaler = 128;
-	private ICard[] chosenCards = new ICard[5];
+	//	private ICard[] chosenCards = new ICard[5];
 	private ArrayList<ICard> hand;
-	private ArrayList<ICard> currentHand = new ArrayList<>(5);
+	private ArrayList<ICard> currentHand = new ArrayList<>(4);
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -161,10 +161,10 @@ public class GUI implements ApplicationListener {
 	// check if user has chosen all 5 cards
 	// and put the chosen cards in the game-client, and lock the registry
 	public void playerCards() {
-		if (chosenCards[4] != null) {
+		if (currentHand.get(4) != null) {
 			cardsChoosen = true;
-			for (int i=0; i<chosenCards.length; i++) {
-				game.setCard(chosenCards[i], i);
+			for (int i=0; i<currentHand.size(); i++) {
+				game.setCard(currentHand.get(i), i);
 			}
 			game.lockRegistry();
 		}
@@ -197,8 +197,6 @@ public class GUI implements ApplicationListener {
 
 	public void chooseCards() {
 		if(!hand.equals(game.getHand())) {
-//			hand.clear();
-//			currentHand.clear();
 			hand = game.getHand();
 			reset();
 		}
@@ -214,13 +212,10 @@ public class GUI implements ApplicationListener {
 					if(clickPos.x <= scaler+card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
 						if (card.getY() != scaler) {
 							currentHand.add(card);
-							chosenCards[pointer] = card;
 							pointer++;
-							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef());
-							//							card.setX(yPos);
+							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef() + " \tPriority: \t" + card.getPriority());
 							// just move them outside the map for now lol
-							card.setY(-scaler);
-							//							yPos += scaler;
+							card.setY(23+scaler);
 						}
 					}
 				}
@@ -233,13 +228,11 @@ public class GUI implements ApplicationListener {
 			drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
 			font.draw(batch, currentCards.getPriority(), currentCards.getX()+42, currentCards.getY()+93);
 		}
-
 		if (!cardsChoosen && pointer != 6) {
-			for (ICard currentCards : currentHand) {
-				if (currentCards.getY() != scaler) {
-					//				System.out.println(pointer + " card(s) choosen " + currentCards.GetSpriteRef());
-					currentCards.setX(yPos);
-					currentCards.setY(scaler);
+			for (ICard card : currentHand) {
+				if (card.getY() != scaler) {
+					card.setX(yPos);
+					card.setY(scaler);
 					yPos += scaler;
 				}
 			}
@@ -252,15 +245,14 @@ public class GUI implements ApplicationListener {
 		pointer = 0;
 		yPos = 0;
 		cardXpos = 0;
-		for (int i=0; i<chosenCards.length; i++) {
-			chosenCards[i] = null;
-		}
 		currentHand.clear();
+		hand = game.getHand();
 		for (ICard card : hand) {
-			System.out.print(card.GetSpriteRef() + "\t");
+			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t" );
 		}
 		initiateCards(hand);
 		initiateCards(currentHand);
+		showcurrenthand();
 		chooseCards();
 	}
 
@@ -269,10 +261,6 @@ public class GUI implements ApplicationListener {
 			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 			if (clickPos.x > sprite.getX() && clickPos.x < sprite.getX() + sprite.getWidth()) {
 				if (clickPos.y > sprite.getY() && clickPos.y < sprite.getY() + sprite.getHeight()) {
-					sprite.setColor(Color.BLACK);
-					sprite.draw(batch);
-					sprite.draw(batch);
-					sprite.setColor(Color.WHITE);
 					return true;
 				}
 			}
