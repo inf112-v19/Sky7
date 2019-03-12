@@ -21,4 +21,6 @@ public interface IDeck {
     void returnCards (ArrayList<ICard> cards);
     
     void shuffle();
+
+
 }
