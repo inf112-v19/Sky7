@@ -20,7 +20,7 @@ public class CogWheel implements IActive {
             if(rotDirection == -1) {
                 texture = new Texture("assets/cogwheel/CogRed.png");
             } else if (rotDirection == 1){
-                texture = new Texture("assets/cogwhell/CogGreen.png");
+                texture = new Texture("assets/cogwheel/CogGreen.png");
             } else {
                 throw new IllegalStateException("The rotaion Direction has invalid value, has to be -1, 1, or 2. Was " + rotDirection);
             }

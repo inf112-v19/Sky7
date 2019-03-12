@@ -1,4 +1,4 @@
-package inf112.skeleton.app;
+package sky7;
 
 public class JSonFileFormat {
     private String name;

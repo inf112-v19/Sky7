@@ -55,7 +55,6 @@
 	- Per dato 07.03.19, står det ingen ting om Henrik sine bidrag i "contributors" på github, 
 	selv om han har en god del commits på master. Vi finner ikke ut hvorfor Henrik sine bidrag ikke vises i git 
 	statistikken.
-	- Brigt jobber med tester på egen branch (ikke pushet til git?)
 
 ### Referat fra møter siden forrige leveranse skal legges ved.
 	Referater legges i prosjekt root /Documents
@@ -89,7 +88,7 @@
 
 ### Oppdatere hvilke krav dere har prioritert, hvor langt dere har kommet og hva dere har gjort siden forrige gang
     - Vi har jobbet mest med første prioritet, og prøver å få til 3. punkt på listen før innlevering. 
-	- Det har ikke gått som planlagt med skriving av tester. 
+	- Vi er delvis i mål med tanke på tester.
 
 ## Deloppgave 4: kode
 
@@ -97,4 +96,5 @@
 	Bygging, testing og kjøring vil dokumenteres i Readme.md i root.
 
 ### Dokumentér også hvordan testene skal kjøres. Kodekvalitet og testdekning vektlegges. Merk at testene dere skriver skal brukes i produktet.
-	Vi blir nødt til å utsette denne delen til neste sprint da vi ikke har tester å kjøre. 
+	- Se Readme.md angående JUnit tester.
+	- Forslag / instruks til brukertesting: Documents/UserTest.md 
