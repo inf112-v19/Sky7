@@ -34,8 +34,8 @@ public class CogWheel implements IActive {
     }
 
     @Override
-    public int compareTo(ICell o) {
-        return 0;
+    public int compareTo(ICell other) {
+        return Integer.compare(this.drawPriority(), other.drawPriority());
     }
     
     public int getRotation() {
