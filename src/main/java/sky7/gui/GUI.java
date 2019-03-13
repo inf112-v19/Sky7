@@ -197,7 +197,7 @@ public class GUI implements ApplicationListener {
 
 	public void chooseCards() {
 		if(!hand.equals(game.getHand())) {
-			hand = game.getHand();
+			hand.clear();
 			reset();
 		}
 		for (ICard card : hand) {
@@ -215,7 +215,7 @@ public class GUI implements ApplicationListener {
 							pointer++;
 							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef() + " \tPriority: \t" + card.getPriority());
 							// just move them outside the map for now lol
-							card.setY(23+scaler);
+							card.setY(-scaler);
 						}
 					}
 				}
@@ -228,7 +228,7 @@ public class GUI implements ApplicationListener {
 			drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
 			font.draw(batch, currentCards.getPriority(), currentCards.getX()+42, currentCards.getY()+93);
 		}
-		if (!cardsChoosen && pointer != 6) {
+		if (!cardsChoosen && pointer <= 5) {
 			for (ICard card : currentHand) {
 				if (card.getY() != scaler) {
 					card.setX(yPos);
