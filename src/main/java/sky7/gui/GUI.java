@@ -198,9 +198,11 @@ public class GUI implements ApplicationListener {
 			hand.clear();
 			reset();
 		}
-		for (ICard card : hand) {
-			drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
-			font.draw(batch, card.getPriority(), card.getX()+42, card.getY()+93);
+		if(!cardsChoosen) {
+			for (ICard card : hand) {
+				drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
+				font.draw(batch, card.getPriority(), card.getX()+42, card.getY()+93);
+			}
 		}
 		if (!cardsChoosen && pointer != 5) {
 			//check if card is clicked
@@ -236,7 +238,7 @@ public class GUI implements ApplicationListener {
 			}
 		}
 	}
-	
+
 	public boolean isClicked(Sprite sprite) {
 		if (Gdx.input.justTouched()){
 			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -248,7 +250,7 @@ public class GUI implements ApplicationListener {
 		}
 		return false;
 	}
-	
+
 	//reset chosen cards, reset position etc
 	public void reset() {
 		System.out.println("\n----------- Resetting Cards -----------");
