@@ -41,7 +41,7 @@ public class GUI implements ApplicationListener {
 	private int scaler = 128;
 	//	private ICard[] chosenCards = new ICard[5];
 	private ArrayList<ICard> hand;
-	private ArrayList<ICard> currentHand = new ArrayList<>(4);
+	private ArrayList<ICard> registry = new ArrayList<>(4);
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -82,7 +82,7 @@ public class GUI implements ApplicationListener {
 
 			hand = game.getHand();
 			addSprites();
-			initiateCards(hand);
+			setHandPos(hand);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -98,7 +98,6 @@ public class GUI implements ApplicationListener {
 
 	@Override
 	public void pause() {
-
 	}
 
 	@Override
@@ -120,7 +119,7 @@ public class GUI implements ApplicationListener {
 
 		Dock();
 		chooseCards();
-		showcurrenthand();
+		showRegistry();
 		if(!cardsChoosen) {
 			reset.draw(batch);
 			if (isClicked(reset)) {
@@ -131,7 +130,7 @@ public class GUI implements ApplicationListener {
 		if (pointer == 5) {
 			confirm.draw(batch);
 			if (isClicked(confirm)) {
-				playerCards();
+				setRegistry();
 			}
 		}
 		batch.end();
@@ -145,7 +144,6 @@ public class GUI implements ApplicationListener {
 
 	@Override
 	public void resume() {
-
 	}
 
 	public void Dock() {
@@ -160,11 +158,11 @@ public class GUI implements ApplicationListener {
 
 	// check if user has chosen all 5 cards
 	// and put the chosen cards in the game-client, and lock the registry
-	public void playerCards() {
-		if (currentHand.get(4) != null) {
+	public void setRegistry() {
+		if (registry.get(4) != null) {
 			cardsChoosen = true;
-			for (int i=0; i<currentHand.size(); i++) {
-				game.setCard(currentHand.get(i), i);
+			for (int i=0; i<registry.size(); i++) {
+				game.setCard(registry.get(i), i);
 			}
 			game.lockRegistry();
 		}
@@ -187,7 +185,7 @@ public class GUI implements ApplicationListener {
 	}
 
 	// set the x position for the cards to spread them accross the map
-	private void initiateCards(ArrayList<ICard> hand) {
+	private void setHandPos(ArrayList<ICard> hand) {
 		for (ICard card : hand) {
 			card.setX(cardXpos);
 			card.setY(0);
@@ -211,7 +209,7 @@ public class GUI implements ApplicationListener {
 				for(ICard card : hand) {
 					if(clickPos.x <= scaler+card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
 						if (card.getY() != scaler) {
-							currentHand.add(card);
+							registry.add(card);
 							pointer++;
 							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef() + " \tPriority: \t" + card.getPriority());
 							// just move them outside the map for now lol
@@ -223,13 +221,13 @@ public class GUI implements ApplicationListener {
 		}
 	}
 
-	public void showcurrenthand() {
-		for (ICard currentCards : currentHand) {
+	public void showRegistry() {
+		for (ICard currentCards : registry) {
 			drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
 			font.draw(batch, currentCards.getPriority(), currentCards.getX()+42, currentCards.getY()+93);
 		}
 		if (!cardsChoosen && pointer <= 5) {
-			for (ICard card : currentHand) {
+			for (ICard card : registry) {
 				if (card.getY() != scaler) {
 					card.setX(yPos);
 					card.setY(scaler);
@@ -238,24 +236,7 @@ public class GUI implements ApplicationListener {
 			}
 		}
 	}
-	//reset chosen cards, reset position etc
-	public void reset() {
-		System.out.println("\n----------- Resetting Cards -----------");
-		cardsChoosen = false;
-		pointer = 0;
-		yPos = 0;
-		cardXpos = 0;
-		currentHand.clear();
-		hand = game.getHand();
-		for (ICard card : hand) {
-			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t" );
-		}
-		initiateCards(hand);
-		initiateCards(currentHand);
-		showcurrenthand();
-		chooseCards();
-	}
-
+	
 	public boolean isClicked(Sprite sprite) {
 		if (Gdx.input.justTouched()){
 			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -266,5 +247,31 @@ public class GUI implements ApplicationListener {
 			}
 		}
 		return false;
+	}
+	
+	//reset chosen cards, reset position etc
+	public void reset() {
+		System.out.println("\n----------- Resetting Cards -----------");
+		cardsChoosen = false;
+		pointer = 0;
+		yPos = 0;
+		cardXpos = 0;
+		registry.clear();
+		hand = game.getHand();
+		for (ICard card : hand) {
+			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t" );
+		}
+		resetCards(hand);
+		resetCards(registry);
+		setHandPos(hand);
+		showRegistry();
+		chooseCards();
+	}
+
+	private void resetCards(ArrayList<ICard> cards) {
+		for (ICard card : cards) {
+			card.setX(0);
+			card.setY(0);
+		}	
 	}
 }
