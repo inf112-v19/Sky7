@@ -28,7 +28,7 @@ public class HostTest {
 
         testClient1.connect(host,1,"assets/Boards/emptyBoard.json");
 
-        int originalSizeOfDeck;
+        int originalSizeOfDeck; //TODO add getters in host and getSize in IDeck
 
     }
     // TODO #2 of run: test if host waits for 0 , 1, 2 and n clients.
