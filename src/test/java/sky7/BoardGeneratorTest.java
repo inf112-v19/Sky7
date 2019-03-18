@@ -2,7 +2,7 @@ package sky7;
 
 import com.badlogic.gdx.utils.Json;
 import com.google.gson.Gson;
-import com.sun.org.apache.xml.internal.security.utils.resolver.implementations.ResolverAnonymous;
+//import com.sun.org.apache.xml.internal.security.utils.resolver.implementations.ResolverAnonymous;
 import org.junit.Test;
 import sky7.board.Board;
 import sky7.board.BoardGenerator;
@@ -87,7 +87,7 @@ public class BoardGeneratorTest {
         Gson j = new Gson();
         String jsonFile = j.toJson(format);
         try {
-            PrintWriter wr = new PrintWriter("src/test/assets/checkForRadnomeInput.json");
+            PrintWriter wr = new PrintWriter("src/test/assets/checkForRandomInput.json");
             wr.println(jsonFile);
             wr.close();
         }catch (FileNotFoundException e){
