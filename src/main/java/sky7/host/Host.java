@@ -48,6 +48,10 @@ public class Host implements IHost {
         
         run();
     }
+    
+    public Host() {
+        
+    }
 
     private synchronized void run() {
         int currentPlayer = 0;

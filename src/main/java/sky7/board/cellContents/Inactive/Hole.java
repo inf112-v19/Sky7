@@ -26,7 +26,7 @@ public class Hole implements IInactive{
     }
 
     @Override
-    public int compareTo(ICell o) {
-        return 0;
+    public int compareTo(ICell other) {
+        return Integer.compare(this.drawPriority(), other.drawPriority());
     }
 }
