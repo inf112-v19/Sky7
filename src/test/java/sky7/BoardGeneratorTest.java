@@ -33,7 +33,7 @@ public class BoardGeneratorTest {
      * Then a IBoardGenerator tries to read it
      */
     @Test //TODO: check that the test only check things that are implemented
-    public void checkThatRandomBoardCanBeRead(){
+    public void checkThatRandomValidBoardCanBeRead(){
         try {
             generateLongStringWithRandomObjects();
             IBoardGenerator generator = new BoardGenerator();
@@ -46,44 +46,49 @@ public class BoardGeneratorTest {
     }
 
 
-    private void generateLongStringWithRandomObjects(){
-        ArrayList<String> listOfAll = new ArrayList<>();
+    @Test
+    public void invalidBoardStateShouldCrashCastError(){
+        ArrayList<String> validInput = getListOfValidCombinations();
+
+
+    }
+
+    private ArrayList<String> getListOfValidCombinations(){
+        ArrayList<String> validInput = new ArrayList<>();
         String[] direction = {"N", "S", "E", "W"};
         String[] clockWise = {"C", "A"};
-        String[] flagNumbers = {"1", "2", "3", "4"};
+        String[] flagNumbers = {"1", "2", "3", "4"}
         String[] nrOfLasers = {"1", "2"};
         String[] playerNr = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
         String[] startPlace = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
         String[] wrenchtool = {"1","2"};
 
-        listOfAll.add("f");
-        addOneOf("w", direction, listOfAll);
-        addOneOf("b", direction, listOfAll);
-        addOneOf("c", clockWise, listOfAll);
-        addOneOf("g", flagNumbers, listOfAll);
-        addOneOf("t", wrenchtool, listOfAll);
-        listOfAll.add("h");
+        validInput.add("f");
+        addOneOf("w", direction, validInput);
+        addOneOf("b", direction, validInput);
+        addOneOf("c", clockWise, validInput);
+        addOneOf("g", flagNumbers, validInput);
+        addOneOf("t", wrenchtool, validInput);
+        validInput.add("h");
 
-        /*addOneOf("lN", nrOfLasers, listOfAll);
-        addOneOf("lW", nrOfLasers, listOfAll);
-        addOneOf("lS", nrOfLasers, listOfAll);
-        addOneOf("lE", nrOfLasers, listOfAll);*/
-        // laser not added in boardgenerator
-        //addOneOf("r", playerNr, listOfAll); not added in boardGenerator
-        addOneOf("s", startPlace, listOfAll);
+        addOneOf("s", startPlace, validInput);
+        return  validInput;
+    }
 
 
+    private void generateLongStringWithRandomObjects(){
+        ArrayList<String> listOfAll = getListOfValidCombinations();
 
-        int height = r.nextInt(200) +50;
-        int width = r.nextInt(200) +50;
+        int height = r.nextInt(500) + 2150;
+        int width = r.nextInt(500) + 2150;
 
-        String string = "";
+        StringBuilder string =  new StringBuilder();
         for (int i = 0; i < height*width; i++) {
             int randomNr = r.nextInt(listOfAll.size());
-            string += listOfAll.get(randomNr) + " ";
+            string.append(listOfAll.get(randomNr) + " ");
         }
 
-        JSonFileFormat format = new JSonFileFormat("Name", "random", "5-8", ("" +width), (""+height), string);
+        JSonFileFormat format = new JSonFileFormat("Name", "random", "5-8", ("" +width), (""+height), string.toString());
         Gson j = new Gson();
         String jsonFile = j.toJson(format);
         try {
