@@ -57,7 +57,7 @@ public class BoardGeneratorTest {
         ArrayList<String> validInput = new ArrayList<>();
         String[] direction = {"N", "S", "E", "W"};
         String[] clockWise = {"C", "A"};
-        String[] flagNumbers = {"1", "2", "3", "4"}
+        String[] flagNumbers = {"1", "2", "3", "4"};
         String[] nrOfLasers = {"1", "2"};
         String[] playerNr = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
         String[] startPlace = {"1", "2", "3", "4", "5", "6", "7", "8", "9"};
