@@ -50,7 +50,6 @@ public class ClientTest {
         try {
             clients.get(0).generateBoard();
         } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -59,16 +58,19 @@ public class ClientTest {
     public void testHand() {
         deck = new ProgramDeck();
         
+        // simulate 100 rounds of drawing and returning cards
         for (int j=0; j<100 ; j++) {
             ArrayList<ICard> given = deck.draw(9);  
             clients.get(0).chooseCards(given);
             
             assertEquals(given, clients.get(0).getHand());
             
+            // simulate player choosing the first 5 cards in hand
             for (int i=0; i<5 ; i++) {
                 clients.get(0).setCard(given.get(i), i);
             }
-            
+
+            // assert that the stored registry is made up of the chosen cards each round
             ArrayList<ICard> reg = clients.get(0).getPlayer().getRegistry();
             assertEquals(reg.size(), 5);
             for (int i=0; i<5 ; i++) {
@@ -77,11 +79,5 @@ public class ClientTest {
             
             deck.returnCards(given);
         }
-    }
-    
-    @Test
-    public void testRobot() {
-        // at the moment, client places robot at 5,5 in generateBoard() method, otherwise we would have to place it now
-        clients.get(0).activateCard(0, new ProgramCard(0,2,0));
     }
 }

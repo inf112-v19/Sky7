@@ -29,9 +29,11 @@ public class ProgramDeckTest {
         
         ArrayList<ICard> hand;
         
+        // draw and return 9 cards N times
         for (int i=0; i<N ; i++) {
             hand = deck.draw(9);
             
+            // assert that no duplicate cards occur
             for (int j=0; j<9 ; j++) {
                 for (int k=j+1; k<9 ; k++) {
                     assertFalse(((ProgramCard)hand.get(j)).equals(((ProgramCard)hand.get(k))));
@@ -43,6 +45,7 @@ public class ProgramDeckTest {
             hand.clear();
         }
         
+        // assert that the deck is complete after drawing and returning cards
         assertTrue(deck.nRemainingCards() == fullDeck);
     }
     
