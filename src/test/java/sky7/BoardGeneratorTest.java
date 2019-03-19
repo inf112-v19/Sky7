@@ -3,7 +3,9 @@ package sky7;
 import com.badlogic.gdx.utils.Json;
 import com.google.gson.Gson;
 //import com.sun.org.apache.xml.internal.security.utils.resolver.implementations.ResolverAnonymous;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import sky7.board.Board;
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
@@ -22,6 +24,9 @@ import static org.junit.Assert.*;
 
 public class BoardGeneratorTest {
     private Random r = new Random();
+    @Rule
+    public ExpectedException thrown= ExpectedException.none();
+
 
     /**
      * Generates a random board with one element in each slot,
@@ -40,7 +45,7 @@ public class BoardGeneratorTest {
             Board board = generator.getBoardFromFile("src/test/assets/checkForRadnomeInput.json");
             assertTrue(true); // if it gets here everthing okey
         }catch (FileNotFoundException e) {
-            fail("did'nt pass");
+            fail("didn't pass");
             e.fillInStackTrace();
         }
     }
@@ -49,6 +54,40 @@ public class BoardGeneratorTest {
     @Test
     public void invalidBoardStateShouldCrashCastError(){
         ArrayList<String> validInput = getListOfValidCombinations();
+        String[] allChars= {"b","c","f","g","h","l","r","s","t","w","N","E","W","S","C","A"};
+
+        int randomNum = r.nextInt(500) + 3000;
+        BoardGenerator bg = new BoardGenerator();
+        for (int i = 0; i < randomNum; i++) {
+
+            int firstPos = r.nextInt(allChars.length);
+            int secondPos = r.nextInt(allChars.length);
+
+            while (validInput.contains(allChars[firstPos] + allChars[secondPos])) {
+                firstPos = r.nextInt(allChars.length);
+                secondPos = r.nextInt(allChars.length);
+            }
+
+
+            JSonFileFormat format = new JSonFileFormat("Name", "random", "5-8", ("1"), ("1"), (allChars[firstPos] + allChars[secondPos]));
+            Gson j = new Gson();
+            String jsonFile = j.toJson(format);
+            try {
+                PrintWriter wr = new PrintWriter("src/test/assets/checkInvalidInputTest.json");
+                wr.println(jsonFile);
+                wr.close();
+                try{
+                    bg.getBoardFromFile("src/test/assets/checkInvalidInputTest.json");
+                    fail(allChars[firstPos] + allChars[secondPos] + " passed the generator, it should not");
+                } catch (IllegalArgumentException e){
+                }
+            }catch (FileNotFoundException e){
+                e.fillInStackTrace();
+            }
+        }
+
+
+
 
 
     }
