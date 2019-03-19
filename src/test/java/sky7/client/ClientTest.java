@@ -58,18 +58,30 @@ public class ClientTest {
     @Test
     public void testHand() {
         deck = new ProgramDeck();
-        ArrayList<ICard> given = deck.draw(9);  
-        clients.get(0).chooseCards(given);
         
-        assertEquals(given, clients.get(0).getHand());
-        
+        for (int j=0; j<100 ; j++) {
+            ArrayList<ICard> given = deck.draw(9);  
+            clients.get(0).chooseCards(given);
+            
+            assertEquals(given, clients.get(0).getHand());
+            
+            for (int i=0; i<5 ; i++) {
+                clients.get(0).setCard(given.get(i), i);
+            }
+            
+            ArrayList<ICard> reg = clients.get(0).getPlayer().getRegistry();
+            assertEquals(reg.size(), 5);
+            for (int i=0; i<5 ; i++) {
+                assertTrue(((ProgramCard)reg.get(i)).equals(((ProgramCard)given.get(i))));
+            }
+            
+            deck.returnCards(given);
+        }
     }
     
     @Test
     public void testRobot() {
         // at the moment, client places robot at 5,5 in generateBoard() method, otherwise we would have to place it now
         clients.get(0).activateCard(0, new ProgramCard(0,2,0));
-        
-        
     }
 }
