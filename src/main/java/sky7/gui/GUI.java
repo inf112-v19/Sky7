@@ -2,6 +2,9 @@ package sky7.gui;
 
 import java.io.FileNotFoundException;
 import java.util.*;
+
+import org.omg.PortableServer.POAManagerPackage.State;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -20,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.*;
 import sky7.board.ICell;
 import sky7.card.ICard;
 import sky7.game.IClient;
+import sky7.game.STATE;
 
 public class GUI implements ApplicationListener {
 	private IClient game;
@@ -74,8 +78,8 @@ public class GUI implements ApplicationListener {
 
 			reset = new Sprite(textures.get("reset"));
 			confirm = new Sprite(textures.get("confirm"));
-			reset.setPosition(scaler*9, 20);
-			confirm.setPosition(scaler*10, 20);
+			reset.setPosition(scaler*2, scaler+20);
+			confirm.setPosition(scaler*9, scaler+20);
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
@@ -117,7 +121,7 @@ public class GUI implements ApplicationListener {
 		chooseCards();
 		showRegistry();
 		
-		if(!cardsChoosen) {
+		if(!cardsChoosen && pointer != 0) {
 			reset.draw(batch);
 			if (isClicked(reset)) {
 				reset();
@@ -128,6 +132,7 @@ public class GUI implements ApplicationListener {
 			confirm.draw(batch);
 			if (isClicked(confirm)) {
 				setRegistry();
+				pointer = 0;
 			}
 		}
 		batch.end();
@@ -148,8 +153,8 @@ public class GUI implements ApplicationListener {
 			batch.draw(textures.get("dock"), i * scaler, 0);
 			batch.draw(textures.get("dock"), i * scaler, scaler);
 		}
-		for (int i = 0; i < 5; i++) {
-			batch.draw(textures.get("outline"), i * scaler, scaler);
+		for (int i = 3; i < 8; i++) {
+			batch.draw(textures.get("outline"), i * scaler+64, scaler);
 		}
 	}
 
@@ -184,7 +189,7 @@ public class GUI implements ApplicationListener {
 	// set the x position for the cards to spread them accross the map
 	private void setHandPos(ArrayList<ICard> hand) {
 		for (ICard card : hand) {
-			card.setX(cardXpos);
+			card.setX(192+cardXpos);
 			card.setY(0);
 			cardXpos+=scaler;
 		}	
@@ -230,7 +235,7 @@ public class GUI implements ApplicationListener {
 		if (!cardsChoosen && pointer <= 5) {
 			for (ICard card : registry) {
 				if (card.getY() != scaler) {
-					card.setX(yPos);
+					card.setX(448+yPos);
 					card.setY(scaler);
 					yPos += scaler;
 				}

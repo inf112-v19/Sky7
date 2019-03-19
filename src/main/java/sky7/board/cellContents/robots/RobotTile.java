@@ -1,6 +1,7 @@
 package sky7.board.cellContents.robots;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import sky7.board.ICell;
 import sky7.board.cellContents.DIRECTION;
@@ -9,6 +10,7 @@ import sky7.board.cellContents.IMoving;
 public class RobotTile implements IMoving {
     String textureRef = "robot";
     Texture texture;
+    Sprite spr;
     private static final int PRIORITY = 5;
     int playerNr;
     DIRECTION dir;
@@ -21,9 +23,10 @@ public class RobotTile implements IMoving {
     @Override
     public Texture getTexture() {
         if (texture == null) {
-            texture = new Texture("assets/robot1.png");
+            texture = new Texture("assets/robots/Robot" + Integer.toString(playerNr) + ".png");
+            spr = new Sprite(texture);
         }
-        return texture;
+        return spr.getTexture();
     }
 
     @Override
@@ -46,6 +49,8 @@ public class RobotTile implements IMoving {
         switch (dir) {
         case NORTH:
             dir = DIRECTION.WEST;
+//            spr.rotate(-90);
+//            spr.rotate90(false);
             break;
         case EAST:
             dir = DIRECTION.NORTH;
