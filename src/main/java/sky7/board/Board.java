@@ -224,7 +224,7 @@ public class Board implements IBoard {
     @Override
     public void rotateRobot(int currentPlayer, int rotate) {
         
-        System.out.println("Attempting to rotate " + rotate);
+        System.out.println("Attempting to rotate player " + currentPlayer + " " + rotate);
         
         switch (rotate) {
         case -1:
@@ -239,14 +239,17 @@ public class Board implements IBoard {
         default:
             throw new IllegalStateException("Invalid rotation value.");
         }
+        
+        System.out.println("Robot " + currentPlayer + " is headed " + robots[currentPlayer].getOrientation());
     }
 
     @Override
     public void rotateCogs() {
         for (int i=0; i<cogPos.size(); i++) {
             for (int j=0; j<nPlayers; j++) {
-                if (cogPos.get(i).equals(robotPos[i])) 
-                    rotateRobot(i, cogs.get(i).getRotation());
+                if (cogPos.get(i).equals(robotPos[j])) {
+                    rotateRobot(j, cogs.get(i).getRotation());
+                }
             }
         }
     }

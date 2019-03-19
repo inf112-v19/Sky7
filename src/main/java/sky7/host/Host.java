@@ -97,13 +97,11 @@ public class Host implements IHost {
                     }
                     
                 }
-                
                 pQueue.clear();
-                
-                activateBoardElements();
-                activateLasers();
-                
             }
+            
+            activateBoardElements();
+            activateLasers();
             
             // return registry cards to deck - need to implement locked cards later
             for (int j=nPlayers-1; j>=0; j--) {
@@ -146,6 +144,11 @@ public class Host implements IHost {
     private void activateBoardElements() {
         board.moveConveyors();
         board.rotateCogs();
+        
+        for (int i=0; i<nPlayers; i++) {
+            players[i].activateBoardElements();
+            // add method to activate conveyors
+        }
     }
     
     private void activateLasers() {
