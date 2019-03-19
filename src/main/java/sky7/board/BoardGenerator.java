@@ -61,9 +61,16 @@ public class BoardGenerator implements IBoardGenerator {
 
                     switch (typeOfCell) { //TODO throw argument exception if the file is formatted incorrectly.
                         case 'f':
+                            if(part.length() != 1){
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
+
                             layers.add(new FloorTile());
                             break;
                         case 'w': //TODO fill in wall (direction, can be multiple walls)
+                            if(!(part.length() > 1)){
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
                             layers.add(new FloorTile());
                             for (int k = 1; k < part.length(); k++) {
                                 char direction = part.charAt(k);
@@ -80,11 +87,16 @@ public class BoardGenerator implements IBoardGenerator {
                                     case 'W': // TODO west
                                         layers.add(new Wall(DIRECTION.WEST));
                                         break;
+                                    default:
+                                        throw new IllegalArgumentException("There is a mistake in the format of the file");
                                 }
                             }
 
                             break;
                         case 'b': //TODO fill in belt (direction and type)
+                            if(part.length() < 2) {
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
                             for (int k = 1; k < part.length(); k++) {
                                 char direction = part.charAt(k);
                                 switch (direction) {
@@ -100,10 +112,15 @@ public class BoardGenerator implements IBoardGenerator {
                                     case 'W': // TODO west
                                         layers.add(new Belt(4, 0));
                                         break;
+                                    default:
+                                        throw new IllegalArgumentException("There is a mistake in the format of the file");
                                 }
                             }
                             break;
                         case 'c': //TODO fill in cogwheel (direction with clock and against clock)
+                            if(!(part.length() > 1)){
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
                             for (int k = 1; k < part.length(); k++) {
                                 char direction = part.charAt(k);
                                 switch (direction) {
@@ -113,24 +130,41 @@ public class BoardGenerator implements IBoardGenerator {
                                     case 'A': //TODO against clock
                                         layers.add(new CogWheel(-1));
                                         break;
+                                    default:
+                                        throw new IllegalArgumentException("There is a mistake in the format of the file");
                                 }
                             }
                             break;
                         case 'g': //fill in flag (number)
+                            if(part.length() != 2){
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
                             int flagNumber = Integer.parseInt("" + part.charAt(1));
                             layers.add(new Flag(flagNumber));
                             break;
                         case 't': // fill in wrench (2 types)
+                            if(part.length() != 2){
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
                             int typeOfWrench = Integer.parseInt("" + part.charAt(1));
                             layers.add(new Wrench(typeOfWrench));
                             break;
                         case 'h': // fill in hole, essentially ignore
+                            if(part.length() != 1){
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
                             layers.add(new Hole());
                             break;
                         case 'l': //TODO fill in laser (start position, direction, number of lasers)
+                            if(part.length() != 1){
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
                             layers.add(new Laser(false, 0, 1));
                             break;
                         case 's': //TODO fill in start cell for robot (number)
+                            if(part.length() != 2){
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
                             int startNumber = Integer.parseInt("" + part.charAt(1));
                             layers.add(new StartPosition(startNumber));
                             break;
