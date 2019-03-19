@@ -46,6 +46,7 @@ public class Client implements IClient {
 
     @Override
     public void chooseCards(ArrayList<ICard> hand) {
+        player.clearRegistry();
         player.setHand(hand);
         state = STATE.CHOOSING_CARDS;
     }
