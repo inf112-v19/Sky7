@@ -39,7 +39,6 @@ public class GUI implements ApplicationListener {
 	private boolean cardsChoosen = false;
 	private int pointer, yPos, cardXpos = 0;
 	private int scaler = 128;
-	//	private ICard[] chosenCards = new ICard[5];
 	private ArrayList<ICard> hand;
 	private ArrayList<ICard> registry = new ArrayList<>(4);
 
@@ -65,11 +64,9 @@ public class GUI implements ApplicationListener {
 			camera = new OrthographicCamera();
 			viewport = new ExtendViewport(width * scaler, (height+2) * scaler, camera);
 
-			textures.put("robot", new Texture("assets/robot1.png"));
 			textures.put("floor", new Texture("assets/floor/plain.png"));
 			textures.put("outline", new Texture("assets/cards/Outline.png"));
 			textures.put("dock", new Texture("assets/dock.png"));
-			textures.put("unmarkedCard", new Texture("assets/cards/EmptyCard.png"));
 			textures.put("reset", new Texture("assets/dock/Reset.png"));
 			textures.put("confirm", new Texture("assets/dock/Confirm.png"));
 
@@ -79,7 +76,6 @@ public class GUI implements ApplicationListener {
 			confirm = new Sprite(textures.get("confirm"));
 			reset.setPosition(scaler*9, 20);
 			confirm.setPosition(scaler*10, 20);
-
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
@@ -117,9 +113,10 @@ public class GUI implements ApplicationListener {
 			}
 		}
 
-		Dock();
+		showDockBG();
 		chooseCards();
 		showRegistry();
+		
 		if(!cardsChoosen) {
 			reset.draw(batch);
 			if (isClicked(reset)) {
@@ -146,7 +143,7 @@ public class GUI implements ApplicationListener {
 	public void resume() {
 	}
 
-	public void Dock() {
+	public void showDockBG() {
 		for (int i = 0; i < width; i++) {
 			batch.draw(textures.get("dock"), i * scaler, 0);
 			batch.draw(textures.get("dock"), i * scaler, scaler);
@@ -192,12 +189,13 @@ public class GUI implements ApplicationListener {
 			cardXpos+=scaler;
 		}	
 	}
-
+	// pick which cards you want to use
 	public void chooseCards() {
 		if(!hand.equals(game.getHand())) {
 			hand.clear();
 			reset();
 		}
+		// if GO is not pressed, draw available cards
 		if(!cardsChoosen) {
 			for (ICard card : hand) {
 				drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
@@ -223,6 +221,7 @@ public class GUI implements ApplicationListener {
 		}
 	}
 
+	//show chosen cards
 	public void showRegistry() {
 		for (ICard currentCards : registry) {
 			drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
@@ -238,7 +237,7 @@ public class GUI implements ApplicationListener {
 			}
 		}
 	}
-
+	//check if the clicked position is a sprite
 	public boolean isClicked(Sprite sprite) {
 		if (Gdx.input.justTouched()){
 			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -260,17 +259,19 @@ public class GUI implements ApplicationListener {
 		cardXpos = 0;
 		registry.clear();
 		hand = game.getHand();
+		
 		for (ICard card : hand) {
 			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t" );
 		}
-		resetCards(hand);
-		resetCards(registry);
+		
+		resetCardPos(hand);
+		resetCardPos(registry);
 		setHandPos(hand);
 		showRegistry();
 		chooseCards();
 	}
 
-	private void resetCards(ArrayList<ICard> cards) {
+	private void resetCardPos(ArrayList<ICard> cards) {
 		for (ICard card : cards) {
 			card.setX(0);
 			card.setY(0);
