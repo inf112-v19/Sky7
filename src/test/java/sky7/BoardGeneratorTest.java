@@ -42,7 +42,7 @@ public class BoardGeneratorTest {
         try {
             generateLongStringWithRandomObjects();
             IBoardGenerator generator = new BoardGenerator();
-            Board board = generator.getBoardFromFile("src/test/assets/checkForRadnomeInput.json");
+            Board board = generator.getBoardFromFile("src/test/assets/checkForRandomInput.json");
             assertTrue(true); // if it gets here everthing okey
         }catch (FileNotFoundException e) {
             fail("didn't pass");
@@ -118,8 +118,8 @@ public class BoardGeneratorTest {
     private void generateLongStringWithRandomObjects(){
         ArrayList<String> listOfAll = getListOfValidCombinations();
 
-        int height = r.nextInt(500) + 2150;
-        int width = r.nextInt(500) + 2150;
+        int height = r.nextInt(500) + 550;
+        int width = r.nextInt(500) + 550;
 
         StringBuilder string =  new StringBuilder();
         for (int i = 0; i < height*width; i++) {
