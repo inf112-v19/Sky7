@@ -106,7 +106,7 @@ public class Host implements IHost {
             }
             
             // return registry cards to deck - need to implement locked cards later
-            for (int j=0; j<nPlayers; j++) {
+            for (int j=nPlayers-1; j>=0; j--) {
                 pDeck.returnCards(playerRegs.remove(j));
             }
             
