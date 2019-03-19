@@ -20,7 +20,16 @@ public interface IDeck {
      */
     void returnCards (ArrayList<ICard> cards);
     
+    /**
+     * Shuffle the deck
+     */
     void shuffle();
 
+    /**
+     * Get the number of cards currently in the deck
+     * 
+     * @return the number of cards available
+     */
+    int nRemainingCards();
 
 }
