@@ -46,7 +46,14 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 
 	@Override
 	public String toString() {
-		return super.toString();//TODO return a string representation of the card
+		String s = "";
+		
+		if (moveType) s += "move " + move;
+		else s+= "rotate " + rotate;
+		
+		s += " p:" + priority;
+		
+		return s;
 	}
 
 	@Override

@@ -48,9 +48,11 @@ public interface IPlayer {
     void setHand(ArrayList<ICard>  programCards);
 
     /**
-     * @param chosenCards the cards the player has chosen.
+     * Clear the registry
+     * 
+     * @param
      */
-    void setRegistry(ArrayList<ICard>  chosenCards);
+    void clearRegistry();
 
     /**
      * @return the hand that the player was dealt.
