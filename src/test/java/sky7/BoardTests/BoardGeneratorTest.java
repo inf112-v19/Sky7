@@ -1,6 +1,5 @@
-package sky7;
+package sky7.BoardTests;
 
-import com.badlogic.gdx.utils.Json;
 import com.google.gson.Gson;
 //import com.sun.org.apache.xml.internal.security.utils.resolver.implementations.ResolverAnonymous;
 import org.junit.Rule;
@@ -8,16 +7,12 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import sky7.board.Board;
 import sky7.board.BoardGenerator;
-import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
 import sky7.board.cellContents.Inactive.FloorTile;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -201,5 +196,51 @@ public class BoardGeneratorTest {
             fs += "f ";
         }
         System.out.println(fs);
+    }
+
+    private class JSonFileFormat{
+        private String name;
+        private String length;
+        private String players;
+        private String width;
+        private String height;
+        private String grid;
+
+
+
+
+
+
+        public JSonFileFormat(String name, String length, String players, String width, String height, String grid){
+            this.name = name;
+            this.length = length;
+            this.players = players;
+            this.width = width;
+            this.height = height;
+            this.grid = grid;
+        }
+
+        public String getLength() {
+            return length;
+        }
+
+        public String getName() {
+            return name;
+        }
+        public String getGrid() {
+            return grid;
+        }
+
+        public String getHeight() {
+            return height;
+        }
+
+        public String getPlayers() {
+            return players;
+        }
+
+        public String getWidth() {
+            return width;
+        }
     }
 }

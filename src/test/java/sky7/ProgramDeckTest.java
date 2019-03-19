@@ -18,7 +18,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int move3 = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).move() == 3){
+            if( (cards[i]).move() == 3){
                 move3++;
             }
         }
@@ -32,7 +32,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int move2 = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).move() == 2){
+            if( (cards[i]).move() == 2){
                 move2++;
             }
         }
@@ -46,7 +46,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int move1 = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).move() == 1){
+            if( (cards[i]).move() == 1){
                 move1++;
             }
         }
@@ -60,7 +60,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int right = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).rotate() == 1){
+            if( (cards[i]).rotate() == 1){
                 right++;
             }
         }
@@ -74,7 +74,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int left = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).rotate() == -1){
+            if( (cards[i]).rotate() == -1){
                 left++;
             }
         }
@@ -89,7 +89,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int turnAround = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).rotate() == 2){
+            if( (cards[i]).rotate() == 2){
                 turnAround++;
             }
         }
