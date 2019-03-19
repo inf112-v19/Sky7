@@ -36,10 +36,12 @@ public class RobotTile implements IMoving {
         return Integer.compare(this.drawPriority(), other.drawPriority());
     }
 
+    @Override
     public DIRECTION getOrientation() {
         return this.dir;
     }
 
+    @Override
     public void rotateCCW() {
         switch (dir) {
         case NORTH:
@@ -59,6 +61,7 @@ public class RobotTile implements IMoving {
         }
     }
     
+    @Override
     public void rotateCW() {
         switch (dir) {
         case NORTH:
@@ -78,6 +81,7 @@ public class RobotTile implements IMoving {
         }
     }
     
+    @Override
     public void rotate180() {
         dir = dir.inverse(dir);
     }
