@@ -1,17 +1,51 @@
 package sky7;
 
-import org.junit.Test;
-import sky7.card.ICard;
-import sky7.card.IDeck;
-import sky7.card.ProgramCard;
-import sky7.card.ProgramDeck;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import sky7.card.ICard;
+import sky7.card.ProgramCard;
+import sky7.card.ProgramDeck;
 
 public class ProgramDeckTest {
 
+    static ProgramDeck deck;
+    int N = 1000;
+    static int fullDeck;
+    
+    @BeforeClass
+    public static void initiate() {
+        deck = new ProgramDeck();
+        fullDeck = deck.nRemainingCards();
+        assertTrue(fullDeck == 84);
+    }
+    
+    @Test
+    public void sanityTest() {
+        
+        ArrayList<ICard> hand;
+        
+        for (int i=0; i<N ; i++) {
+            hand = deck.draw(9);
+            
+            for (int j=0; j<9 ; j++) {
+                for (int k=j+1; k<9 ; k++) {
+                    assertFalse(((ProgramCard)hand.get(j)).equals(((ProgramCard)hand.get(k))));
+                }
+            }
+            
+            deck.returnCards(hand);
+            
+            hand.clear();
+        }
+        
+        assertTrue(deck.nRemainingCards() == fullDeck);
+    }
+    
     @Test
     public void correctNumberMove3(){
         ProgramDeck deck = new ProgramDeck();
