@@ -16,11 +16,13 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.*;
 
 import sky7.board.ICell;
+import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
 import sky7.game.IClient;
 import sky7.game.STATE;
@@ -112,7 +114,13 @@ public class GUI implements ApplicationListener {
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
-					batch.draw(cell.getTexture(), i * scaler, (j + 2) * scaler, scaler, scaler);
+				    if (cell instanceof RobotTile) {
+				        int rotation = findRotation((RobotTile)cell);
+				        batch.draw(new TextureRegion(cell.getTexture()), i*scaler, (j+2)*scaler, scaler/2, scaler/2, scaler, scaler, 1, 1, rotation);
+				    } else {
+				        batch.draw(cell.getTexture(), i * scaler, (j + 2) * scaler, scaler, scaler);
+				    }
+					
 				}
 			}
 		}
@@ -138,7 +146,20 @@ public class GUI implements ApplicationListener {
 		batch.end();
 	}
 
-	@Override
+	private int findRotation(RobotTile robot) {
+        switch (robot.getOrientation()) {
+        case EAST:
+            return 270;
+        case SOUTH:
+            return 180;
+        case WEST:
+            return 90;
+        default:
+            return 0;
+        }
+    }
+
+    @Override
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		batch.setProjectionMatrix(camera.combined);

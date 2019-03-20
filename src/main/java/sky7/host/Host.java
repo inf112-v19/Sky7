@@ -133,10 +133,11 @@ public class Host implements IHost {
         ProgramCard thisPlayersCard = (ProgramCard)playerRegs.get(i).get(roundNr);
             for (int j=0; j<pQueue.size(); j++) {
                 ProgramCard thatPlayersCard = (ProgramCard)playerRegs.get(pQueue.get(j)).get(roundNr);
-                if (thisPlayersCard.priorityN() > thatPlayersCard.priorityN())
+                if (thisPlayersCard.priorityN() > thatPlayersCard.priorityN()) {
                     pQueue.add(j, i);
+                    continue;
+                }
             }
-            
             pQueue.add(i);
         }
     }
@@ -147,17 +148,18 @@ public class Host implements IHost {
         
         for (int i=0; i<nPlayers; i++) {
             players[i].activateBoardElements();
-            // add method to activate conveyors
         }
     }
     
     private void activateLasers() {
-        
+        for (int i=0; i<nPlayers; i++) {
+            players[i].activateLasers();
+        }
     }
 
     @Override
     public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
-        if (registry.size() < 5) throw new IllegalArgumentException("registry does not contain 5 cards");
+        if (registry.size() < 5) throw new IllegalArgumentException("Player " + pN + " attempting to play fewer than 5 cards.");
         playerRegs.put(pN, registry);
         pDeck.returnCards(discard);
         readyPlayers++;
