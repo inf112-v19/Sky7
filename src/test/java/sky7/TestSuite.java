@@ -9,6 +9,7 @@ import sky7.BoardTests.BoardTests;
 import sky7.client.ClientTest;
 
 @RunWith(Suite.class)
+
 @SuiteClasses({
     BoardGeneratorTest.class,
     BoardTests.class,
