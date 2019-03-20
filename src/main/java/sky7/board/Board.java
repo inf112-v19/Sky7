@@ -17,7 +17,7 @@ import sky7.board.cellContents.robots.RobotTile;
 
 public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
-    private int width, height, nPlayers;
+    private int width, height, nPlayers, maxMove;
     private Vector2[] robotPos;
     private RobotTile[] robots;
     private List<CogWheel> cogs;
@@ -119,9 +119,10 @@ public class Board implements IBoard {
         }
         
         // check how far in the given direction it is possible to move (up to the move value)
+        maxMove = 0;
         for (int i=1; i<=move; i++) {
             possibleMove = (isMovePossible(player, i, dir)) ? i : possibleMove;
-            if (possibleMove < i) break;
+            if (possibleMove < i || maxMove == i) break;
         }
         
         
@@ -182,11 +183,18 @@ public class Board implements IBoard {
         if (target.x < 0 || target.y < 0) return false;
         if (target.x >= grid.length || target.y >= grid[0].length) return false;
         
+        // set maxMove to move+1 indicating it is possible to move into the target cell and beyond until it is found not to be possible
+        maxMove = move+1;
+        
         // check what is in the target cell
         for(ICell item : grid[(int) target.x][(int) target.y]) {
             
+            // if its a wall in the opposite end of the cell, this cell is the farthest the robot can go, set max move
             // if it's a wall facing the robot, return false
-            if (item instanceof Wall && ((Wall) item).getDirection() == dir.inverse(dir)) return false;
+            if (item instanceof Wall) {
+                if (((Wall) item).getDirection() == dir) maxMove = move;
+                if (((Wall) item).getDirection() == dir.inverse(dir)) return false;
+            }
             
             if (item instanceof RobotTile) {
                 
