@@ -22,5 +22,6 @@ public interface IDeck {
     
     void shuffle();
 
+    int getSize();
 
 }
