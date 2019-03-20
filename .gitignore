@@ -21,6 +21,7 @@
 
 # Test Files #
 checkForRandomInput.json
+checkInvalidInputTest.json
 
 target
 .iml

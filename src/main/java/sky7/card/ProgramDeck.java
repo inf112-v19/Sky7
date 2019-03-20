@@ -75,4 +75,9 @@ public class ProgramDeck implements IDeck {
 
         return deck;
     }
+
+    @Override
+    public int nRemainingCards() {
+        return availableCards.size(); 
+    }
 }

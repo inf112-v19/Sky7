@@ -81,8 +81,8 @@ public class Player implements IPlayer {
     }
 
     @Override
-    public void setRegistry(ArrayList<ICard> chosenCards) {
-        registry = chosenCards;
+    public void clearRegistry() {
+        registry.clear();
     }
 
     @Override
