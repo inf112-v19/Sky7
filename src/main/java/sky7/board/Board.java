@@ -50,7 +50,7 @@ public class Board implements IBoard {
         this.grid = grid;
         this.width = width;
         this.height = height;
-        this.nPlayers = 1;
+        this.nPlayers = 0;
         this.robotPos = new Vector2[8];
         this.robots = new RobotTile[8];
         this.cogs = new ArrayList<>();
@@ -103,9 +103,11 @@ public class Board implements IBoard {
 
     @Override
     public void placeRobot(int playerNr, int x, int y) {
+        System.out.println("Placing robot " + playerNr + " at " + x + ", " + y);
         robotPos[playerNr] = new Vector2(x,y);
         robots[playerNr] = new RobotTile(playerNr);
         grid[x][y].add(robots[playerNr]);
+        nPlayers++;
     }
 
     @Override
@@ -128,24 +130,7 @@ public class Board implements IBoard {
         
         if (possibleMove > 0) {
             
-            Vector2 target = new Vector2(0,0);
-            
-            switch (dir) {
-            case NORTH:
-                target = new Vector2(robotPos[player].x, robotPos[player].y+possibleMove);
-                break;
-            case EAST:
-                target = new Vector2(robotPos[player].x+possibleMove, robotPos[player].y);
-                break;
-            case SOUTH:
-                target = new Vector2(robotPos[player].x, robotPos[player].y-possibleMove);
-                break;
-            case WEST:
-                target = new Vector2(robotPos[player].x-possibleMove, robotPos[player].y);
-                break;
-            default:
-                throw new IllegalStateException("Found no orientation for robot " + player);
-            }
+            Vector2 target = getDestination(robotPos[player], dir, possibleMove);
             
             updateRobotPos(player, target);
         }
@@ -160,24 +145,7 @@ public class Board implements IBoard {
             }
         }
         
-        Vector2 target = new Vector2(0,0);
-        
-        switch (dir) {
-        case NORTH:
-            target = new Vector2(robotPos[player].x, robotPos[player].y+move);
-            break;
-        case EAST:
-            target = new Vector2(robotPos[player].x+move, robotPos[player].y);
-            break;
-        case SOUTH:
-            target = new Vector2(robotPos[player].x, robotPos[player].y-move);
-            break;
-        case WEST:
-            target = new Vector2(robotPos[player].x-move, robotPos[player].y);
-            break;
-        default:
-            throw new IllegalStateException("Found no orientation for robot " + player);
-        }
+        Vector2 target = getDestination(robotPos[player], robots[player].getOrientation(), move);
         
         // check that new pos is within grid
         if (target.x < 0 || target.y < 0) return false;
@@ -202,19 +170,43 @@ public class Board implements IBoard {
                 
                 // get the playerNr of the blocking robot
                 for (int i=0; i<nPlayers; i++) {
-                    if (i != player && robotPos[i] == target) {
+                    if (i != player && robotPos[i].equals(target)) {
                         blockingRobot = i;
                     }
                 }
                 
                 // recursively check if the robot can be pushed in the current direction
                 boolean canMove = isMovePossible(blockingRobot, 1, dir);
-                if (canMove) updateRobotPos(blockingRobot, target);
+                if (canMove) {
+                    Vector2 blockingRobotTarget = getDestination(robotPos[blockingRobot], dir, 1);
+                    updateRobotPos(blockingRobot, blockingRobotTarget);
+                }
                 return canMove;
             }
         }
         
         return true;
+    }
+
+    private Vector2 getDestination(Vector2 pos, DIRECTION dir, int distance) {
+        Vector2 target;
+        switch (dir) {
+        case NORTH:
+            target = new Vector2(pos.x, pos.y+distance);
+            break;
+        case EAST:
+            target = new Vector2(pos.x+distance, pos.y);
+            break;
+        case SOUTH:
+            target = new Vector2(pos.x, pos.y-distance);
+            break;
+        case WEST:
+            target = new Vector2(pos.x-distance, pos.y);
+            break;
+        default:
+            throw new IllegalStateException("Could not calculate target position.");
+        }
+        return target;
     }
 
     private void updateRobotPos(int player, Vector2 target) {

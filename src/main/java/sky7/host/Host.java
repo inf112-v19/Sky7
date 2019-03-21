@@ -45,6 +45,7 @@ public class Host implements IHost {
         cli.connect((IHost)this, 0, boardName); //TODO do this for each client and give each client a unique ID.
         
         board.placeRobot(0, 5, 5);
+        board.placeRobot(1, 6, 6);
         
         run();
     }

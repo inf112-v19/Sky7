@@ -57,6 +57,7 @@ public class Client implements IClient {
         board = generator.getBoardFromFile(boardName);
         state = STATE.MOVING_ROBOT;
         board.placeRobot(0, 5, 5);
+        board.placeRobot(1, 6, 6);
     }
 
     @Override
