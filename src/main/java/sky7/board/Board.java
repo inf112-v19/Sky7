@@ -136,6 +136,14 @@ public class Board implements IBoard {
         }
     }
     
+    /**
+     * Check whether a move is possible with the given parameters
+     * 
+     * @param player the player/robot to be moved
+     * @param move the number of tiles to check ahead
+     * @param dir the direction to check for possible movement
+     * @return true if it is possible (not blocked by walls, edge of map or immovable robots)
+     */
     private boolean isMovePossible(int player, int move, DIRECTION dir) {
         
         // return false if there's a wall in tile which the robot is in (same direction as robot is going to move)
@@ -145,7 +153,7 @@ public class Board implements IBoard {
             }
         }
         
-        Vector2 target = getDestination(robotPos[player], robots[player].getOrientation(), move);
+        Vector2 target = getDestination(robotPos[player], dir, move);
         
         // check that new pos is within grid
         if (target.x < 0 || target.y < 0) return false;
@@ -188,6 +196,14 @@ public class Board implements IBoard {
         return true;
     }
 
+    /**
+     * Get the coordinates of the tile in the given direction and distance from pos
+     * 
+     * @param pos the source from which to find the new coordinates
+     * @param dir the direction of travel
+     * @param distance the number of tiles to traverse
+     * @return the target vector (coordinates)
+     */
     private Vector2 getDestination(Vector2 pos, DIRECTION dir, int distance) {
         Vector2 target;
         switch (dir) {
@@ -209,6 +225,12 @@ public class Board implements IBoard {
         return target;
     }
 
+    /**
+     * Move a robot to a target vector
+     * 
+     * @param player the player/robot to move
+     * @param target the destination coordinates
+     */
     private void updateRobotPos(int player, Vector2 target) {
         Vector2 pos = robotPos[player];
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
