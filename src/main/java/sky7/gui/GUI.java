@@ -29,7 +29,7 @@ import sky7.game.STATE;
 
 public class GUI implements ApplicationListener {
 	private IClient game;
-	private int width, height, gameWidth, gameHeight;
+	private int width, height, windowWidth, windowHeight;
 	private SpriteBatch batch;
 	private BitmapFont font;
 
@@ -60,8 +60,8 @@ public class GUI implements ApplicationListener {
 			game.generateBoard();
 			this.width = game.gameBoard().getWidth();
 			this.height = game.gameBoard().getHeight();
-			gameWidth = width+4;
-			gameHeight = height+2;
+			windowWidth = width+4;
+			windowHeight = height+2;
 
 			batch = new SpriteBatch();
 			font = new BitmapFont();
@@ -70,7 +70,7 @@ public class GUI implements ApplicationListener {
 			font.setColor(Color.GOLDENROD);
 
 			camera = new OrthographicCamera();
-			viewport = new ExtendViewport(gameWidth * scaler, gameHeight * scaler, camera);
+			viewport = new ExtendViewport(windowWidth * scaler, windowHeight * scaler, camera);
 
 			textures.put("floor", new Texture("assets/floor/plain.png"));
 			textures.put("outline", new Texture("assets/cards/Outline.png"));
@@ -112,26 +112,13 @@ public class GUI implements ApplicationListener {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
-		showDockBG();
 		
-		// draw a grid of width*height, each square at 128*128 pixels
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
-				    if (cell instanceof RobotTile) {
-				        int rotation = findRotation((RobotTile)cell);
-				        batch.draw(new TextureRegion(cell.getTexture()), (i+2)*scaler, (j+2)*scaler, scaler/2, scaler/2, scaler, scaler, 1, 1, rotation);
-				    } else {
-				        batch.draw(cell.getTexture(), (i+2) * scaler, (j + 2) * scaler, scaler, scaler);
-				    }
-					
-				}
-			}
-		}
-
-		chooseCards();
-		showRegistry();
+		showDockBG();
+		showBoard();
 		showHealth();
+		showRegistry();
+		
+		chooseCards();
 		
 		if(!cardsChoosen && pointer != 0) {
 			reset.draw(batch);
@@ -150,6 +137,7 @@ public class GUI implements ApplicationListener {
 		batch.end();
 	}
 
+	//find the rotation of the robot
 	private int findRotation(RobotTile robot) {
         switch (robot.getOrientation()) {
         case EAST:
@@ -174,8 +162,8 @@ public class GUI implements ApplicationListener {
 	}
 
 	public void showDockBG() {
-		for (int i = 0; i < gameWidth; i++) {
-			for (int j=0; j < gameHeight; j++) {
+		for (int i = 0; i < windowWidth; i++) {
+			for (int j=0; j < windowHeight; j++) {
 			batch.draw(textures.get("dock"), i * scaler, j*scaler);
 			}
 		}
@@ -183,6 +171,25 @@ public class GUI implements ApplicationListener {
 			batch.draw(textures.get("outline"), i * scaler+64, scaler);
 		}
 	}
+	
+	// draw the board as a grid of width*height, each square at 128*128 pixels
+	public void showBoard() {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
+				    if (cell instanceof RobotTile) {
+				        int rotation = findRotation((RobotTile)cell);
+				        batch.draw(new TextureRegion(cell.getTexture()), (i+2)*scaler, (j+2)*scaler, scaler/2, scaler/2, scaler, scaler, 1, 1, rotation);
+				    } else {
+				        batch.draw(cell.getTexture(), (i+2) * scaler, (j + 2) * scaler, scaler, scaler);
+				    }
+					
+				}
+			}
+		}
+
+	}
+
 	// Show health and healthtokens
 	public void showHealth() {
 		font.draw(batch, "Health: " + game.getPlayer().getHealth() + "\nTokens: " + game.getPlayer().getLifeToken(), 12*scaler+72, 2*scaler-32);
@@ -264,6 +271,7 @@ public class GUI implements ApplicationListener {
 			}
 		}
 	}
+	
 	//check if the clicked position is a sprite
 	public boolean isClicked(Sprite sprite) {
 		if (Gdx.input.justTouched()){
@@ -298,6 +306,7 @@ public class GUI implements ApplicationListener {
 		chooseCards();
 	}
 
+	//reset the cardpositions
 	private void resetCardPos(ArrayList<ICard> cards) {
 		for (ICard card : cards) {
 			card.setX(0);
