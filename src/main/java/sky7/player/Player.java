@@ -124,5 +124,17 @@ public class Player implements IPlayer {
         discard.remove(chosenCard);
     }
 
+	@Override
+	public CharSequence getHealth() {
+		String healthStr = Integer.toString(health);
+		return healthStr;
+	}
+
+	@Override
+	public CharSequence getLifeToken() {
+		String lifeTokensStr = Integer.toString(lifeTokens);
+		return lifeTokensStr;
+	}
+
 
 }

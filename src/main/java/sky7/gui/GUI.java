@@ -128,6 +128,7 @@ public class GUI implements ApplicationListener {
 		showDockBG();
 		chooseCards();
 		showRegistry();
+		showHealth();
 		
 		if(!cardsChoosen && pointer != 0) {
 			reset.draw(batch);
@@ -178,6 +179,10 @@ public class GUI implements ApplicationListener {
 			batch.draw(textures.get("outline"), i * scaler+64, scaler);
 		}
 	}
+	// Show health and healthtokens
+	public void showHealth() {
+		font.draw(batch, "Health: " + game.getPlayer().getHealth() + "\nTokens: " + game.getPlayer().getLifeToken(), 10*scaler+72, 2*scaler-32);
+	}
 
 	// check if user has chosen all 5 cards
 	// and put the chosen cards in the game-client, and lock the registry
@@ -207,14 +212,6 @@ public class GUI implements ApplicationListener {
 		sprite.draw(batch);
 	}
 
-	// set the x position for the cards to spread them accross the map
-	private void setHandPos(ArrayList<ICard> hand) {
-		for (ICard card : hand) {
-			card.setX(192+cardXpos);
-			card.setY(0);
-			cardXpos+=scaler;
-		}	
-	}
 	// pick which cards you want to use
 	public void chooseCards() {
 		if(!hand.equals(game.getHand())) {
@@ -301,6 +298,15 @@ public class GUI implements ApplicationListener {
 		for (ICard card : cards) {
 			card.setX(0);
 			card.setY(0);
+		}	
+	}
+	
+	// set the x position for the cards to spread them accross the map
+	private void setHandPos(ArrayList<ICard> hand) {
+		for (ICard card : hand) {
+			card.setX(192+cardXpos);
+			card.setY(0);
+			cardXpos+=scaler;
 		}	
 	}
 }
