@@ -45,8 +45,13 @@ public class Host implements IHost {
         cli.connect((IHost)this, 0, boardName); //TODO do this for each client and give each client a unique ID.
         
         board.placeRobot(0, 5, 5);
+        board.placeRobot(1, 6, 6);
         
         run();
+    }
+    
+    public Host() {
+        
     }
 
     private synchronized void run() {
@@ -93,16 +98,14 @@ public class Host implements IHost {
                     }
                     
                 }
-                
                 pQueue.clear();
-                
-                activateBoardElements();
-                activateLasers();
-                
             }
             
+            activateBoardElements();
+            activateLasers();
+            
             // return registry cards to deck - need to implement locked cards later
-            for (int j=0; j<nPlayers; j++) {
+            for (int j=nPlayers-1; j>=0; j--) {
                 pDeck.returnCards(playerRegs.remove(j));
             }
             
@@ -131,10 +134,11 @@ public class Host implements IHost {
         ProgramCard thisPlayersCard = (ProgramCard)playerRegs.get(i).get(roundNr);
             for (int j=0; j<pQueue.size(); j++) {
                 ProgramCard thatPlayersCard = (ProgramCard)playerRegs.get(pQueue.get(j)).get(roundNr);
-                if (thisPlayersCard.priorityN() > thatPlayersCard.priorityN())
+                if (thisPlayersCard.priorityN() > thatPlayersCard.priorityN()) {
                     pQueue.add(j, i);
+                    continue;
+                }
             }
-            
             pQueue.add(i);
         }
     }
@@ -142,15 +146,21 @@ public class Host implements IHost {
     private void activateBoardElements() {
         board.moveConveyors();
         board.rotateCogs();
+        
+        for (int i=0; i<nPlayers; i++) {
+            players[i].activateBoardElements();
+        }
     }
     
     private void activateLasers() {
-        
+        for (int i=0; i<nPlayers; i++) {
+            players[i].activateLasers();
+        }
     }
 
     @Override
     public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
-        if (registry.size() < 5) throw new IllegalArgumentException("registry does not contain 5 cards");
+        if (registry.size() < 5) throw new IllegalArgumentException("Player " + pN + " attempting to play fewer than 5 cards.");
         playerRegs.put(pN, registry);
         pDeck.returnCards(discard);
         readyPlayers++;

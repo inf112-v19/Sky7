@@ -2,6 +2,9 @@ package sky7.gui;
 
 import java.io.FileNotFoundException;
 import java.util.*;
+
+import org.omg.PortableServer.POAManagerPackage.State;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -13,17 +16,20 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.*;
 
 import sky7.board.ICell;
+import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
 import sky7.game.IClient;
+import sky7.game.STATE;
 
 public class GUI implements ApplicationListener {
 	private IClient game;
-	private int width, height;
+	private int width, height, gameWidth, gameHeight;
 	private SpriteBatch batch;
 	private BitmapFont font;
 
@@ -39,9 +45,8 @@ public class GUI implements ApplicationListener {
 	private boolean cardsChoosen = false;
 	private int pointer, yPos, cardXpos = 0;
 	private int scaler = 128;
-	private ICard[] chosenCards = new ICard[5];
 	private ArrayList<ICard> hand;
-	private ArrayList<ICard> currentHand = new ArrayList<>(5);
+	private ArrayList<ICard> registry = new ArrayList<>(4);
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -55,6 +60,8 @@ public class GUI implements ApplicationListener {
 			game.generateBoard();
 			this.width = game.gameBoard().getWidth();
 			this.height = game.gameBoard().getHeight();
+			gameWidth = width+4;
+			gameHeight = height+2;
 
 			batch = new SpriteBatch();
 			font = new BitmapFont();
@@ -63,13 +70,11 @@ public class GUI implements ApplicationListener {
 			font.setColor(Color.GOLDENROD);
 
 			camera = new OrthographicCamera();
-			viewport = new ExtendViewport(width * scaler, (height+2) * scaler, camera);
+			viewport = new ExtendViewport(gameWidth * scaler, gameHeight * scaler, camera);
 
-			textures.put("robot", new Texture("assets/robot1.png"));
 			textures.put("floor", new Texture("assets/floor/plain.png"));
 			textures.put("outline", new Texture("assets/cards/Outline.png"));
 			textures.put("dock", new Texture("assets/dock.png"));
-			textures.put("unmarkedCard", new Texture("assets/cards/EmptyCard.png"));
 			textures.put("reset", new Texture("assets/dock/Reset.png"));
 			textures.put("confirm", new Texture("assets/dock/Confirm.png"));
 
@@ -77,12 +82,12 @@ public class GUI implements ApplicationListener {
 
 			reset = new Sprite(textures.get("reset"));
 			confirm = new Sprite(textures.get("confirm"));
-			reset.setPosition(scaler*9, 20);
-			confirm.setPosition(scaler*10, 20);
-
+			reset.setPosition(scaler*4, scaler+20);
+			confirm.setPosition(scaler*11, scaler+20);
+			
 			hand = game.getHand();
 			addSprites();
-			initiateCards(hand);
+			setHandPos(hand);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -98,7 +103,6 @@ public class GUI implements ApplicationListener {
 
 	@Override
 	public void pause() {
-
 	}
 
 	@Override
@@ -108,20 +112,28 @@ public class GUI implements ApplicationListener {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
-
+		showDockBG();
+		
 		// draw a grid of width*height, each square at 128*128 pixels
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
-					batch.draw(cell.getTexture(), i * scaler, (j + 2) * scaler, scaler, scaler);
+				    if (cell instanceof RobotTile) {
+				        int rotation = findRotation((RobotTile)cell);
+				        batch.draw(new TextureRegion(cell.getTexture()), (i+2)*scaler, (j+2)*scaler, scaler/2, scaler/2, scaler, scaler, 1, 1, rotation);
+				    } else {
+				        batch.draw(cell.getTexture(), (i+2) * scaler, (j + 2) * scaler, scaler, scaler);
+				    }
+					
 				}
 			}
 		}
 
-		Dock();
 		chooseCards();
-		showcurrenthand();
-		if(!cardsChoosen) {
+		showRegistry();
+		showHealth();
+		
+		if(!cardsChoosen && pointer != 0) {
 			reset.draw(batch);
 			if (isClicked(reset)) {
 				reset();
@@ -131,13 +143,27 @@ public class GUI implements ApplicationListener {
 		if (pointer == 5) {
 			confirm.draw(batch);
 			if (isClicked(confirm)) {
-				playerCards();
+				setRegistry();
+				pointer = 0;
 			}
 		}
 		batch.end();
 	}
 
-	@Override
+	private int findRotation(RobotTile robot) {
+        switch (robot.getOrientation()) {
+        case EAST:
+            return 270;
+        case SOUTH:
+            return 180;
+        case WEST:
+            return 90;
+        default:
+            return 0;
+        }
+    }
+
+    @Override
 	public void resize(int width, int height) {
 		viewport.update(width, height, true);
 		batch.setProjectionMatrix(camera.combined);
@@ -145,26 +171,30 @@ public class GUI implements ApplicationListener {
 
 	@Override
 	public void resume() {
-
 	}
 
-	public void Dock() {
-		for (int i = 0; i < width; i++) {
-			batch.draw(textures.get("dock"), i * scaler, 0);
-			batch.draw(textures.get("dock"), i * scaler, scaler);
+	public void showDockBG() {
+		for (int i = 0; i < gameWidth; i++) {
+			for (int j=0; j < gameHeight; j++) {
+			batch.draw(textures.get("dock"), i * scaler, j*scaler);
+			}
 		}
-		for (int i = 0; i < 5; i++) {
-			batch.draw(textures.get("outline"), i * scaler, scaler);
+		for (int i = 5; i < 10; i++) {
+			batch.draw(textures.get("outline"), i * scaler+64, scaler);
 		}
+	}
+	// Show health and healthtokens
+	public void showHealth() {
+		font.draw(batch, "Health: " + game.getPlayer().getHealth() + "\nTokens: " + game.getPlayer().getLifeToken(), 12*scaler+72, 2*scaler-32);
 	}
 
 	// check if user has chosen all 5 cards
 	// and put the chosen cards in the game-client, and lock the registry
-	public void playerCards() {
-		if (chosenCards[4] != null) {
+	public void setRegistry() {
+		if (registry.get(4) != null) {
 			cardsChoosen = true;
-			for (int i=0; i<chosenCards.length; i++) {
-				game.setCard(chosenCards[i], i);
+			for (int i=0; i<registry.size(); i++) {
+				game.setCard(registry.get(i), i);
 			}
 			game.lockRegistry();
 		}
@@ -186,25 +216,18 @@ public class GUI implements ApplicationListener {
 		sprite.draw(batch);
 	}
 
-	// set the x position for the cards to spread them accross the map
-	private void initiateCards(ArrayList<ICard> hand) {
-		for (ICard card : hand) {
-			card.setX(cardXpos);
-			card.setY(0);
-			cardXpos+=scaler;
-		}	
-	}
-
+	// pick which cards you want to use
 	public void chooseCards() {
-		if(hand.get(1) != game.getHand().get(1)) {
+		if(!hand.equals(game.getHand())) {
 			hand.clear();
-			currentHand.clear();
-			hand = game.getHand();
 			reset();
 		}
-		for (ICard card : hand) {
-			drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
-			font.draw(batch, card.getPriority(), card.getX()+42, card.getY()+93);
+		// if GO is not pressed, draw available cards
+		if(!cardsChoosen) {
+			for (ICard card : hand) {
+				drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
+				font.draw(batch, card.getPriority(), card.getX()+42, card.getY()+93);
+			}
 		}
 		if (!cardsChoosen && pointer != 5) {
 			//check if card is clicked
@@ -213,14 +236,11 @@ public class GUI implements ApplicationListener {
 				for(ICard card : hand) {
 					if(clickPos.x <= scaler+card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
 						if (card.getY() != scaler) {
-							currentHand.add(card);
-							chosenCards[pointer] = card;
+							registry.add(card);
 							pointer++;
-							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef());
-//							card.setX(yPos);
+							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef() + " \tPriority: \t" + card.getPriority());
 							// just move them outside the map for now lol
 							card.setY(-scaler);
-//							yPos += scaler;
 						}
 					}
 				}
@@ -228,52 +248,69 @@ public class GUI implements ApplicationListener {
 		}
 	}
 
-	public void showcurrenthand() {
-		for (ICard currentCards : currentHand) {
+	//show chosen cards
+	public void showRegistry() {
+		for (ICard currentCards : registry) {
 			drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
 			font.draw(batch, currentCards.getPriority(), currentCards.getX()+42, currentCards.getY()+93);
 		}
-
-		if (!cardsChoosen && pointer != 6) {
-			for (ICard currentCards : currentHand) {
-				if (currentCards.getY() != scaler) {
-					//				System.out.println(pointer + " card(s) choosen " + currentCards.GetSpriteRef());
-					currentCards.setX(yPos);
-					currentCards.setY(scaler);
+		if (!cardsChoosen && pointer <= 5) {
+			for (ICard card : registry) {
+				if (card.getY() != scaler) {
+					card.setX((scaler*5)+64+yPos);
+					card.setY(scaler);
 					yPos += scaler;
 				}
 			}
 		}
 	}
-	//reset chosen cards, reset position etc
-	public void reset() {
-		System.out.println("Resetting");
-		cardsChoosen = false;
-		pointer = 0;
-		yPos = 0;
-		cardXpos = 0;
-		for (int i=0; i<chosenCards.length; i++) {
-			chosenCards[i] = null;
-		}
-		currentHand.clear();
-		initiateCards(hand);
-		initiateCards(currentHand);
-		chooseCards();
-	}
-
+	//check if the clicked position is a sprite
 	public boolean isClicked(Sprite sprite) {
 		if (Gdx.input.justTouched()){
 			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 			if (clickPos.x > sprite.getX() && clickPos.x < sprite.getX() + sprite.getWidth()) {
 				if (clickPos.y > sprite.getY() && clickPos.y < sprite.getY() + sprite.getHeight()) {
-					sprite.setColor(Color.BLACK);
-					sprite.draw(batch);
-					sprite.draw(batch);
-					sprite.setColor(Color.WHITE);
 					return true;
 				}
 			}
 		}
 		return false;
+	}
+
+	//reset chosen cards, reset position etc
+	public void reset() {
+		System.out.println("\n----------- Resetting Cards -----------");
+		cardsChoosen = false;
+		pointer = 0;
+		yPos = 0;
+		cardXpos = 0;
+		registry.clear();
+		hand = game.getHand();
+		
+		for (ICard card : hand) {
+			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t" );
+		}
+		
+		resetCardPos(hand);
+		resetCardPos(registry);
+		setHandPos(hand);
+		showRegistry();
+		chooseCards();
+	}
+
+	private void resetCardPos(ArrayList<ICard> cards) {
+		for (ICard card : cards) {
+			card.setX(0);
+			card.setY(0);
+		}	
+	}
+	
+	// set the x position for the cards to spread them accross the map
+	private void setHandPos(ArrayList<ICard> hand) {
+		for (ICard card : hand) {
+			card.setX((3*scaler+64)+cardXpos);
+			card.setY(0);
+			cardXpos+=scaler;
+		}	
 	}
 }

@@ -1,24 +1,61 @@
 package sky7;
 
-import org.junit.Test;
-import sky7.card.ICard;
-import sky7.card.IDeck;
-import sky7.card.ProgramCard;
-import sky7.card.ProgramDeck;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import sky7.card.ICard;
+import sky7.card.ProgramCard;
+import sky7.card.ProgramDeck;
 
 public class ProgramDeckTest {
 
+    static ProgramDeck deck;
+    int N = 1000;
+    static int fullDeck;
+    
+    @BeforeClass
+    public static void initiate() {
+        deck = new ProgramDeck();
+        fullDeck = deck.nRemainingCards();
+        assertTrue(fullDeck == 84);
+    }
+    
+    @Test
+    public void sanityTest() {
+        
+        ArrayList<ICard> hand;
+        
+        // draw and return 9 cards N times
+        for (int i=0; i<N ; i++) {
+            hand = deck.draw(9);
+            
+            // assert that no duplicate cards occur
+            for (int j=0; j<9 ; j++) {
+                for (int k=j+1; k<9 ; k++) {
+                    assertFalse(((ProgramCard)hand.get(j)).equals(((ProgramCard)hand.get(k))));
+                }
+            }
+            
+            deck.returnCards(hand);
+            
+            hand.clear();
+        }
+        
+        // assert that the deck is complete after drawing and returning cards
+        assertTrue(deck.nRemainingCards() == fullDeck);
+    }
+    
     @Test
     public void correctNumberMove3(){
         ProgramDeck deck = new ProgramDeck();
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int move3 = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).move() == 3){
+            if( (cards[i]).move() == 3){
                 move3++;
             }
         }
@@ -32,7 +69,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int move2 = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).move() == 2){
+            if( (cards[i]).move() == 2){
                 move2++;
             }
         }
@@ -46,7 +83,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int move1 = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).move() == 1){
+            if( (cards[i]).move() == 1){
                 move1++;
             }
         }
@@ -60,7 +97,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int right = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).rotate() == 1){
+            if( (cards[i]).rotate() == 1){
                 right++;
             }
         }
@@ -74,7 +111,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int left = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).rotate() == -1){
+            if( (cards[i]).rotate() == -1){
                 left++;
             }
         }
@@ -89,7 +126,7 @@ public class ProgramDeckTest {
         ProgramCard[] cards = deck.getProgramCardsForTesting();
         int turnAround = 0;
         for (int i = 0; i < cards.length; i++) {
-            if( ((ProgramCard) (cards[i])).rotate() == 2){
+            if( (cards[i]).rotate() == 2){
                 turnAround++;
             }
         }
