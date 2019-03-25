@@ -26,7 +26,7 @@ public class Host implements IHost {
 //    TreeSet<PlayerCard> queue;
     List<Integer> pQueue;
     BoardGenerator bg;
-    HostNetListener net;
+    HostNetHandler net;
     IHost host;
 
 
@@ -51,10 +51,9 @@ public class Host implements IHost {
         board.placeRobot(1, 6, 6);
         
         new Thread(new Runnable(){
-
             @Override
             public void run() {
-                net = new HostNetListener(host);
+                net = new HostNetHandler(host);
             }
         }).start();
         

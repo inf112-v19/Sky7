@@ -1,17 +1,20 @@
 package sky7.host;
 
+import java.util.ArrayList;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net.Protocol;
 import com.badlogic.gdx.net.ServerSocket;
 import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.net.Socket;
 
-public class HostNetListener {
+public class HostNetHandler {
 
     ServerSocket sSocket;
     ServerSocketHints servHints;
+    ArrayList<HostConnection> connections;
     
-    public HostNetListener(final IHost host) {
+    public HostNetHandler(final IHost host) {
         servHints = new ServerSocketHints();
         servHints.acceptTimeout = 8000;
         sSocket = Gdx.net.newServerSocket(Protocol.TCP, 6767, servHints);
@@ -22,7 +25,7 @@ public class HostNetListener {
 
                 @Override
                 public void run() {
-                    new HostConnection(host, cSocket);
+                    connections.add(new HostConnection(host, cSocket));
                 }
             }).start();
         }
