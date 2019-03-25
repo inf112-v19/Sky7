@@ -26,6 +26,8 @@ public class Host implements IHost {
 //    TreeSet<PlayerCard> queue;
     List<Integer> pQueue;
     BoardGenerator bg;
+    HostNetListener net;
+    IHost host;
 
 
     public Host(IClient cli) {
@@ -36,6 +38,7 @@ public class Host implements IHost {
         pQueue = new LinkedList<>();
         pDeck = new ProgramDeck();
         bg = new BoardGenerator();
+        host = this;
         try {
             board = bg.getBoardFromFile(boardName);
         } catch (FileNotFoundException e) {
@@ -47,11 +50,19 @@ public class Host implements IHost {
         board.placeRobot(0, 5, 5);
         board.placeRobot(1, 6, 6);
         
+        new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                net = new HostNetListener(host);
+            }
+        }).start();
+        
         run();
     }
     
     public Host() {
-        
+        // used by tests
     }
 
     private synchronized void run() {
