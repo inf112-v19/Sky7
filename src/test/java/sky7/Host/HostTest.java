@@ -34,10 +34,10 @@ public class HostTest {
 
         testClient1 = new Client();
         testClient1.connect(host, 0, "assets/Boards/emptyBoard.json");
-        int originalSizeOfDeck = host.getpDeck().getSize();
+        int originalSizeOfDeck = host.getpDeck().nRemainingCards();
         host = new Host(testClient1);
 
-        int sizeOfDeckafterCardsDelt = host.getpDeck().getSize();
+        int sizeOfDeckafterCardsDelt = host.getpDeck().nRemainingCards();
 
         assert (originalSizeOfDeck - 9 == sizeOfDeckafterCardsDelt);
         host.ready(0,testClient1.getHand(),testClient1.getHand());
