@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.NinePatch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -47,7 +48,10 @@ public class GUI implements ApplicationListener {
 	private int scaler = 128;
 	private ArrayList<ICard> hand;
 	private ArrayList<ICard> registry = new ArrayList<>(4);
-
+	private NinePatch health;
+	int healthwidth;
+	Texture container;
+	
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
 		textures = new HashMap<>();
@@ -77,17 +81,21 @@ public class GUI implements ApplicationListener {
 			textures.put("dock", new Texture("assets/dock.png"));
 			textures.put("reset", new Texture("assets/dock/Reset.png"));
 			textures.put("confirm", new Texture("assets/dock/Confirm.png"));
-
+			textures.put("health", new Texture("assets/health.png"));
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
 
 			reset = new Sprite(textures.get("reset"));
-			confirm = new Sprite(textures.get("confirm"));
 			reset.setPosition(scaler*4, scaler+20);
+			confirm = new Sprite(textures.get("confirm"));
 			confirm.setPosition(scaler*11, scaler+20);
 			
+			health = new NinePatch(textures.get("health"), 0, 0, 0, 0);
+//			container = new NinePatch(containerRegion, 5, 5, 2, 2);
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
+			
+			healthwidth = Integer.parseInt(game.getPlayer().getHealth().toString()) / 10*128;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -119,6 +127,8 @@ public class GUI implements ApplicationListener {
 		showRegistry();
 		
 		chooseCards();
+		
+		health.draw(batch, 64, 13*scaler, healthwidth, height);
 		
 		if(!cardsChoosen && pointer != 0) {
 			reset.draw(batch);
