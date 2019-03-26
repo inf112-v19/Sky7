@@ -15,7 +15,7 @@ import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Inactive.Flag;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Inactive.Hole;
-import sky7.board.cellContents.Inactive.Laser;
+import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.Inactive.Wrench;
@@ -159,7 +159,7 @@ public class BoardGenerator implements IBoardGenerator {
                             if(part.length() != 1){
                                 throw new IllegalArgumentException("There is a mistake in the format of the file");
                             }
-                            layers.add(new Laser(false, 0, 1));
+                            layers.add(new Laser(false, DIRECTION.NORTH, 1));//
                             break;
                         case 's': //TODO fill in start cell for robot (number)
                             if(part.length() != 2){
