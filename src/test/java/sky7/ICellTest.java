@@ -3,13 +3,12 @@ package sky7;
 import org.junit.Test;
 import sky7.board.ICell;
 import sky7.board.cellContents.Active.Belt;
-import sky7.board.cellContents.Active.CogWheel;
+import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Inactive.*;
 import sky7.board.cellContents.robots.RobotTile;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 

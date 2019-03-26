@@ -15,7 +15,7 @@ import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Inactive.Flag;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Inactive.Hole;
-import sky7.board.cellContents.Inactive.Laser;
+import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.Inactive.Wrench;

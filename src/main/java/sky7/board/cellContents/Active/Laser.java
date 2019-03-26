@@ -1,10 +1,11 @@
-package sky7.board.cellContents.Inactive;
+package sky7.board.cellContents.Active;
 
 import com.badlogic.gdx.graphics.Texture;
 import sky7.board.ICell;
+import sky7.board.cellContents.IActive;
 import sky7.board.cellContents.IInactive;
 
-public class Laser implements IInactive {
+public class Laser implements IActive {
     private final boolean start;
     private final int direction;
     private final int numberOfLasers;
