@@ -53,4 +53,8 @@ public class Pusher implements IActive {
 
     @Override
     public int compareTo(ICell other) { return Integer.compare(this.drawPriority(), other.drawPriority()); }
+
+    public DIRECTION getDirection(){
+        return direction;
+    }
 }
