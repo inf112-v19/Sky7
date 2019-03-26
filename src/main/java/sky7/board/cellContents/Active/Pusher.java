@@ -8,24 +8,28 @@ import sky7.board.cellContents.IActive;
 import java.util.HashSet;
 
 
-
 public class Pusher implements IActive {
-    private final DIRECTION direction;//what way it faces
-    private final HashSet whenActive; // the pusher activates
+    private final DIRECTION direction;
+    private final HashSet whenActive; // when the pusher activates
     private Texture texture;
-    private final int PRIORITY =3;
+    private final int PRIORITY =4;
 
     public Pusher(DIRECTION direction, HashSet whenActive ){
         this.direction = direction;
         this.whenActive = whenActive;
     }
 
-    boolean doActivate(int fase){
-        return whenActive.contains(fase);
+    /**
+     * Check if the pusher activates in the current phase.
+     * @param phase the current phase
+     * @return true if the pusher activates in phase, false otherwise.
+     */
+    boolean doActivate(int phase){
+        return whenActive.contains(phase);
     }
 
     @Override
-    public Texture getTexture() {//TODO endre bilde 8.png da dette er likt som 1.png
+    public Texture getTexture() {//TODO change image 8.png , this is the same as 1.png
         if(texture == null){
             if(whenActive.contains(2) && whenActive.contains(4)){
                 switch (direction){
@@ -33,6 +37,8 @@ public class Pusher implements IActive {
                     case SOUTH: texture = new Texture("assets/pusher/1.png"); break;
                     case EAST: texture = new Texture("assets/pusher/4.png"); break;
                     case WEST: texture = new Texture("assets/pusher/2.png"); break;
+                    default: throw new IllegalStateException("The direction argument of the pusher is not in a valid state");
+
                 }
             }else {
                 switch (direction){
@@ -40,7 +46,7 @@ public class Pusher implements IActive {
                     case SOUTH: texture = new Texture("assets/pusher/6.png"); break;
                     case EAST: texture = new Texture("assets/pusher/9.png"); break;
                     case WEST: texture = new Texture("assets/pusher/7.png"); break;
-                    default: throw new IllegalStateException("The directoion arguement of the pusher is not in a valid state");
+                    default: throw new IllegalStateException("The direction argument of the pusher is not in a valid state");
                 }
             }
         }
@@ -55,6 +61,10 @@ public class Pusher implements IActive {
     @Override
     public int compareTo(ICell other) { return Integer.compare(this.drawPriority(), other.drawPriority()); }
 
+    /**
+     * return the direction of this pusher
+     * @return
+     */
     public DIRECTION getDirection(){
         return direction;
     }

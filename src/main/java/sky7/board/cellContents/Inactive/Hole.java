@@ -29,4 +29,5 @@ public class Hole implements IInactive{
     public int compareTo(ICell other) {
         return Integer.compare(this.drawPriority(), other.drawPriority());
     }
+
 }
