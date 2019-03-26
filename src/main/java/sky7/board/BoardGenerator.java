@@ -128,7 +128,7 @@ public class BoardGenerator implements IBoardGenerator {
                             layers.add(new Hole());
                             break;
                         case 'l': //TODO fill in laser (start position, direction, number of lasers)
-                            layers.add(new Laser(false, 0, 1));
+                            layers.add(new Laser(false, DIRECTION.NORTH, 1));//
                             break;
                         case 's': //TODO fill in start cell for robot (number)
                             int startNumber = Integer.parseInt("" + part.charAt(1));
