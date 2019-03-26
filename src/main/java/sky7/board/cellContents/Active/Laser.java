@@ -47,6 +47,8 @@ public class Laser implements IActive {
                         } else {
                             texture = new Texture("assets/laser/LaserDStartL.png");
                         }break;
+                    default: throw new IllegalStateException("The directoion arguement of the pusher is not in a valid state");
+
                 }
 
 

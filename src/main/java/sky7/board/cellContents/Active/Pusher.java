@@ -29,17 +29,18 @@ public class Pusher implements IActive {
         if(texture == null){
             if(whenActive.contains(2) && whenActive.contains(4)){
                 switch (direction){
-                    case NORTH: texture = new Texture("assets/laser/3.png"); break;
-                    case SOUTH: texture = new Texture("assets/laser/1.png"); break;
-                    case EAST: texture = new Texture("assets/laser/4.png"); break;
-                    case WEST: texture = new Texture("assets/laser/2.png"); break;
+                    case NORTH: texture = new Texture("assets/pusher/3.png"); break;
+                    case SOUTH: texture = new Texture("assets/pusher/1.png"); break;
+                    case EAST: texture = new Texture("assets/pusher/4.png"); break;
+                    case WEST: texture = new Texture("assets/pusher/2.png"); break;
                 }
             }else {
                 switch (direction){
-                    case NORTH: texture = new Texture("assets/laser/8.png"); break;
-                    case SOUTH: texture = new Texture("assets/laser/6.png"); break;
-                    case EAST: texture = new Texture("assets/laser/9.png"); break;
-                    case WEST: texture = new Texture("assets/laser/7.png"); break;
+                    case NORTH: texture = new Texture("assets/pusher/8.png"); break;
+                    case SOUTH: texture = new Texture("assets/pusher/6.png"); break;
+                    case EAST: texture = new Texture("assets/pusher/9.png"); break;
+                    case WEST: texture = new Texture("assets/pusher/7.png"); break;
+                    default: throw new IllegalStateException("The directoion arguement of the pusher is not in a valid state");
                 }
             }
         }
