@@ -8,13 +8,11 @@ import sky7.board.cellContents.DIRECTION;
 public class Laser implements IActive {
     private final boolean start;
     private DIRECTION direction;
-    //private final int direction; //
     private final int numberOfLasers;
     private Texture texture;
     private final static int PRIORITY = 3;
 
     public Laser(boolean start, DIRECTION direction, int numberOfLasers) {
-
         this.start = start;
         this.direction = direction;
         this.numberOfLasers = numberOfLasers;
@@ -74,13 +72,10 @@ public class Laser implements IActive {
     }
 
     @Override
-    public int drawPriority() {
-        return PRIORITY;
-    }
+    public int drawPriority() { return PRIORITY; }
 
     @Override
-    public int compareTo(ICell other) {
+    public int compareTo(ICell other) { return Integer.compare(this.drawPriority(), other.drawPriority()); }
 
-        return Integer.compare(this.drawPriority(), other.drawPriority());
-    }
+    public DIRECTION getDirection(){ return direction; }
 }
