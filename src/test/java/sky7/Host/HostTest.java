@@ -30,17 +30,30 @@ public class HostTest {
 
     @Test
     public void hostShouldDeal9Cards() {
-        Client testClient1 = clients[1];
+        final Client testClient1 = new Client();
 
-        testClient1 = new Client();
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                host = new Host(testClient1);
+            }
+        }).start();
+
+        System.out.println("here");
+
         testClient1.connect(host, 0, "assets/Boards/emptyBoard.json");
-        int originalSizeOfDeck = host.getpDeck().nRemainingCards();
+        testClient1.lockRegistry();
+
+
+
+        /*int originalSizeOfDeck = host.getpDeck().nRemainingCards();
         host = new Host(testClient1);
 
         int sizeOfDeckafterCardsDelt = host.getpDeck().nRemainingCards();
 
         assert (originalSizeOfDeck - 9 == sizeOfDeckafterCardsDelt);
-        host.ready(0,testClient1.getHand(),testClient1.getHand());
+        host.ready(0,testClient1.getHand(),testClient1.getHand());*/
 
 
         //TODO add getters in host and getSize in IDeck
