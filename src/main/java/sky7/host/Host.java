@@ -193,8 +193,6 @@ public class Host implements IHost {
                     pQueue.add(j, i);
                     continue;
                 }
-            }
-
             pQueue.add(i);
         }
     }
