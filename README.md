@@ -6,16 +6,18 @@
 - Run Main.java (src/main/java/sky7/main)
 
 ## Current functionality
-- One player can move a robot on the board by clicking on cards to put them in the registry, 
-then click "Go" to have the game engine execute the plan.
+- One player can play endless rounds by selecting cards from hand and playing them by clicking "go".
 - Walls block the path of robots.
+- Player can push another robot(placed there for demonstration, not controlled).
+- Cogwheels rotate robots.
 - Player is dealt new cards each round.
 
 ## Documentation
 - Class diagram in Documents folder
 
 ## Known bugs
-- Sometimes, only 8 cards appear in hand, and there seems to be an invisible card holding a slot in the registry (?)
+- Trying to load a board which is not quadratic crashes the game.
+	- It is likely a mix-up of x and y somewhere in Board.
 
 ## Tests
 - Located in [test folder](src/test/java/sky7)
