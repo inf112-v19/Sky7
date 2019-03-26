@@ -19,7 +19,8 @@ then click "Go" to have the game engine execute the plan.
 
 ## Tests
 - Located in [test folder](src/test/java/sky7)
-- Tests ICell properties
+- Run TestSuite as JUnit test - combines all tests in a Suite
+- ICell
     - Test that the priority of each ICell is correct
 - BoardGenerator
     - Tests that BoardGenerator can read a random Json file,
