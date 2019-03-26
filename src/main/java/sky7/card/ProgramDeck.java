@@ -60,10 +60,6 @@ public class ProgramDeck implements IDeck {
         Collections.shuffle(availableCards);
     }
 
-    @Override
-    public int getSize() {
-        return availableCards.size();
-    }
 
 
     public ProgramCard[] getProgramCardsForTesting(){
