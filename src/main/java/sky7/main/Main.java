@@ -1,15 +1,17 @@
 package sky7.main;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.io.FileNotFoundException;
+
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import sky7.game.Client;
 import sky7.game.IClient;
 import sky7.gui.GUI;
+import sky7.gui.splashScreen;
 import sky7.host.Host;
-import sky7.host.IHost;
-
-import java.io.FileNotFoundException;
 
 public class Main {
     
@@ -17,29 +19,45 @@ public class Main {
 
     public static void main(String[] args) {
         
-        clientThread cThread = new clientThread();
-        Thread client = new Thread(cThread);
-        client.start();
+        new Thread(new Runnable(){
+
+            @Override
+            public void run() {
+                LwjglApplicationConfiguration menu = new LwjglApplicationConfiguration();
+                menu.title = "Sky7 Games";
+                // TODO Width and Height should adapt to the resolution of a screen.
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                menu.width = screenSize.width/3;
+                menu.height = screenSize.height-300;
+                menu.foregroundFPS = 30;
+                menu.backgroundFPS = 30;
+                new LwjglApplication(new splashScreen(), menu);
+            }
+        }).start();
         
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        
-        startGUI g = new startGUI();
-        Thread gui = new Thread(g);
-        gui.start();
-        
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        
-        startHost h = new startHost();
-        Thread host = new Thread(h);
-        host.start();
+//        clientThread cThread = new clientThread();
+//        Thread client = new Thread(cThread);
+//        client.start();
+//        
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        
+//        startGUI g = new startGUI();
+//        Thread gui = new Thread(g);
+//        gui.start();
+//        
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        
+//        startHost h = new startHost();
+//        Thread host = new Thread(h);
+//        host.start();
     }
     
     public static class clientThread implements Runnable {

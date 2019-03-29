@@ -1,6 +1,5 @@
 package sky7.gui;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 import com.badlogic.gdx.ApplicationListener;
@@ -15,9 +14,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
-import sky7.game.IClient;
 
 public class splashScreen implements ApplicationListener {
 	private SpriteBatch batch;
@@ -25,50 +21,40 @@ public class splashScreen implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	private HashMap<String, Texture> textures;
-	private int scaler = 128;
-	private int width, height, windowWidth, windowHeight;
-	private IClient game;
+	private int scaler = 1;
+	private int windowWidth, windowHeight;
 	private BitmapFont font;
 	private Stage stage;
 
-	public splashScreen(IClient game)  throws FileNotFoundException {
-		this.game = game;
+	public splashScreen() {
 		textures = new HashMap<>();
 	}
 	public class MyActor extends Actor {
 		
 		@Override
 		public void draw(Batch batch, float alpha){
-			batch.draw(textures.get("splashScreen"),0,0);
+			batch.draw(textures.get("splashScreen"),0,0, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
 		}
 	}
 
 
 	@Override
 	public void create() {
-		try {
-			game.generateBoard();
-			this.width = game.gameBoard().getWidth();
-			this.height = game.gameBoard().getHeight();
-			windowWidth = width+4;
-			windowHeight = height+2;
+        windowWidth = Gdx.graphics.getWidth();
+        windowHeight = Gdx.graphics.getWidth();
 
-			batch = new SpriteBatch();
-			font = new BitmapFont();
-			font.getData().setScale(5, 5);
-			camera = new OrthographicCamera();
-			viewport = new ExtendViewport(windowWidth * scaler, windowHeight * scaler, camera);
+        batch = new SpriteBatch();
+        font = new BitmapFont();
+        font.getData().setScale(5, 5);
+        camera = new OrthographicCamera();
+        viewport = new ExtendViewport(windowWidth * scaler, windowHeight * scaler, camera);
 
-			textures.put("splashScreen", new Texture("assets/splashScreen.png"));
+        textures.put("splashScreen", new Texture("assets/menu/splashScreen.png"));
 
-			stage = new Stage(viewport);
-			MyActor myActor = new MyActor();
-			stage.addActor(myActor);
-			Gdx.input.setInputProcessor(stage);
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+        stage = new Stage(viewport);
+        MyActor myActor = new MyActor();
+        stage.addActor(myActor);
+        Gdx.input.setInputProcessor(stage);
 	}
 
 	@Override
