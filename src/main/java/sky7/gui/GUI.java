@@ -29,7 +29,7 @@ import sky7.game.STATE;
 
 public class GUI implements ApplicationListener {
 	private IClient game;
-	private int width, height;
+	private int width, height, gameWidth, gameHeight;
 	private SpriteBatch batch;
 	private BitmapFont font;
 
@@ -60,6 +60,8 @@ public class GUI implements ApplicationListener {
 			game.generateBoard();
 			this.width = game.gameBoard().getWidth();
 			this.height = game.gameBoard().getHeight();
+			gameWidth = width+4;
+			gameHeight = height+2;
 
 			batch = new SpriteBatch();
 			font = new BitmapFont();
@@ -68,7 +70,7 @@ public class GUI implements ApplicationListener {
 			font.setColor(Color.GOLDENROD);
 
 			camera = new OrthographicCamera();
-			viewport = new ExtendViewport(width * scaler, (height+2) * scaler, camera);
+			viewport = new ExtendViewport(gameWidth * scaler, gameHeight * scaler, camera);
 
 			textures.put("floor", new Texture("assets/floor/plain.png"));
 			textures.put("outline", new Texture("assets/cards/Outline.png"));
@@ -80,8 +82,9 @@ public class GUI implements ApplicationListener {
 
 			reset = new Sprite(textures.get("reset"));
 			confirm = new Sprite(textures.get("confirm"));
-			reset.setPosition(scaler*2, scaler+20);
-			confirm.setPosition(scaler*9, scaler+20);
+			reset.setPosition(scaler*4, scaler+20);
+			confirm.setPosition(scaler*11, scaler+20);
+			
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
@@ -109,25 +112,26 @@ public class GUI implements ApplicationListener {
 		batch.setProjectionMatrix(camera.combined);
 
 		batch.begin();
-
+		showDockBG();
+		
 		// draw a grid of width*height, each square at 128*128 pixels
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
 				    if (cell instanceof RobotTile) {
 				        int rotation = findRotation((RobotTile)cell);
-				        batch.draw(new TextureRegion(cell.getTexture()), i*scaler, (j+2)*scaler, scaler/2, scaler/2, scaler, scaler, 1, 1, rotation);
+				        batch.draw(new TextureRegion(cell.getTexture()), (i+2)*scaler, (j+2)*scaler, scaler/2, scaler/2, scaler, scaler, 1, 1, rotation);
 				    } else {
-				        batch.draw(cell.getTexture(), i * scaler, (j + 2) * scaler, scaler, scaler);
+				        batch.draw(cell.getTexture(), (i+2) * scaler, (j + 2) * scaler, scaler, scaler);
 				    }
 					
 				}
 			}
 		}
 
-		showDockBG();
 		chooseCards();
 		showRegistry();
+		showHealth();
 		
 		if(!cardsChoosen && pointer != 0) {
 			reset.draw(batch);
@@ -170,13 +174,18 @@ public class GUI implements ApplicationListener {
 	}
 
 	public void showDockBG() {
-		for (int i = 0; i < width; i++) {
-			batch.draw(textures.get("dock"), i * scaler, 0);
-			batch.draw(textures.get("dock"), i * scaler, scaler);
+		for (int i = 0; i < gameWidth; i++) {
+			for (int j=0; j < gameHeight; j++) {
+			batch.draw(textures.get("dock"), i * scaler, j*scaler);
+			}
 		}
-		for (int i = 3; i < 8; i++) {
+		for (int i = 5; i < 10; i++) {
 			batch.draw(textures.get("outline"), i * scaler+64, scaler);
 		}
+	}
+	// Show health and healthtokens
+	public void showHealth() {
+		font.draw(batch, "Health: " + game.getPlayer().getHealth() + "\nTokens: " + game.getPlayer().getLifeToken(), 12*scaler+72, 2*scaler-32);
 	}
 
 	// check if user has chosen all 5 cards
@@ -207,14 +216,6 @@ public class GUI implements ApplicationListener {
 		sprite.draw(batch);
 	}
 
-	// set the x position for the cards to spread them accross the map
-	private void setHandPos(ArrayList<ICard> hand) {
-		for (ICard card : hand) {
-			card.setX(192+cardXpos);
-			card.setY(0);
-			cardXpos+=scaler;
-		}	
-	}
 	// pick which cards you want to use
 	public void chooseCards() {
 		if(!hand.equals(game.getHand())) {
@@ -256,7 +257,7 @@ public class GUI implements ApplicationListener {
 		if (!cardsChoosen && pointer <= 5) {
 			for (ICard card : registry) {
 				if (card.getY() != scaler) {
-					card.setX(448+yPos);
+					card.setX((scaler*5)+64+yPos);
 					card.setY(scaler);
 					yPos += scaler;
 				}
@@ -301,6 +302,15 @@ public class GUI implements ApplicationListener {
 		for (ICard card : cards) {
 			card.setX(0);
 			card.setY(0);
+		}	
+	}
+	
+	// set the x position for the cards to spread them accross the map
+	private void setHandPos(ArrayList<ICard> hand) {
+		for (ICard card : hand) {
+			card.setX((3*scaler+64)+cardXpos);
+			card.setY(0);
+			cardXpos+=scaler;
 		}	
 	}
 }

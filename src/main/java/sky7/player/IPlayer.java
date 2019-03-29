@@ -81,4 +81,17 @@ public interface IPlayer {
      * @param positionInRegistry the position of the card in the registry.
      */
     void setCard(ICard chosenCard, int positionInRegistry);
+    
+    /**
+     * 
+     * @return player health
+     */
+    public CharSequence getHealth();
+    
+    /**
+     * 
+     * @return life tokens
+     */
+    public CharSequence getLifeToken();
+    
 }
