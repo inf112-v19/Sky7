@@ -76,8 +76,10 @@ public class Main {
 
         @Override
         public void run() {
-            
-            new Host(cli);
+            Host host = new Host(cli);
+
+            host.Begin();
+
         }
     }
 }
