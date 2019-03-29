@@ -19,45 +19,48 @@ public class Main {
 
     public static void main(String[] args) {
         
-        new Thread(new Runnable(){
-
-            @Override
-            public void run() {
-                LwjglApplicationConfiguration menu = new LwjglApplicationConfiguration();
-                menu.title = "Sky7 Games";
-                // TODO Width and Height should adapt to the resolution of a screen.
-                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-                menu.width = screenSize.width/3;
-                menu.height = screenSize.height-300;
-                menu.foregroundFPS = 30;
-                menu.backgroundFPS = 30;
-                new LwjglApplication(new splashScreen(), menu);
-            }
-        }).start();
+        // uncomment to start splashScreen, comment out all below
+        // TODO add buttons to  menu, so we can start client, host etc from there
         
-//        clientThread cThread = new clientThread();
-//        Thread client = new Thread(cThread);
-//        client.start();
-//        
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        
-//        startGUI g = new startGUI();
-//        Thread gui = new Thread(g);
-//        gui.start();
-//        
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        
-//        startHost h = new startHost();
-//        Thread host = new Thread(h);
-//        host.start();
+//        new Thread(new Runnable(){
+//
+//            @Override
+//            public void run() {
+//                LwjglApplicationConfiguration menu = new LwjglApplicationConfiguration();
+//                menu.title = "Sky7 Games";
+//                // TODO Width and Height should adapt to the resolution of a screen.
+//                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+//                menu.height = screenSize.height-400;
+//                menu.width = (int) (menu.height*1.141928); // aspect ratio of splashScreen image is 1.141928
+//                menu.foregroundFPS = 30;
+//                menu.backgroundFPS = 30;
+//                new LwjglApplication(new splashScreen(), menu);
+//            }
+//        }).start();
+        
+        clientThread cThread = new clientThread();
+        Thread client = new Thread(cThread);
+        client.start();
+        
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        startGUI g = new startGUI();
+        Thread gui = new Thread(g);
+        gui.start();
+        
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
+        startHost h = new startHost();
+        Thread host = new Thread(h);
+        host.start();
     }
     
     public static class clientThread implements Runnable {
