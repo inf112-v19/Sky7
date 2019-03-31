@@ -1,6 +1,7 @@
 package sky7.gui;
 
 import java.util.HashMap;
+
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
@@ -14,6 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
+import sky7.game.IClient;
+import sky7.main.Handler;
+
 public class splashScreen implements ApplicationListener {
 	private SpriteBatch batch;
 	private ExtendViewport viewport;
@@ -23,8 +27,11 @@ public class splashScreen implements ApplicationListener {
 	private int windowWidth, windowHeight;
 	private Stage stage;
 	private Sprite spr;
+	private IClient client;
+	private Handler handler;
 
-	public splashScreen() {
+	public splashScreen(Handler handler) {
+	    this.handler = handler;
 		textures = new HashMap<>();
 	}
 
@@ -38,8 +45,12 @@ public class splashScreen implements ApplicationListener {
 		public void draw(Batch batch, float alpha) {
 			spr.draw(batch, alpha);
 			if (isClicked(spr)) {
-				//TODO: initiate GUI/ the game
-				System.out.println("You pressed me!");
+				try {
+				    dispose();
+                    handler.startGameAsHost();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 			}
 		}
 	}
