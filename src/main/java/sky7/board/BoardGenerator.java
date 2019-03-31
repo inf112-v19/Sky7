@@ -15,7 +15,7 @@ import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Inactive.Flag;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Inactive.Hole;
-import sky7.board.cellContents.Inactive.Laser;
+import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.Inactive.Wrench;
@@ -80,8 +80,16 @@ public class BoardGenerator implements IBoardGenerator {
                         case 'h':
                             readInHole(part, layers);
                             break;
+<<<<<<< HEAD
                         case 'l':
                             readInLaser(part, layers);
+=======
+                        case 'l': //TODO fill in laser (start position, direction, number of lasers)
+                            if(part.length() != 1){
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
+                            layers.add(new Laser(false, DIRECTION.NORTH, 1));//
+>>>>>>> Maren
                             break;
                         case 's':
                             readInStart(part, layers);
