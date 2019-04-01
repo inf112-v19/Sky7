@@ -14,7 +14,7 @@ public class Hole implements IInactive{
     @Override
     public Texture getTexture() {
         if (texture == null) {
-            texture = new Texture("floor/hole.png");
+            texture = new Texture("assets/floor/hole.png");
         }
 
         return texture;
@@ -29,4 +29,5 @@ public class Hole implements IInactive{
     public int compareTo(ICell other) {
         return Integer.compare(this.drawPriority(), other.drawPriority());
     }
+
 }

@@ -2,16 +2,17 @@ package sky7.board.cellContents.Inactive;
 
 import com.badlogic.gdx.graphics.Texture;
 import sky7.board.ICell;
+import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.IInactive;
 
 public class StartPosition implements IInactive{
-    private int number;
+    private int startNumber;
     private static final int PRIORITY = 4;
     private Texture texture;
+    private DIRECTION direction;
 
-    public StartPosition(int number){
-
-        this.number = number;
+    public StartPosition(int startNumber){
+        this.startNumber = startNumber;
 
     }
 
