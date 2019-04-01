@@ -30,5 +30,7 @@
 - ProgramDeck
     - Test that the values of ProgramDeck matches the number of different
      cards as shown in the rulebook
+- Host
+    - Test the different states of host. Currently tests BEGIN, DEAL_CARDS, WAIT_FOR_CLIENTS and TERMINATED.
 
 22e3450d273bd813e33374b470ca2e933aee2699
