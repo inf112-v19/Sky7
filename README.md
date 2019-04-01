@@ -6,6 +6,7 @@
 - Run Main.java (src/main/java/sky7/main)
 
 ## Current functionality
+- Game starts in "menu" with only one button. This will later be populated with options to host or connect, what board to load etc.
 - One player can play endless rounds by selecting cards from hand and playing them by clicking "go".
 - Walls block the path of robots.
 - Player can push another robot(placed there for demonstration, not controlled).
@@ -47,6 +48,6 @@
 	- Assert that clients always return 5 cards assigned to registry, 
 	and the remaining as discard (n=100) (none lost, duplicated or created).
 ### Manual Tests
-- Instructions in [Documents](Documents/UserTest.md)
+- Instructions in [Documents/UserTest.md](Documents/UserTest.md)
 
 22e3450d273bd813e33374b470ca2e933aee2699
