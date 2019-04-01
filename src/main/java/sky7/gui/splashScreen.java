@@ -1,23 +1,18 @@
 package sky7.gui;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
-
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-
-import sky7.game.IClient;
 
 public class splashScreen implements ApplicationListener {
 	private SpriteBatch batch;
@@ -25,50 +20,54 @@ public class splashScreen implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	private HashMap<String, Texture> textures;
-	private int scaler = 128;
-	private int width, height, windowWidth, windowHeight;
-	private IClient game;
-	private BitmapFont font;
+	private int windowWidth, windowHeight;
 	private Stage stage;
+	private Sprite spr;
 
-	public splashScreen(IClient game)  throws FileNotFoundException {
-		this.game = game;
+	public splashScreen() {
 		textures = new HashMap<>();
 	}
-	public class MyActor extends Actor {
-		
-		@Override
+
+	public class Background extends Actor {
 		public void draw(Batch batch, float alpha){
-			batch.draw(textures.get("splashScreen"),0,0);
+			batch.draw(textures.get("splashScreen"),0,0, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+		}
+	}
+
+	public class Button extends Actor {
+		public void draw(Batch batch, float alpha) {
+			spr.draw(batch, alpha);
+			if (isClicked(spr)) {
+				//TODO: initiate GUI/ the game
+				System.out.println("You pressed me!");
+			}
 		}
 	}
 
 
 	@Override
 	public void create() {
-		try {
-			game.generateBoard();
-			this.width = game.gameBoard().getWidth();
-			this.height = game.gameBoard().getHeight();
-			windowWidth = width+4;
-			windowHeight = height+2;
+		windowWidth = Gdx.graphics.getWidth();
+		windowHeight = Gdx.graphics.getWidth();
 
-			batch = new SpriteBatch();
-			font = new BitmapFont();
-			font.getData().setScale(5, 5);
-			camera = new OrthographicCamera();
-			viewport = new ExtendViewport(windowWidth * scaler, windowHeight * scaler, camera);
+		batch = new SpriteBatch();
+		camera = new OrthographicCamera();
+		viewport = new ExtendViewport(windowWidth, windowHeight, camera);
 
-			textures.put("splashScreen", new Texture("assets/splashScreen.png"));
+		textures.put("splashScreen", new Texture("assets/menu/splashScreen.png"));
+		textures.put("button", new Texture("assets/dock/Confirm.png"));
 
-			stage = new Stage(viewport);
-			MyActor myActor = new MyActor();
-			stage.addActor(myActor);
-			Gdx.input.setInputProcessor(stage);
+		spr = new Sprite(textures.get("button"));
+		spr.setX(6*128);
+		spr.setY(6*128);
+		
+		stage = new Stage(viewport);
+		Background myActor = new Background();
+		Button myButton = new Button();
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		stage.addActor(myActor);
+		stage.addActor(myButton);
+		Gdx.input.setInputProcessor(stage);
 	}
 
 	@Override
@@ -79,17 +78,10 @@ public class splashScreen implements ApplicationListener {
 
 	@Override
 	public void render() {
-		float delta = Gdx.graphics.getDeltaTime();
 		Gdx.gl.glClearColor(0, 0, 0, 1); // Background Color
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT); // Clears every image from previous iteration of render.
 		batch.setProjectionMatrix(camera.combined);
 
-//		batch.begin();
-//		batch.draw(textures.get("splashScreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
-//		font.draw(batch, "testing shit", 7*scaler, 8*scaler);
-//		batch.end();
-
-		stage.act(delta);
 		stage.draw();
 	}
 
@@ -109,5 +101,17 @@ public class splashScreen implements ApplicationListener {
 	public void dispose() {	
 		stage.dispose();
 	}
-
+	
+	public boolean isClicked(Sprite sprite) {
+		if (Gdx.input.justTouched()){
+			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
+			if (clickPos.x > sprite.getX() && clickPos.x < sprite.getX() + sprite.getWidth()) {
+				if (clickPos.y > sprite.getY() && clickPos.y < sprite.getY() + sprite.getHeight()) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	
 }
