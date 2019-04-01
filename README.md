@@ -22,7 +22,7 @@
 ## Tests
 ### JUNIT tests
 - Located in [test folder](src/test/java/sky7)
-- Run TestSuite as JUnit test - combines all tests in a Suite.
+- Run [TestSuite](src/test/java/sky7/TestSuite.java) as JUnit test - combines all tests in a Suite.
 - The TestSuite takes ~40 sec as of 01.04.19 due to simulation of rounds.
 - ICell
     - Test that the priority of each ICell is correct
