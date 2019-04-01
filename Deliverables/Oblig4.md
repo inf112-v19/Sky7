@@ -53,13 +53,15 @@
 	- Host testing
 	- Client testing
 	- BoardGenerator testing
-	- Robot redesign
+	- Robotgrafikk redesign
 	- Robot kan dytte andre roboter
 	- Refaktorering av robot movement i Board
 	- Redesign av dock i GUI
-	- Refactor Host (90%)
-	- Redesign floor tiles
+	- Refaktorering av Host (90%)
+	- Redesign floor tiles (for bedre grafikk ved skalering)
 	- Påbegynt nettverkskode for Host
+	- Implementasjon av klasser: Pusher, Laser (Ikke på brett enda)
+	- Spillet starter med en meny, slik at vi senere kan legge inn knapper for valg av board osv.
 
 ## Deloppgave 3: kode
 	- Se README.md for informasjon om bygging og testing.
