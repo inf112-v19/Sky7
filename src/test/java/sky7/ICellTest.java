@@ -31,7 +31,6 @@ public class ICellTest {
     public void middleTilesShouldHaveSamePriority(){
         ArrayList<ICell> list = new ArrayList<>();
         list.add(new Flag(1));
-        list.add(new Laser(true, 1, 1));
         list.add(new Wrench(1));;
         final int middel = 3;
         for (int i = 0; i < list.size(); i++) {
@@ -54,6 +53,7 @@ public class ICellTest {
     public void topMiddleLevelShouldHaveSamePriority(){
         ArrayList<ICell> list = new ArrayList<>();
         list.add(new Wall(DIRECTION.EAST));
+        list.add(new Laser(true, DIRECTION.EAST, 1));
 
         final int inBetween = 4;
         for (int i = 0; i < list.size(); i++) {

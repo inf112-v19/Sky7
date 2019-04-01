@@ -151,7 +151,7 @@ public class BoardGenerator implements IBoardGenerator {
         if (part.length() != 1) {
             throw new IllegalArgumentException("There is a mistake in the format of the file");
         }
-        layers.add(new Laser(false, 0, 1));
+        layers.add(new Laser(false, DIRECTION.EAST, 1));
     }
 
     private void readInHole(String part, TreeSet<ICell> layers) {
