@@ -55,15 +55,18 @@ public class BoardTests {
 
         assertTrue(isRoboHere(board, 5,5));
 
-
+        board.moveRobot(0,-1);
+        board.moveRobot(0, -1);
         board.rotateRobot(0, 2 );   // facing SOUTH
 
-        board.moveRobot(0,2);            // (5,3)
+                // (5,3)
         board.rotateRobot(0, 1);    // (Facing West)
         board.moveRobot(0,1);             // (4,3)
 
         assertFalse(isRoboHere(board, 5,5)); //RoboMoved
         assertTrue(isRoboHere(board, 4, 3)); // To (4,3)
+
+
 
     }
 
