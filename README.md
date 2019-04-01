@@ -33,7 +33,7 @@
     - Test that the values of ProgramDeck matches the number of different
      cards as shown in the rulebook
 - Host
-	
+    - Test the different states of host. Currently tests BEGIN, DEAL_CARDS, WAIT_FOR_CLIENTS and TERMINATED.
 - Client
 	- Asserts that connected clients retain the correct playerNumber.
 	- Assert that the 5 cards chosen by clients are the same 5 returned to host as registry.
