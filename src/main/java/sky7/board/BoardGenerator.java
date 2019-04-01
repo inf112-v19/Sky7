@@ -80,16 +80,11 @@ public class BoardGenerator implements IBoardGenerator {
                         case 'h':
                             readInHole(part, layers);
                             break;
-<<<<<<< HEAD
-                        case 'l':
-                            readInLaser(part, layers);
-=======
                         case 'l': //TODO fill in laser (start position, direction, number of lasers)
                             if(part.length() != 1){
                                 throw new IllegalArgumentException("There is a mistake in the format of the file");
                             }
                             layers.add(new Laser(false, DIRECTION.NORTH, 1));//
->>>>>>> Maren
                             break;
                         case 's':
                             readInStart(part, layers);
