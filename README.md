@@ -29,6 +29,13 @@
 - BoardGenerator
     - Tests that BoardGenerator can read a random Json file,
     and that the height and width is correct.
+- BoardTests
+    - Tests that the you can retrieve information correctly from Board. 
+    - Tests that the movement of the robots on the board is correct follow the rules.
+- FlagTest
+    - Basic check for flag values
+- RoboTest
+    - Checks that RoboTile rotates correctly
 - ProgramDeck
     - Test that the values of ProgramDeck matches the number of different
      cards as shown in the rulebook
