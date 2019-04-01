@@ -167,8 +167,8 @@ public class BoardGeneratorTest {
     public void heightAndWidthTest(){
 
         try {
-            final int height = 232;
-            final int width = 43;
+            final int height = 12;
+            final int width = 12;
             IBoardGenerator generator = new BoardGenerator();
             Board board = generator.getBoardFromFile("src/test/assets/heightWithTest.json");
             assertEquals(height, board.getHeight());
@@ -187,10 +187,10 @@ public class BoardGeneratorTest {
      *
      */
 
-    //@Test remove "//" to get the string
+    //@Test //remove "//" to get the string
     public void getStringForJSonFile(){
-        final int height = 232;
-        final int width = 43;
+        final int height = 5;
+        final int width = 2;
         String fs= "";
         for (int i = 0; i < height*width; i++) {
             fs += "f ";
