@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.*;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -36,7 +37,7 @@ public class GUI implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	private TextureAtlas textureAtlas;
-	private Sprite reset, confirm, host;
+	private Sprite reset, confirm, host, join;
 
 	private boolean cardsChoosen = false;
 	private boolean hosting = false;
@@ -86,8 +87,12 @@ public class GUI implements ApplicationListener {
 			confirm.setPosition(scaler*11, scaler+20);
 
 			host = new Sprite(textures.get("confirm"));
-			host.setPosition(scaler*7+64, scaler*6);
-
+			host.setPosition(scaler*8, scaler*7);
+			
+			join = new Sprite(textures.get("reset"));
+			join.setPosition(scaler*7, scaler*7);
+			join.setColor(Color.CYAN);
+			
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
@@ -119,10 +124,16 @@ public class GUI implements ApplicationListener {
 		if (!hosting) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
 			host.draw(batch);
+			join.draw(batch);
 			
 			if (isClicked(host)) {
 				hosting = true;
-			}	
+			}
+			if (isClicked(join)) {
+				MyTextInputListener listener = new MyTextInputListener();
+				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");	
+				String IP = listener.toString();
+			}
 			
 		} else {	
 			showDockBG(); //Render background and registry slots
@@ -359,4 +370,16 @@ public class GUI implements ApplicationListener {
 			cardXpos+=scaler;
 		}	
 	}
+	
+	// Get user input
+	public class MyTextInputListener implements TextInputListener {
+		   @Override
+		   public void input (String text) {
+			   String input = text;
+		   }
+
+		   @Override
+		   public void canceled () {
+		   }
+		}
 }
