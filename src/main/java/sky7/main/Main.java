@@ -1,5 +1,7 @@
 package sky7.main;
 
+import java.io.FileNotFoundException;
+
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -7,16 +9,13 @@ import sky7.game.Client;
 import sky7.game.IClient;
 import sky7.gui.GUI;
 import sky7.host.Host;
-import sky7.host.IHost;
-
-import java.io.FileNotFoundException;
 
 public class Main {
     
     private static IClient cli;
 
     public static void main(String[] args) {
-        
+
         clientThread cThread = new clientThread();
         Thread client = new Thread(cThread);
         client.start();

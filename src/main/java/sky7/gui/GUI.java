@@ -36,9 +36,10 @@ public class GUI implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	private TextureAtlas textureAtlas;
-	private Sprite reset, confirm;
+	private Sprite reset, confirm, host;
 
 	private boolean cardsChoosen = false;
+	private boolean hosting = false;
 	private int pointer, cardXpos = 0;
 	private int yPos = 64;
 	private int scaler = 128;
@@ -75,12 +76,18 @@ public class GUI implements ApplicationListener {
 			textures.put("reset", new Texture("assets/dock/Reset.png"));
 			textures.put("confirm", new Texture("assets/dock/Confirm.png"));
 			textures.put("health", new Texture("assets/health.png"));
+			textures.put("Splashscreen", new Texture("assets/menu/splashscreen.png"));
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
 
 			reset = new Sprite(textures.get("reset"));
 			reset.setPosition(scaler*4, scaler+20);
+
 			confirm = new Sprite(textures.get("confirm"));
 			confirm.setPosition(scaler*11, scaler+20);
+
+			host = new Sprite(textures.get("confirm"));
+			host.setPosition(scaler*7+64, scaler*6);
+
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
@@ -109,32 +116,39 @@ public class GUI implements ApplicationListener {
 
 		batch.begin();
 
-		showDockBG(); //Render background and registry slots
-		showBoard(); //Render gameboard
-		showHealth(); //Render health of player
-		showRegistry(); //Render the cards the player has chosen
-		chooseCards(); //Render 9 selectable cards
-
-
-//		health.draw(batch, 64, 13*scaler, healthwidth, height);
-
-		/*
-		 * render reset button only if at least one card is selected and
-		 * when the player has not pressed the "ready" button
-		 */
-		if(!cardsChoosen && pointer != 0) {
-			reset.draw(batch);
-			if (isClicked(reset)) {
-				reset();
+		if (!hosting) {
+			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
+			host.draw(batch);
+			
+			if (isClicked(host)) {
+				hosting = true;
+			}	
+			
+		} else {	
+			showDockBG(); //Render background and registry slots
+			showBoard(); //Render gameboard
+			showHealth(); //Render health of player
+			showRegistry(); //Render the cards the player has chosen
+			chooseCards(); //Render 9 selectable cards
+			
+			/*
+			 * render reset button only if at least one card is selected and
+			 * when the player has not pressed the "ready" button
+			 */
+			if(!cardsChoosen && pointer != 0) {
+				reset.draw(batch);
+				if (isClicked(reset)) {
+					reset();
+				}
 			}
-		}
 
-		// Render "GO" button only if 5 cards are choosen
-		if (pointer == 5) {
-			confirm.draw(batch);
-			if (isClicked(confirm)) {
-				setRegistry();
-				pointer = 0;
+			// Render "GO" button only if 5 cards are choosen
+			if (pointer == 5) {
+				confirm.draw(batch);
+				if (isClicked(confirm)) {
+					setRegistry();
+					pointer = 0;
+				}
 			}
 		}
 		batch.end();
@@ -252,12 +266,12 @@ public class GUI implements ApplicationListener {
 				font.draw(batch, card.getPriority(), card.getX()+42, card.getY()+93);
 			}
 		}
-		
+
 		if (!cardsChoosen && pointer != 5) {
 			//check if card is clicked
 			if (Gdx.input.justTouched()) {
 				camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
-				
+
 				// go through cards in hand and see if the clickposition is the same as a cards position
 				for(ICard card : hand) {
 					if(clickPos.x <= scaler+card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
