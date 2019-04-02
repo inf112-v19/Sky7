@@ -131,7 +131,7 @@ public class GUI implements ApplicationListener {
 			}
 			if (isClicked(join)) {
 				// take input from user
-				MyTextInputListener listener = new MyTextInputListener();
+				TextInput listener = new TextInput();
 				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");	
 			}
 
@@ -222,7 +222,6 @@ public class GUI implements ApplicationListener {
 				}
 			}
 		}
-
 	}
 
 	// Show health and healthtokens
