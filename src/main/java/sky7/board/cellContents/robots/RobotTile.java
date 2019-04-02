@@ -1,7 +1,6 @@
 package sky7.board.cellContents.robots;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
 import sky7.board.ICell;
 import sky7.board.cellContents.DIRECTION;
@@ -10,7 +9,7 @@ import sky7.board.cellContents.IMoving;
 public class RobotTile implements IMoving {
     String textureRef = "robot";
     Texture texture;
-    private static final int PRIORITY = 5;
+    private static final int PRIORITY = 11;
     int playerNr;
     DIRECTION dir;
     
@@ -84,6 +83,6 @@ public class RobotTile implements IMoving {
     
     @Override
     public void rotate180() {
-        dir = dir.inverse(dir);
+        dir = dir.reverse();
     }
 }

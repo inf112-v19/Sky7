@@ -19,7 +19,7 @@ public class ICellTest {
     @Test
     public void bottomTilesShouldHaveSamePriority(){
         ArrayList<ICell> list = new ArrayList<>();
-        list.add(new Belt(1, 1));
+        list.add(new Belt(DIRECTION.SOUTH,DIRECTION.NORTH, 1));
         list.add(new FloorTile());
         list.add(new Hole());
         final int priority = 1;

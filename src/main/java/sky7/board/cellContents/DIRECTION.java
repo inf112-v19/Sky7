@@ -7,15 +7,34 @@ public enum DIRECTION {
     WEST;
 
 
-    public DIRECTION inverse(DIRECTION dir){
-        DIRECTION newDir;
-        switch (dir){
-            case NORTH: newDir = SOUTH; break;
-            case WEST: newDir = EAST; break;
-            case SOUTH: newDir = NORTH; break;
-            case EAST: newDir =  WEST; break;
-            default: throw new IllegalArgumentException("The direction you are trying to invers are not one of the standar four");
+    public DIRECTION reverse() {
+        switch (this) {
+            case NORTH:
+                return SOUTH;
+            case WEST:
+                return EAST;
+            case SOUTH:
+                return NORTH;
+            case EAST:
+                return WEST;
+            default:
+                throw new IllegalArgumentException("The direction you are trying to invers are not one of the standar four");
         }
-         return newDir;
+    }
+
+    public char symbol() {
+        switch (this) {
+            case NORTH:
+                return 'N';
+            case WEST:
+                return 'W';
+            case SOUTH:
+                return 'S';
+            case EAST:
+                return 'E';
+            default:
+                throw new IllegalArgumentException("The direction you are trying to invers are not one of the standar four");
+        }
+
     }
 }

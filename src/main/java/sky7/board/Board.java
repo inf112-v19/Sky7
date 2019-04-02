@@ -116,7 +116,7 @@ public class Board implements IBoard {
         int possibleMove = 0;
         DIRECTION dir = robots[player].getOrientation();
         if (move < 0) {
-            dir = dir.inverse(dir);
+            dir = dir.reverse();
             move = 1;
         }
         
@@ -169,7 +169,7 @@ public class Board implements IBoard {
             // if it's a wall facing the robot, return false
             if (item instanceof Wall) {
                 if (((Wall) item).getDirection() == dir) maxMove = move;
-                if (((Wall) item).getDirection() == dir.inverse(dir)) return false;
+                if (((Wall) item).getDirection() == dir.reverse()) return false;
             }
             
             if (item instanceof RobotTile) {
