@@ -5,12 +5,17 @@ import sky7.board.ICell;
 import sky7.board.cellContents.IActive;
 import sky7.board.cellContents.DIRECTION;
 
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
 public class Laser implements IActive {
     private final boolean start; // its a start og a laser
     private DIRECTION direction;
     private final int numberOfLasers;
     private Texture texture;
-    private final static int PRIORITY = 4;
+    private final static int PRIORITY = 10;
 
     public Laser(boolean start, DIRECTION direction, int numberOfLasers) {
         this.start = start;
@@ -20,10 +25,10 @@ public class Laser implements IActive {
 
     @Override
     public Texture getTexture() {
-        if(texture == null){
-            if(start){
-               texture = getStartLaserTexture();
-            }else {
+        if (texture == null) {
+            if (start) {
+                texture = getStartLaserTexture();
+            } else {
                 texture = getLaserTexture();
             }
         }
@@ -32,6 +37,7 @@ public class Laser implements IActive {
 
     /**
      * Start of this laser. Check in what direction it goes and how many lasers.
+     *
      * @return the texture of this start laser in right direction.
      */
     public Texture getStartLaserTexture() {
@@ -48,9 +54,9 @@ public class Laser implements IActive {
             case SOUTH:
                 if (numberOfLasers == 1) {
                     texture = new Texture("assets/laser/LaserStartD.png");
-                }else if (numberOfLasers == 2) {
+                } else if (numberOfLasers == 2) {
                     texture = new Texture("assets/laser/LaserDStartD.png");
-                }else {
+                } else {
                     throw new IllegalArgumentException("the number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
                 }
                 break;
@@ -66,9 +72,9 @@ public class Laser implements IActive {
             case EAST:
                 if (numberOfLasers == 1) {
                     texture = new Texture("assets/laser/LaserStartL.png");
-                }else if (numberOfLasers == 2) {
+                } else if (numberOfLasers == 2) {
                     texture = new Texture("assets/laser/LaserDStartL.png");
-                }else {
+                } else {
                     throw new IllegalArgumentException("the number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
                 }
                 break;
@@ -80,36 +86,64 @@ public class Laser implements IActive {
 
     /**
      * check in what direction this laser goes and if it has  one or two lasers.
+     *
      * @return the texture of this laser in its direction and correct number of lasers.
      */
-        public Texture getLaserTexture() {
-            if( direction == DIRECTION.SOUTH || direction == DIRECTION.NORTH){
-                if(numberOfLasers == 1){
-                    texture = new Texture("assets/laser/LaserVert.png");
-                }else if (numberOfLasers == 2){
-                    texture = new Texture("assets/laser/LaserDVert.png");
-                }else {
-                    throw  new IllegalArgumentException("The number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
-                }
-            }else if ( direction == DIRECTION.EAST || direction == DIRECTION.WEST) {
-                if(numberOfLasers == 1){
-                    texture = new Texture("assets/laser/LaserHor.png");
-                }else if(numberOfLasers == 2) {
-                    texture = new Texture("assets/laser/LaserDHor.png");
-                }else {
-                    throw  new IllegalArgumentException("The number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
-                }
-            }else {
-                throw  new IllegalArgumentException("The number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
+    public Texture getLaserTexture() {
+        if (direction == DIRECTION.SOUTH || direction == DIRECTION.NORTH) {
+            if (numberOfLasers == 1) {
+                texture = new Texture("assets/laser/LaserVert.png");
+            } else if (numberOfLasers == 2) {
+                texture = new Texture("assets/laser/LaserDVert.png");
+            } else {
+                throw new IllegalArgumentException("The number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
             }
-            return texture;
+        } else if (direction == DIRECTION.EAST || direction == DIRECTION.WEST) {
+            if (numberOfLasers == 1) {
+                texture = new Texture("assets/laser/LaserHor.png");
+            } else if (numberOfLasers == 2) {
+                texture = new Texture("assets/laser/LaserDHor.png");
+            } else {
+                throw new IllegalArgumentException("The number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
+            }
+        } else {
+            throw new IllegalArgumentException("The number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
         }
+        return texture;
+    }
 
     @Override
-    public int drawPriority() { return PRIORITY; }
+    public int drawPriority() {
+        return PRIORITY;
+    }
 
     @Override
-    public int compareTo(ICell other) { return Integer.compare(this.drawPriority(), other.drawPriority()); }
+    public int compareTo(ICell other) {
+        return Integer.compare(this.drawPriority(), other.drawPriority());
+    }
 
-    public DIRECTION getDirection(){ return direction; }
+    public DIRECTION getDirection() {
+        return direction;
+    }
+
+
+    public static List<AbstractMap.SimpleEntry<String, Supplier<ICell>>> getSuppliers() {
+        List<AbstractMap.SimpleEntry<String, Supplier<ICell>>> suppliers = new ArrayList<>();
+        // TODO add laser supplier
+
+        char[] bools = {'T', 'F'};
+        int maxNrOfLaserEyes = 2;
+        int booleans = 2;
+        for (int b = 0; b < booleans; b++) {
+            final boolean IS_START = b == 0;
+            for (int dir = 0; dir < DIRECTION.values().length; dir++) {
+                final int DIR_F = dir;
+                for (int nrOfLasers = 0; nrOfLasers < maxNrOfLaserEyes; nrOfLasers++) {
+                    final int NR_OF_LASERS = nrOfLasers;
+                    suppliers.add(new AbstractMap.SimpleEntry<>("l" + bools[b] + DIRECTION.values()[dir].symbol(), () -> new Laser(IS_START, DIRECTION.values()[DIR_F], NR_OF_LASERS)));
+                }
+            }
+        }
+        return suppliers;
+    }
 }
