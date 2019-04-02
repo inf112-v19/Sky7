@@ -1,5 +1,5 @@
 {
-  "MetaInformation": [
+  "Meta": [
     "Width",
     "Height",
     "name",
@@ -8,16 +8,17 @@
     "length"
   ],
   "Code": {
-    "b": "conveyor belt followed by (direction and type)",
-    "c": "cogwheel followed by (direction with clock and against clock)",
+    "b": "conveyor belt <- (snd_direction_from::[N,E,S,W], direction_to::[N,E,S,W], type::[0,1])",
+    "c": "cogwheel <- (direction::[C, A], type::[1,2])",
     "f": "floor",
-    "g": "flag[goal] followed by (number)",
+    "g": "flag <- (number::[1,2,3,4] )",
     "h": "hole",
-    "l": "laser followed by (start position, direction, number of lasers)",
+    "l": "laser <- (isStartPosition::[T,F], direction::[N,E,S,W], numberOfLasers::[1,2])",
     "r": "robot",
-    "s": "start cell for robot followed by (number)",
-    "t": "wrench[tool] (1 or 2)",
-    "w": "wall followed by (direction, can be multiple walls)"
+    "s": "start cell for a robot  <- (number::[1 ... 8])",
+    "t": "wrench <- (number::[1,2])",
+    "w": "wall <- (direction_to::[N,E,S,W])",
+    "p": "pusher <- (direction::[N,W,S,E], phase::[P,O])"
   },
   "posCode": {
     "N": "north",
@@ -25,7 +26,11 @@
     "W": "west",
     "S": "south",
     "C": "with clock direction",
-    "A": "against clock direction"
+    "A": "against clock direction",
+    "P": "pair phase:  2 or 4",
+    "O": "odd phase: 1, 3 or 5",
+    "T": "true",
+    "F": "false"
   },
   "split": {
     "_": "between codes in the same cell",
