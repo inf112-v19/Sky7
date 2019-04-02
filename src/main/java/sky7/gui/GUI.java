@@ -88,11 +88,11 @@ public class GUI implements ApplicationListener {
 
 			host = new Sprite(textures.get("confirm"));
 			host.setPosition(scaler*8, scaler*7);
-			
+
 			join = new Sprite(textures.get("reset"));
 			join.setPosition(scaler*7, scaler*7);
 			join.setColor(Color.CYAN);
-			
+
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
@@ -125,23 +125,23 @@ public class GUI implements ApplicationListener {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
 			host.draw(batch);
 			join.draw(batch);
-			
+
 			if (isClicked(host)) {
 				hosting = true;
 			}
 			if (isClicked(join)) {
+				// take input from user
 				MyTextInputListener listener = new MyTextInputListener();
 				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");	
-				String IP = listener.toString();
 			}
-			
+
 		} else {	
 			showDockBG(); //Render background and registry slots
 			showBoard(); //Render gameboard
 			showHealth(); //Render health of player
 			showRegistry(); //Render the cards the player has chosen
 			chooseCards(); //Render 9 selectable cards
-			
+
 			/*
 			 * render reset button only if at least one card is selected and
 			 * when the player has not pressed the "ready" button
@@ -370,16 +370,22 @@ public class GUI implements ApplicationListener {
 			cardXpos+=scaler;
 		}	
 	}
-	
+
 	// Get user input
 	public class MyTextInputListener implements TextInputListener {
-		   @Override
-		   public void input (String text) {
-			   String input = text;
-		   }
-
-		   @Override
-		   public void canceled () {
-		   }
+		String input;
+		@Override
+		public void input (String text) {
+			input = text;
+			System.out.println(input);
 		}
+
+		@Override
+		public void canceled () {
+		}
+
+		public String getinput() {
+			return input;
+		}
+	}
 }
