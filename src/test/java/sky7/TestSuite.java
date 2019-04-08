@@ -14,6 +14,7 @@ import sky7.client.ClientTest;
 @SuiteClasses({
     BoardGeneratorTest.class,
     BoardTests.class,
+    RoboTest.class,
     ClientTest.class,
     FlagTest.class,
     ICellTest.class,

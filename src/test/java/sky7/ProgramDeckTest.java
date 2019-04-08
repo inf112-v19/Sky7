@@ -48,6 +48,17 @@ public class ProgramDeckTest {
         // assert that the deck is complete after drawing and returning cards
         assertTrue(deck.nRemainingCards() == fullDeck);
     }
+
+    @Test
+    public void noTowCardsShouldHaveSamePriority(){
+        ProgramDeck deck = new ProgramDeck();
+        ProgramCard[] cards = deck.getProgramCardsForTesting();
+        for (int i = 0; i < cards.length; i++) {
+            for (int j = i+1; j < cards.length; j++) {
+                assertTrue(cards[i].priorityN() != cards[j].priorityN());
+            }
+        }
+    }
     
     @Test
     public void correctNumberMove3(){
