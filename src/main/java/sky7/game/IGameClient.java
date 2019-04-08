@@ -10,7 +10,7 @@ import sky7.player.IPlayer;
 
 import java.io.FileNotFoundException;
 
-public interface IClient {
+public interface IGameClient {
 
     /**
      * Return the board that the current game is being played on.

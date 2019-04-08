@@ -21,11 +21,11 @@ import com.badlogic.gdx.utils.viewport.*;
 import sky7.board.ICell;
 import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
-import sky7.game.IClient;
+import sky7.game.IGameClient;
 
 
 public class GUI implements ApplicationListener {
-	private IClient game;
+	private IGameClient game;
 	private int width, height, windowWidth, windowHeight;
 	private SpriteBatch batch;
 	private BitmapFont font;
@@ -47,7 +47,7 @@ public class GUI implements ApplicationListener {
 	private ArrayList<ICard> hand;
 	private ArrayList<ICard> registry = new ArrayList<>(4);
 
-	public GUI(IClient game) throws FileNotFoundException {
+	public GUI(IGameClient game) throws FileNotFoundException {
 		this.game = game;
 		textures = new HashMap<>();
 		sprites = new HashMap<>();

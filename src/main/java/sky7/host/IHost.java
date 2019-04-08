@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import sky7.card.ICard;
-import sky7.game.Client;
+import sky7.game.GameClient;
 
 public interface IHost {
 
@@ -29,7 +29,7 @@ public interface IHost {
      * @param player the player that want to enter the game
      * @return true if player can be added to the game hosted by host
      */
-    boolean addPlayer(Client player);
+    boolean addPlayer(GameClient player);
 
     /**
      * Method to be called by players, to inform host of which cards are chosen to play, and in what order

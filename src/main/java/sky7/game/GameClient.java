@@ -11,7 +11,7 @@ import sky7.host.IHost;
 import sky7.player.IPlayer;
 import sky7.player.Player;
 
-public class Client implements IClient {
+public class GameClient implements IGameClient {
 
     private IBoard board; //TODO double check the code, might contain problems.
     private IHost host;
@@ -20,7 +20,7 @@ public class Client implements IClient {
     private String boardName;
 
 
-    public Client() {
+    public GameClient() {
         //board = new Board(10,8);
         this.player = new Player();
         state = STATE.LOADING;

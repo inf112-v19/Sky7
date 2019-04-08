@@ -4,7 +4,7 @@ package sky7.Host;
 import org.junit.Before;
 import org.junit.Test;
 import sky7.card.ICard;
-import sky7.game.Client;
+import sky7.game.GameClient;
 import sky7.host.HOST_STATE;
 import sky7.host.Host;
 
@@ -15,15 +15,15 @@ public class HostTest {
 
 
     static final int NR_OF_CLIENTS = 8;
-    static private Client[] clients;
+    static private GameClient[] clients;
     static private Host host;
 
     @Before
     public void setUp() {
         host = new Host();
-        clients = new Client[NR_OF_CLIENTS];
+        clients = new GameClient[NR_OF_CLIENTS];
         for (int i = 0; i < NR_OF_CLIENTS; i++) {
-            clients[i] = new Client();
+            clients[i] = new GameClient();
         }
         //TODO a Host needs a client
 

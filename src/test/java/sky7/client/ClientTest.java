@@ -12,14 +12,14 @@ import org.junit.Test;
 import sky7.card.ICard;
 import sky7.card.ProgramCard;
 import sky7.card.ProgramDeck;
-import sky7.game.Client;
-import sky7.game.IClient;
+import sky7.game.GameClient;
+import sky7.game.IGameClient;
 import sky7.host.Host;
 import sky7.host.IHost;
 
 public class ClientTest {
 
-    static List<IClient> clients;
+    static List<IGameClient> clients;
     static final int N_CLIENTS = 8;
     ProgramDeck deck;
     
@@ -29,9 +29,9 @@ public class ClientTest {
     
     @BeforeClass
     public static void testSetup() {
-        clients = new ArrayList<IClient>();
+        clients = new ArrayList<IGameClient>();
         for (int i=0; i<N_CLIENTS ; i++) {
-            clients.add(new Client());
+            clients.add(new GameClient());
         }
         
         IHost host = new Host();

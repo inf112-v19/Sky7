@@ -1,33 +1,50 @@
 package sky7.host;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net.Protocol;
-import com.badlogic.gdx.net.ServerSocket;
-import com.badlogic.gdx.net.ServerSocketHints;
-import com.badlogic.gdx.net.Socket;
+import com.esotericsoftware.kryonet.Connection;
+import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.kryonet.Server;
+
+import sky7.card.ICard;
+import sky7.net.KryoRegister;
+import sky7.net.packets.Hand;
 
 public class HostNetHandler {
-
-    ServerSocket sSocket;
-    ServerSocketHints servHints;
-    ArrayList<HostConnection> connections;
     
-    public HostNetHandler(final IHost host) {
-        servHints = new ServerSocketHints();
-        servHints.acceptTimeout = 8000;
-        sSocket = Gdx.net.newServerSocket(Protocol.TCP, 6767, servHints);
-        while (true) {
-            final Socket cSocket = sSocket.accept(null);
-            
-            new Thread(new Runnable(){
+    Server server;
+    
+    public HostNetHandler(IHost host) throws IOException {
 
-                @Override
-                public void run() {
-                    connections.add(new HostConnection(host, cSocket));
-                }
-            }).start();
+        server = new Server();
+        new KryoRegister(server.getKryo());
+        server.addListener(new HostListener());
+        server.start();
+        server.bind(27273, 27283);
+    }
+    
+    public int getNumberOfConnectedPlayers() {
+        return server.getConnections().length;
+    }
+    
+    public void dealCards(int playerID, ArrayList<ICard> cards) {
+        Hand h = new Hand();
+        h.cards = cards;
+        server.sendToTCP(playerID, h);
+    }
+    
+    private class HostListener extends Listener {
+        public void connected (Connection connection) {
+            
+        }
+
+        public void disconnected (Connection connection) {
+            
+        }
+
+        public void received (Connection connection, Object object) {
+            
         }
     }
 }

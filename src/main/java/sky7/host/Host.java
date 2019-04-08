@@ -1,6 +1,7 @@
 package sky7.host;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -12,8 +13,8 @@ import sky7.card.ICard;
 import sky7.card.IDeck;
 import sky7.card.ProgramCard;
 import sky7.card.ProgramDeck;
-import sky7.game.Client;
-import sky7.game.IClient;
+import sky7.game.GameClient;
+import sky7.game.IGameClient;
 
 /**
  * A Class that
@@ -24,7 +25,7 @@ public class Host implements IHost {
     private static final int FAZES_PER_ROUND = 5;
     private static int MAX_NR_OF_PLAYERS = 8;
     private String boardName = "assets/Boards/mvp1Board.json";
-    private IClient[] players;
+    private IGameClient[] players;
     private int nPlayers = 0, readyPlayers = 0;
     private IDeck pDeck;
     private IBoard board;
@@ -37,22 +38,28 @@ public class Host implements IHost {
     private HOST_STATE currentState = HOST_STATE.BEGIN;
     private int phaseNr = 0;
     private int roundNr = 0;
+    private HostNetHandler netHandler;
 
 
     // CONSTRUCTORS -------------
     /**
      * @param cli a Client i.e. player
      */
-    public Host(IClient cli) {
+    public Host(IGameClient cli) {
         this();
         players[0] = cli;
+//        try {
+//            netHandler = new HostNetHandler((IHost)this);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         nPlayers++;
         cli.connect(this, 0, boardName);
         board.placeRobot(0, 5, 5);
     }
 
     public Host() {
-        players = new Client[MAX_NR_OF_PLAYERS];
+        players = new GameClient[MAX_NR_OF_PLAYERS];
         playerRegs = new HashMap<>();
         pQueue = new LinkedList<>();
         pDeck = new ProgramDeck();
@@ -69,7 +76,7 @@ public class Host implements IHost {
     /**
      * @param players an array of players
      */
-    public Host(Client[] players) {
+    public Host(GameClient[] players) {
         this();
         this.players = players;
     }
@@ -87,7 +94,7 @@ public class Host implements IHost {
     }
 
     @Override
-    public boolean addPlayer(Client player) {
+    public boolean addPlayer(GameClient player) {
         players[nPlayers++] = player;
         player.connect(this, 0, boardName);
         //TODO add a new player if the board allows it. There is a limit on how many players can play on a board.
@@ -256,11 +263,16 @@ public class Host implements IHost {
      * gives out 9 card to each player, at the start of a round.
      */
     private void giveOutCards() {
-        // give 9 cards to each player
+        // give 9 cards to local player
         for (int i = 0; i < nPlayers; i++) {
             players[i].chooseCards(pDeck.draw(9));
             System.out.println("Cards given to player " + i);
         }
+        
+        for (int i=0; i<nPlayers-1; i++) {
+            netHandler.dealCards(i, pDeck.draw(9));
+        }
+        
     }
 
     /**
@@ -364,7 +376,7 @@ public class Host implements IHost {
         return board;
     }
 
-    public IClient[] getPlayers() {
+    public IGameClient[] getPlayers() {
         return players;
     }
 

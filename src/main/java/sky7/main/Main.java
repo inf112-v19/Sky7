@@ -5,14 +5,14 @@ import java.io.FileNotFoundException;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import sky7.game.Client;
-import sky7.game.IClient;
+import sky7.game.GameClient;
+import sky7.game.IGameClient;
 import sky7.gui.GUI;
 import sky7.host.Host;
 
 public class Main {
     
-    private static IClient client;
+    private static IGameClient client;
 
     public static void main(String[] args) {
         clientThread cThread = new clientThread();
@@ -44,7 +44,7 @@ public class Main {
 
         @Override
         public void run() {
-            client = new Client();
+            client = new GameClient();
         }
         
     }
