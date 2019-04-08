@@ -3,7 +3,7 @@ package sky7.gui;
 import com.badlogic.gdx.Input.TextInputListener;
 
 // Get user input
-public class MyTextInputListener implements TextInputListener {
+public class TextInput implements TextInputListener {
 	String input;
 	
 	@Override
