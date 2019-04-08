@@ -48,11 +48,16 @@ public class Host implements IHost {
     public Host(IGameClient cli) {
         this();
         players[0] = cli;
-//        try {
-//            netHandler = new HostNetHandler((IHost)this);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        new Thread() {
+            public void run() {
+                try {
+                    netHandler = new HostNetHandler((IHost)Host.this);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+        
         nPlayers++;
         cli.connect(this, 0, boardName);
         board.placeRobot(0, 5, 5);

@@ -10,13 +10,15 @@ import com.esotericsoftware.kryonet.Server;
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
 import sky7.net.packets.Hand;
+import sky7.net.packets.RegistryDiscard;
 
 public class HostNetHandler {
     
     Server server;
+    IHost host;
     
     public HostNetHandler(IHost host) throws IOException {
-
+        this.host = host;
         server = new Server();
         new KryoRegister(server.getKryo());
         server.addListener(new HostListener());
@@ -36,15 +38,17 @@ public class HostNetHandler {
     
     private class HostListener extends Listener {
         public void connected (Connection connection) {
-            
+            System.out.println("Client connected, ID: " + connection.getID() + ", IP: " + connection.getRemoteAddressTCP().toString());
         }
 
         public void disconnected (Connection connection) {
-            
+            System.out.println("Client disconnected, ID: " + connection.getID());
         }
 
         public void received (Connection connection, Object object) {
-            
+            if (object instanceof RegistryDiscard) {
+                host.ready(connection.getID()+1, ((RegistryDiscard)object).registry, ((RegistryDiscard)object).discard);
+            }
         }
     }
 }
