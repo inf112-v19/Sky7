@@ -9,7 +9,7 @@ public class TextInput implements TextInputListener {
 	@Override
 	public void input (String text) {
 		input = text;
-		System.out.println(input);
+		System.out.println("Entered IP: " + input);
 	}
 
 	@Override
