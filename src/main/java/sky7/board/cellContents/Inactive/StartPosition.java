@@ -14,18 +14,26 @@ public class StartPosition implements IInactive {
     private int startNumber;
     private static final int PRIORITY = 3;
     private Texture texture;
-    private DIRECTION direction;
 
     public StartPosition(int startNumber) {
         this.startNumber = startNumber;
-
     }
 
 
     @Override
     public Texture getTexture() {
         if (texture == null) {
-            texture = new Texture("");//TODO add start position pictures
+            switch (startNumber){
+                case 1: texture = new Texture("assets/startposition/1.png"); break;
+                case 2: texture = new Texture("assets/startposition/2.png"); break;
+                case 3: texture = new Texture("assets/startposition/3.png"); break;
+                case 4: texture = new Texture("assets/startposition/4.png"); break;
+                case 5: texture = new Texture("assets/startposition/5.png"); break;
+                case 6: texture = new Texture("assets/startposition/6.png"); break;
+                case 7: texture = new Texture("assets/startposition/7.png"); break;
+                case 8: texture = new Texture("assets/startposition/8.png"); break;
+
+            }
         }
         return texture;
     }
