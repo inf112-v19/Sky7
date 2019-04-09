@@ -45,8 +45,4 @@ public class Wall implements IInactive {
     public DIRECTION getDirection() {
         return direction;
     }
-
-    public boolean canGoHere(DIRECTION incomingDir) {
-        return incomingDir.inverse(incomingDir) == direction;
-    }
 }

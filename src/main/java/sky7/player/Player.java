@@ -81,8 +81,8 @@ public class Player implements IPlayer {
     }
 
     @Override
-    public void setRegistry(ArrayList<ICard> chosenCards) {
-        registry = chosenCards;
+    public void clearRegistry() {
+        registry.clear();
     }
 
     @Override
@@ -123,6 +123,18 @@ public class Player implements IPlayer {
         registry.add(positionInRegistry, chosenCard);
         discard.remove(chosenCard);
     }
+
+	@Override
+	public CharSequence getHealth() {
+		String healthStr = Integer.toString(health);
+		return healthStr;
+	}
+
+	@Override
+	public CharSequence getLifeToken() {
+		String lifeTokensStr = Integer.toString(lifeTokens);
+		return lifeTokensStr;
+	}
 
 
 }

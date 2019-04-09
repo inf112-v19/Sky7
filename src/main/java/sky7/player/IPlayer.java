@@ -48,9 +48,11 @@ public interface IPlayer {
     void setHand(ArrayList<ICard>  programCards);
 
     /**
-     * @param chosenCards the cards the player has chosen.
+     * Clear the registry
+     * 
+     * @param
      */
-    void setRegistry(ArrayList<ICard>  chosenCards);
+    void clearRegistry();
 
     /**
      * @return the hand that the player was dealt.
@@ -79,4 +81,17 @@ public interface IPlayer {
      * @param positionInRegistry the position of the card in the registry.
      */
     void setCard(ICard chosenCard, int positionInRegistry);
+    
+    /**
+     * 
+     * @return player health
+     */
+    public CharSequence getHealth();
+    
+    /**
+     * 
+     * @return life tokens
+     */
+    public CharSequence getLifeToken();
+    
 }

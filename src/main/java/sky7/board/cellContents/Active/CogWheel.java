@@ -6,7 +6,7 @@ import sky7.board.cellContents.IActive;
 
 public class CogWheel implements IActive {
 
-    private int rotDirection; // -1 counterclockwise, 1 clockwise, 2 180
+    private int rotDirection; // -1 counterclockwise, 1 clockwise
     private static final int PRIORITY = 3;
     private Texture texture;
 
@@ -22,7 +22,7 @@ public class CogWheel implements IActive {
             } else if (rotDirection == 1){
                 texture = new Texture("assets/cogwheel/CogGreen.png");
             } else {
-                throw new IllegalStateException("The rotaion Direction has invalid value, has to be -1, 1, or 2. Was " + rotDirection);
+                throw new IllegalStateException("Cog invalid rotation value");
             }
         }
         return texture;
@@ -34,8 +34,8 @@ public class CogWheel implements IActive {
     }
 
     @Override
-    public int compareTo(ICell o) {
-        return 0;
+    public int compareTo(ICell other) {
+        return Integer.compare(this.drawPriority(), other.drawPriority());
     }
     
     public int getRotation() {

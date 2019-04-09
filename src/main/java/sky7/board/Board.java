@@ -11,13 +11,13 @@ import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Active.IConveyorBelt;
 import sky7.board.cellContents.Inactive.FloorTile;
-import sky7.board.cellContents.Inactive.Laser;
+import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
 
 public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
-    private int width, height, nPlayers;
+    private int width, height, nPlayers, maxMove;
     private Vector2[] robotPos;
     private RobotTile[] robots;
     private List<CogWheel> cogs;
@@ -50,7 +50,7 @@ public class Board implements IBoard {
         this.grid = grid;
         this.width = width;
         this.height = height;
-        this.nPlayers = 1;
+        this.nPlayers = 0;
         this.robotPos = new Vector2[8];
         this.robots = new RobotTile[8];
         this.cogs = new ArrayList<>();
@@ -103,9 +103,11 @@ public class Board implements IBoard {
 
     @Override
     public void placeRobot(int playerNr, int x, int y) {
+        System.out.println("Placing robot " + playerNr + " at " + x + ", " + y);
         robotPos[playerNr] = new Vector2(x,y);
         robots[playerNr] = new RobotTile(playerNr);
         grid[x][y].add(robots[playerNr]);
+        nPlayers++;
     }
 
     @Override
@@ -119,37 +121,29 @@ public class Board implements IBoard {
         }
         
         // check how far in the given direction it is possible to move (up to the move value)
+        maxMove = 0;
         for (int i=1; i<=move; i++) {
             possibleMove = (isMovePossible(player, i, dir)) ? i : possibleMove;
-            if (possibleMove < i) break;
+            if (possibleMove < i || maxMove == i) break;
         }
         
         
         if (possibleMove > 0) {
             
-            Vector2 target = new Vector2(0,0);
-            
-            switch (dir) {
-            case NORTH:
-                target = new Vector2(robotPos[player].x, robotPos[player].y+possibleMove);
-                break;
-            case EAST:
-                target = new Vector2(robotPos[player].x+possibleMove, robotPos[player].y);
-                break;
-            case SOUTH:
-                target = new Vector2(robotPos[player].x, robotPos[player].y-possibleMove);
-                break;
-            case WEST:
-                target = new Vector2(robotPos[player].x-possibleMove, robotPos[player].y);
-                break;
-            default:
-                throw new IllegalStateException("Found no orientation for robot " + player);
-            }
+            Vector2 target = getDestination(robotPos[player], dir, possibleMove);
             
             updateRobotPos(player, target);
         }
     }
     
+    /**
+     * Check whether a move is possible with the given parameters
+     * 
+     * @param player the player/robot to be moved
+     * @param move the number of tiles to check ahead
+     * @param dir the direction to check for possible movement
+     * @return true if it is possible (not blocked by walls, edge of map or immovable robots)
+     */
     private boolean isMovePossible(int player, int move, DIRECTION dir) {
         
         // return false if there's a wall in tile which the robot is in (same direction as robot is going to move)
@@ -159,34 +153,24 @@ public class Board implements IBoard {
             }
         }
         
-        Vector2 target = new Vector2(0,0);
-        
-        switch (dir) {
-        case NORTH:
-            target = new Vector2(robotPos[player].x, robotPos[player].y+move);
-            break;
-        case EAST:
-            target = new Vector2(robotPos[player].x+move, robotPos[player].y);
-            break;
-        case SOUTH:
-            target = new Vector2(robotPos[player].x, robotPos[player].y-move);
-            break;
-        case WEST:
-            target = new Vector2(robotPos[player].x-move, robotPos[player].y);
-            break;
-        default:
-            throw new IllegalStateException("Found no orientation for robot " + player);
-        }
+        Vector2 target = getDestination(robotPos[player], dir, move);
         
         // check that new pos is within grid
         if (target.x < 0 || target.y < 0) return false;
         if (target.x >= grid.length || target.y >= grid[0].length) return false;
         
+        // set maxMove to move+1 indicating it is possible to move into the target cell and beyond until it is found not to be possible
+        maxMove = move+1;
+        
         // check what is in the target cell
         for(ICell item : grid[(int) target.x][(int) target.y]) {
             
+            // if its a wall in the opposite end of the cell, this cell is the farthest the robot can go, set max move
             // if it's a wall facing the robot, return false
-            if (item instanceof Wall && ((Wall) item).getDirection() == dir.inverse(dir)) return false;
+            if (item instanceof Wall) {
+                if (((Wall) item).getDirection() == dir) maxMove = move;
+                if (((Wall) item).getDirection() == dir.inverse(dir)) return false;
+            }
             
             if (item instanceof RobotTile) {
                 
@@ -194,14 +178,17 @@ public class Board implements IBoard {
                 
                 // get the playerNr of the blocking robot
                 for (int i=0; i<nPlayers; i++) {
-                    if (i != player && robotPos[i] == target) {
+                    if (i != player && robotPos[i].equals(target)) {
                         blockingRobot = i;
                     }
                 }
                 
                 // recursively check if the robot can be pushed in the current direction
                 boolean canMove = isMovePossible(blockingRobot, 1, dir);
-                if (canMove) updateRobotPos(blockingRobot, target);
+                if (canMove) {
+                    Vector2 blockingRobotTarget = getDestination(robotPos[blockingRobot], dir, 1);
+                    updateRobotPos(blockingRobot, blockingRobotTarget);
+                }
                 return canMove;
             }
         }
@@ -209,6 +196,41 @@ public class Board implements IBoard {
         return true;
     }
 
+    /**
+     * Get the coordinates of the tile in the given direction and distance from pos
+     * 
+     * @param pos the source from which to find the new coordinates
+     * @param dir the direction of travel
+     * @param distance the number of tiles to traverse
+     * @return the target vector (coordinates)
+     */
+    private Vector2 getDestination(Vector2 pos, DIRECTION dir, int distance) {
+        Vector2 target;
+        switch (dir) {
+        case NORTH:
+            target = new Vector2(pos.x, pos.y+distance);
+            break;
+        case EAST:
+            target = new Vector2(pos.x+distance, pos.y);
+            break;
+        case SOUTH:
+            target = new Vector2(pos.x, pos.y-distance);
+            break;
+        case WEST:
+            target = new Vector2(pos.x-distance, pos.y);
+            break;
+        default:
+            throw new IllegalStateException("Could not calculate target position.");
+        }
+        return target;
+    }
+
+    /**
+     * Move a robot to a target vector
+     * 
+     * @param player the player/robot to move
+     * @param target the destination coordinates
+     */
     private void updateRobotPos(int player, Vector2 target) {
         Vector2 pos = robotPos[player];
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
@@ -224,7 +246,7 @@ public class Board implements IBoard {
     @Override
     public void rotateRobot(int currentPlayer, int rotate) {
         
-        System.out.println("Attempting to rotate " + rotate);
+        System.out.println("Attempting to rotate player " + currentPlayer + " " + rotate);
         
         switch (rotate) {
         case -1:
@@ -239,14 +261,17 @@ public class Board implements IBoard {
         default:
             throw new IllegalStateException("Invalid rotation value.");
         }
+        
+        System.out.println("Robot " + currentPlayer + " is headed " + robots[currentPlayer].getOrientation());
     }
 
     @Override
     public void rotateCogs() {
         for (int i=0; i<cogPos.size(); i++) {
             for (int j=0; j<nPlayers; j++) {
-                if (cogPos.get(i).equals(robotPos[i])) 
-                    rotateRobot(i, cogs.get(i).getRotation());
+                if (cogPos.get(i).equals(robotPos[j])) {
+                    rotateRobot(j, cogs.get(i).getRotation());
+                }
             }
         }
     }

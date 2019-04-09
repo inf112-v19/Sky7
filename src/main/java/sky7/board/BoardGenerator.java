@@ -15,7 +15,7 @@ import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Inactive.Flag;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Inactive.Hole;
-import sky7.board.cellContents.Inactive.Laser;
+import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.Inactive.Wrench;
@@ -46,106 +46,185 @@ public class BoardGenerator implements IBoardGenerator {
         int width = Integer.parseInt(json.get("width"));
         TreeSet<ICell>[][] grid = new TreeSet[height][width];
         String[] cells = json.get("grid").split(" ");
+
+        //TODO throw argument exception if the file is formatted incorrectly.
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
 
-                String cell = cells[row*width+column];
+                String cell = cells[row * width + column];
 
                 //TODO split cell in to partial codes
                 String[] partsOfCell = cell.split("_");
                 for (String part : partsOfCell) {
-
                     char typeOfCell = part.charAt(0);
-
                     TreeSet<ICell> layers = new TreeSet<ICell>();
-
-                    switch (typeOfCell) { //TODO throw argument exception if the file is formatted incorrectly.
+                    switch (typeOfCell) {
                         case 'f':
-                            layers.add(new FloorTile());
+                            readInFloor(part, layers);
                             break;
-                        case 'w': //TODO fill in wall (direction, can be multiple walls)
-                            layers.add(new FloorTile());
-                            for (int k = 1; k < part.length(); k++) {
-                                char direction = part.charAt(k);
-                                switch (direction) {
-                                    case 'N': //TODO north
-                                        layers.add(new Wall(DIRECTION.NORTH));
-                                        break;
-                                    case 'S': //TODO south
-                                        layers.add(new Wall(DIRECTION.SOUTH));
-                                        break;
-                                    case 'E': // TODO east
-                                        layers.add(new Wall(DIRECTION.EAST));
-                                        break;
-                                    case 'W': // TODO west
-                                        layers.add(new Wall(DIRECTION.WEST));
-                                        break;
-                                }
-                            }
-
+                        case 'w':
+                            readInWall(part, layers);
                             break;
-                        case 'b': //TODO fill in belt (direction and type)
-                            for (int k = 1; k < part.length(); k++) {
-                                char direction = part.charAt(k);
-                                switch (direction) {
-                                    case 'N': //TODO north
-                                        layers.add(new Belt(1, 0));
-                                        break;
-                                    case 'S': //TODO south
-                                        layers.add(new Belt(2, 0));
-                                        break;
-                                    case 'E': // TODO east
-                                        layers.add(new Belt(3, 0));
-                                        break;
-                                    case 'W': // TODO west
-                                        layers.add(new Belt(4, 0));
-                                        break;
-                                }
-                            }
+                        case 'b':
+                            readInBelt(part, layers);
                             break;
-                        case 'c': //TODO fill in cogwheel (direction with clock and against clock)
-                            for (int k = 1; k < part.length(); k++) {
-                                char direction = part.charAt(k);
-                                switch (direction) {
-                                    case 'C': //TODO with clock
-                                        layers.add(new CogWheel(1));
-                                        break;
-                                    case 'A': //TODO against clock
-                                        layers.add(new CogWheel(-1));
-                                        break;
-                                }
-                            }
+                        case 'c':
+                            readInCogWheel(part, layers);
                             break;
-                        case 'g': //fill in flag (number)
-                            int flagNumber = Integer.parseInt("" + part.charAt(1));
-                            layers.add(new Flag(flagNumber));
+                        case 'g':
+                            readInFlag(part, layers);
                             break;
-                        case 't': // fill in wrench (2 types)
-                            int typeOfWrench = Integer.parseInt("" + part.charAt(1));
-                            layers.add(new Wrench(typeOfWrench));
+                        case 't':
+                            readInWrench(part, layers);
                             break;
-                        case 'h': // fill in hole, essentially ignore
-                            layers.add(new Hole());
+                        case 'h':
+                            readInHole(part, layers);
                             break;
                         case 'l': //TODO fill in laser (start position, direction, number of lasers)
-                            layers.add(new Laser(false, 0, 1));
+                            if(part.length() != 1){
+                                throw new IllegalArgumentException("There is a mistake in the format of the file");
+                            }
+                            layers.add(new Laser(false, DIRECTION.NORTH, 1));//
+
                             break;
-                        case 's': //TODO fill in start cell for robot (number)
-                            int startNumber = Integer.parseInt("" + part.charAt(1));
-                            layers.add(new StartPosition(startNumber));
+                        case 's':
+                            readInStart(part, layers);
                             break;
                         default:
                             throw new IllegalArgumentException("There is a mistake in the format of the file");
 
                     }
                     grid[row][column] = layers;
-
                 }
             }
         }
 
 
         return new Board(grid, height, width);
+    }
+
+    private void readInFloor(String part, TreeSet<ICell> layers) {
+        if (part.length() != 1) {
+            throw new IllegalArgumentException("There is a mistake in the format of the file");
+        }
+
+        layers.add(new FloorTile());
+    }
+
+    private void readInWall(String part, TreeSet<ICell> layers) {
+        //TODO fill in wall (direction, can be multiple walls)
+        if (!(part.length() > 1)) {
+            throw new IllegalArgumentException("There is a mistake in the format of the file");
+        }
+        layers.add(new FloorTile());
+        for (int k = 1; k < part.length(); k++) {
+            char direction = part.charAt(k);
+            switch (direction) {
+                case 'N': //TODO north
+                    layers.add(new Wall(DIRECTION.NORTH));
+                    break;
+                case 'S': //TODO south
+                    layers.add(new Wall(DIRECTION.SOUTH));
+                    break;
+                case 'E': // TODO east
+                    layers.add(new Wall(DIRECTION.EAST));
+                    break;
+                case 'W': // TODO west
+                    layers.add(new Wall(DIRECTION.WEST));
+                    break;
+                default:
+                    throw new IllegalArgumentException("There is a mistake in the format of the file");
+            }
+        }
+    }
+
+    private void readInStart(String part, TreeSet<ICell> layers) {
+        //TODO fill in start cell for robot (number)
+        if (part.length() != 2) {
+            throw new IllegalArgumentException("There is a mistake in the format of the file");
+        }
+        int startNumber = Integer.parseInt("" + part.charAt(1));
+        layers.add(new StartPosition(startNumber));
+    }
+
+    private void readInLaser(String part, TreeSet<ICell> layers) {
+        //TODO fill in laser (start position, direction, number of lasers)
+        if (part.length() != 1) {
+            throw new IllegalArgumentException("There is a mistake in the format of the file");
+        }
+        layers.add(new Laser(false, DIRECTION.EAST, 1));
+    }
+
+    private void readInHole(String part, TreeSet<ICell> layers) {
+        // fill in hole, essentially ignore
+        if (part.length() != 1) {
+            throw new IllegalArgumentException("There is a mistake in the format of the file");
+        }
+        layers.add(new Hole());
+    }
+
+    private void readInWrench(String part, TreeSet<ICell> layers) {
+        // fill in wrench (2 types)
+        if (part.length() != 2) {
+            throw new IllegalArgumentException("There is a mistake in the format of the file");
+        }
+        int typeOfWrench = Integer.parseInt("" + part.charAt(1));
+        layers.add(new Wrench(typeOfWrench));
+    }
+
+    private void readInFlag(String part, TreeSet<ICell> layers) {
+        //fill in flag (number)
+        if (part.length() != 2) {
+            throw new IllegalArgumentException("There is a mistake in the format of the file");
+        }
+        int flagNumber = Integer.parseInt("" + part.charAt(1));
+        layers.add(new Flag(flagNumber));
+    }
+
+    private void readInCogWheel(String part, TreeSet<ICell> layers) {
+        //TODO fill in cogwheel (direction with clock and against clock)
+        if (!(part.length() > 1)) {
+            throw new IllegalArgumentException("There is a mistake in the format of the file");
+        }
+        for (int k = 1; k < part.length(); k++) {
+            char direction = part.charAt(k);
+            switch (direction) {
+                case 'C': //TODO with clock
+                    layers.add(new CogWheel(1));
+                    break;
+                case 'A': //TODO against clock
+                    layers.add(new CogWheel(-1));
+                    break;
+                default:
+                    throw new IllegalArgumentException("There is a mistake in the format of the file");
+            }
+        }
+    }
+
+    private void readInBelt(String part, TreeSet<ICell> layers) {
+        //TODO fill in belt (direction and type)
+        if (part.length() < 2) {
+            throw new IllegalArgumentException("There is a mistake in the format of the file");
+        }
+        for (int k = 1; k < part.length(); k++) {
+            char direction = part.charAt(k);
+            switch (direction) {
+                case 'N': //TODO north
+                    layers.add(new Belt(1, 0));
+                    break;
+                case 'S': //TODO south
+                    layers.add(new Belt(2, 0));
+                    break;
+                case 'E': // TODO east
+                    layers.add(new Belt(3, 0));
+                    break;
+                case 'W': // TODO west
+                    layers.add(new Belt(4, 0));
+                    break;
+                default:
+                    throw new IllegalArgumentException("There is a mistake in the format of the file");
+            }
+        }
     }
 
     private static void getJson(String filePath) throws FileNotFoundException {
