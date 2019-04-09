@@ -20,7 +20,7 @@ public class Pusher implements IActive {
 
     public Pusher(DIRECTION direction, boolean oddPhased) {
         this.direction = direction;
-        this.oddPhased = oddPhased; //oddPhased is 1 if it is oddPhased else 0
+        this.oddPhased = oddPhased; //oddPhased is true if it is oddPhased else false
 
     }
 
@@ -28,15 +28,16 @@ public class Pusher implements IActive {
      * Check if the pusher activates in the current phase.
      *
      * @param phase the current phase
-     * @return true if the pusher activates in phase, false otherwise.
+     * @return true if pusher is oddPhased and phase is odd, or if pusher is not oddPhased and phase is equal,
+     * false otherwise.
      */
     boolean doActivate(int phase) {
         assert phase > 0 && phase < 5;
-        return phase % 2 == 1 && oddPhased;
+        return (phase % 2 == 1 && oddPhased) || (phase % 2 == 0 && !oddPhased);
     }
 
     @Override
-    public Texture getTexture() {//TODO change image 8.png , this is the same as 1.png
+    public Texture getTexture() {
         if (texture == null) {
             if (!oddPhased) {
                 switch (direction) {
@@ -89,7 +90,7 @@ public class Pusher implements IActive {
     }
 
     /**
-     * return the direction of this pusher
+     * return the direction of where the pusher push into
      *
      * @return
      */
