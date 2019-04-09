@@ -129,7 +129,6 @@ public class Laser implements IActive {
 
     public static List<AbstractMap.SimpleEntry<String, Supplier<ICell>>> getSuppliers() {
         List<AbstractMap.SimpleEntry<String, Supplier<ICell>>> suppliers = new ArrayList<>();
-        // TODO add laser supplier
 
         char[] bools = {'T', 'F'};
         int maxNrOfLaserEyes = 2;
