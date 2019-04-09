@@ -78,6 +78,8 @@ public class GUI implements ApplicationListener {
 			textures.put("confirm", new Texture("assets/dock/Confirm.png"));
 			textures.put("health", new Texture("assets/health.png"));
 			textures.put("Splashscreen", new Texture("assets/menu/splashscreen.png"));
+			textures.put("Host", new Texture("assets/menu/Host.png"));
+			textures.put("Join", new Texture("assets/menu/Join.png"));
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
 
 			reset = new Sprite(textures.get("reset"));
@@ -86,12 +88,11 @@ public class GUI implements ApplicationListener {
 			confirm = new Sprite(textures.get("confirm"));
 			confirm.setPosition(scaler*11, scaler+20);
 
-			host = new Sprite(textures.get("confirm"));
-			host.setPosition(scaler*8, scaler*7);
+			host = new Sprite(textures.get("Host"));
+			host.setPosition(scaler*9, scaler*7);
 
-			join = new Sprite(textures.get("reset"));
-			join.setPosition(scaler*7, scaler*7);
-			join.setColor(Color.CYAN);
+			join = new Sprite(textures.get("Join"));
+			join.setPosition(scaler*5, scaler*7);
 
 			hand = game.getHand();
 			addSprites();
