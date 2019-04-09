@@ -167,7 +167,8 @@ public class GUI implements ApplicationListener {
 				powerdown.draw(batch);
 				//if powerdown is clicked:
 				if(isClicked(powerdown)) {
-					
+					System.out.println("Powering down next round");
+					//TODO: some logic for powering down
 				}
 				// if confirm is clicked:
 				if (isClicked(confirm)) {
