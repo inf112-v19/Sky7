@@ -37,7 +37,7 @@ public class GUI implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	private TextureAtlas textureAtlas;
-	private Sprite reset, confirm, host, join;
+	private Sprite reset, confirm, host, join, powerdown;
 
 	private boolean cardsChoosen = false;
 	private boolean hosting = false;
@@ -46,6 +46,7 @@ public class GUI implements ApplicationListener {
 	private int scaler = 128;
 	private ArrayList<ICard> hand;
 	private ArrayList<ICard> registry = new ArrayList<>(4);
+	TextInput listener;
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -80,6 +81,9 @@ public class GUI implements ApplicationListener {
 			textures.put("Splashscreen", new Texture("assets/menu/splashscreen.png"));
 			textures.put("Host", new Texture("assets/menu/Host.png"));
 			textures.put("Join", new Texture("assets/menu/Join.png"));
+			textures.put("PowerDown", new Texture("assets/menu/PowerDown.png"));
+			textures.put("PowerDownPressed", new Texture("assets/menu/PowerDownPressed.png"));
+			
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
 
 			reset = new Sprite(textures.get("reset"));
@@ -93,10 +97,14 @@ public class GUI implements ApplicationListener {
 
 			join = new Sprite(textures.get("Join"));
 			join.setPosition(scaler*5, scaler*7);
+			
+			powerdown = new Sprite(textures.get("PowerDown"));
+			powerdown.setPosition(scaler*12+72, 16);
 
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
+			listener = new TextInput();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -132,7 +140,6 @@ public class GUI implements ApplicationListener {
 			}
 			if (isClicked(join)) {
 				// take input from user
-				TextInput listener = new TextInput();
 				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");	
 			}
 
@@ -157,6 +164,12 @@ public class GUI implements ApplicationListener {
 			// Render "GO" button only if 5 cards are choosen
 			if (pointer == 5) {
 				confirm.draw(batch);
+				powerdown.draw(batch);
+				//if powerdown is clicked:
+				if(isClicked(powerdown)) {
+					
+				}
+				// if confirm is clicked:
 				if (isClicked(confirm)) {
 					setRegistry();
 					pointer = 0;
