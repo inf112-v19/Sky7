@@ -2,9 +2,12 @@ package sky7.game;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashSet;
+
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
+import sky7.board.cellContents.Inactive.Flag;
 import sky7.card.ICard;
 import sky7.card.IProgramCard;
 import sky7.host.IHost;
@@ -18,12 +21,14 @@ public class Client implements IClient {
     private IPlayer player;
     private STATE state;
     private String boardName;
+    private HashSet<Flag> flagVisited;
 
 
     public Client() {
         //board = new Board(10,8);
         this.player = new Player();
         state = STATE.LOADING;
+        this.flagVisited = new HashSet<>();
     }
 
     @Override
@@ -116,6 +121,14 @@ public class Client implements IClient {
     public void activateLasers() {
         //TODO should call board.activateLasers
 
+
+    }
+    public void setFlagVisited(Flag visitedFlag){
+        this.flagVisited.add(visitedFlag);
+
+    }
+    public boolean hasVisitedFlag(Flag flag){
+        return this.flagVisited.contains(flag);
     }
 
     /**
