@@ -21,7 +21,7 @@ import com.badlogic.gdx.utils.viewport.*;
 import sky7.board.ICell;
 import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
-import sky7.game.IClient;
+import sky7.Client.IClient;
 
 
 public class GUI implements ApplicationListener {
