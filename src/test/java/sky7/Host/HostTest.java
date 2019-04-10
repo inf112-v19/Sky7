@@ -4,7 +4,7 @@ package sky7.Host;
 import org.junit.Before;
 import org.junit.Test;
 import sky7.card.ICard;
-import sky7.game.Client;
+import sky7.Client.Client;
 import sky7.host.HOST_STATE;
 import sky7.host.Host;
 
