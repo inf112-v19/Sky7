@@ -45,10 +45,10 @@ public class Game implements IGame {
 
     @Override
     public void process(HashMap<Integer, ArrayList<ICard>> playerRegistrys) {
-        Queue<Queue<Pair>> allPhases = findPlayerSequence(playerRegistrys);
+        Queue<Queue<Event>> allPhases = findPlayerSequence(playerRegistrys);
         List<Integer> destroyedRobots = new ArrayList<>();
-        for (Queue<Pair> phase : allPhases) {
-            for (Pair player : phase) {
+        for (Queue<Event> phase : allPhases) {
+            for (Event player : phase) {
                 tryToMove(player);
                 expressConveyor();
                 normalAndExpressConveyor();
@@ -129,9 +129,9 @@ public class Game implements IGame {
     /**
      * Try to move a robot a step.
      *
-     * @param player a Pair containing the playerId and ProgramCard
+     * @param player a Event containing the playerId and ProgramCard
      */
-    private void tryToMove(Pair player) {
+    private void tryToMove(Event player) {
         if (player.card.moveType()) {
             int steps = player.card.move();
             while (steps > 0) {
@@ -165,7 +165,7 @@ public class Game implements IGame {
         }
     }
 
-    private void rotatePlayer(Pair player) {
+    private void rotatePlayer(Event player) {
         board.rotateRobot(player.id, player.card.rotate());
     }
 
@@ -244,16 +244,16 @@ public class Game implements IGame {
      * Queues all the phases, where each phase contains one card from each player sorted by the cards priority
      *
      * @param playerRegistries the registry of all players
-     * @return All 5 phases queued, where each phase is a queue of Pair containing player Id and A card.
+     * @return All 5 phases queued, where each phase is a queue of Event containing player Id and A card.
      */
-    private Queue<Queue<Pair>> findPlayerSequence(HashMap<Integer, ArrayList<ICard>> playerRegistries) {
+    private Queue<Queue<Event>> findPlayerSequence(HashMap<Integer, ArrayList<ICard>> playerRegistries) {
         // TODO make test for this.
 
-        Queue<Queue<Pair>> phases = new LinkedList<>();
+        Queue<Queue<Event>> phases = new LinkedList<>();
         for (int i = 0; i < NR_OF_PHASES; i++) {
-            Queue<Pair> phase = new LinkedList<>();
+            Queue<Event> phase = new LinkedList<>();
             for (Integer playerID : playerRegistries.keySet()) {
-                phase.add(new Pair(playerID, (ProgramCard) playerRegistries.get(playerID).get(i)));
+                phase.add(new Event(playerID, (ProgramCard) playerRegistries.get(playerID).get(i)));
             }
             phases.add(phase);
         }
@@ -261,17 +261,20 @@ public class Game implements IGame {
     }
 
 
-    private class Pair implements Comparable<Pair> {
+    /**
+     * An event is a card associated with a player.
+     */
+    private class Event implements Comparable<Event> {
         private Integer id;
         private ProgramCard card;
 
-        private Pair(Integer id, ProgramCard card) {
+        private Event(Integer id, ProgramCard card) {
             this.id = id;
             this.card = card;
         }
 
         @Override
-        public int compareTo(Pair other) {
+        public int compareTo(Event other) {
             return Integer.compare(card.priorityN(), other.card.priorityN());
         }
     }
