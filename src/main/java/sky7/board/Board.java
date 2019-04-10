@@ -261,6 +261,19 @@ public class Board implements IBoard {
         return target;*/
     }
 
+    @Override
+    public void hideRobot(int player) {
+        Vector2 pos = robotPos[player];
+        for (ICell item : grid[(int) pos.x][(int) pos.y]) {
+            if (item instanceof RobotTile) {
+                grid[(int) pos.x][(int) pos.y].remove(item);
+                return;
+            }
+        }
+    }
+
+
+
     /**
      * Move a robot to a target vector
      *

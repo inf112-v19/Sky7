@@ -46,6 +46,7 @@ public class Game implements IGame {
     @Override
     public void process(HashMap<Integer, ArrayList<ICard>> playerRegistrys) {
         Queue<Queue<Pair>> allPhases = findPlayerSequence(playerRegistrys);
+        List<Integer> destroyedRobots = new ArrayList<>();
         for (Queue<Pair> phase : allPhases) {
             for (Pair player : phase) {
                 tryToMove(player);
@@ -61,10 +62,15 @@ public class Game implements IGame {
         }
         //after 5th phaze
         repairRobotsOnRepairSite();
+        cleanUp();
 
         if (host != null) {
             host.finishedProcessing(board);
         } else client.finishedProcessing(board);
+    }
+
+    private void cleanUp() {
+        // TODO this should be done differently
     }
 
     private boolean foundWinner() {
@@ -155,7 +161,7 @@ public class Game implements IGame {
             }
             board.moveRobot(player, dir);
         } else {
-            // TODO move robot out of the board. currently just stops.
+            board.hideRobot(player);
         }
     }
 

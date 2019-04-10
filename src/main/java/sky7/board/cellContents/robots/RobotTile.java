@@ -2,6 +2,7 @@ package sky7.board.cellContents.robots;
 
 import com.badlogic.gdx.graphics.Texture;
 
+import com.badlogic.gdx.math.Vector2;
 import sky7.board.ICell;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.IMoving;
@@ -12,6 +13,7 @@ public class RobotTile implements IMoving {
     private static final int PRIORITY = 11;
     int playerNr;
     DIRECTION dir;
+    private Vector2 archiveMarker;
     
     public RobotTile(int playerNr) {
         this.playerNr = playerNr;
@@ -88,5 +90,13 @@ public class RobotTile implements IMoving {
 
     public int getId() {
         return playerNr;
+    }
+
+    public Vector2 getArchiveMarker() {
+        return archiveMarker;
+    }
+
+    public void setArchiveMarker(Vector2 archiveMarker) {
+        this.archiveMarker = archiveMarker;
     }
 }

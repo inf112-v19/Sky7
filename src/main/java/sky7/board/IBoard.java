@@ -74,4 +74,6 @@ public interface IBoard {
     boolean containsPosition(Vector2 pos);
 
     Vector2 getDestination(Vector2 from, DIRECTION direction, int i);
+
+    void hideRobot(int player);
 }
