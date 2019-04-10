@@ -74,7 +74,7 @@ public class Game implements IGame {
     }
 
     private boolean foundWinner() {
-        //TODO winner if the clients id, can be found from RoboTile.playerNr.
+        //TODO winner if the clients player, can be found from RoboTile.playerNr.
         /*int winner = 0;
         if (host != null) {
             host.setWinner(0);
@@ -129,20 +129,22 @@ public class Game implements IGame {
     /**
      * Try to move a robot a step.
      *
-     * @param player a Event containing the playerId and ProgramCard
+     * @param action a Event containing the playerId and ProgramCard
      */
-    private void tryToMove(Event player) {
-        if (player.card.moveType()) {
-            int steps = player.card.move();
+    private void tryToMove(Event action) {
+        if (action.card.moveType()) {
+            int steps = Math.abs(action.card.move());
             while (steps > 0) {
-                if (canGo(player.id)) {
-                    movePlayer(player.id, board.getRobots()[player.id].getOrientation());
+                DIRECTION dir = board.getRobots()[action.player].getOrientation();
+                if (action.card.move() < 1) dir = dir.reverse();
+                if (canGo(action.player, dir)) {
+                    movePlayer(action.player, dir);
                     steps--;
                     render();
                 }
             }
         } else {
-            rotatePlayer(player);
+            rotatePlayer(action);
             render();
         }
 
@@ -165,19 +167,17 @@ public class Game implements IGame {
         }
     }
 
-    private void rotatePlayer(Event player) {
-        board.rotateRobot(player.id, player.card.rotate());
+    private void rotatePlayer(Event action) {
+        board.rotateRobot(action.player, action.card.rotate());
     }
 
-    private boolean canGo(Integer id) {
+    private boolean canGo(Integer id, DIRECTION dir) {
 
         Vector2 here = board.getRobotPos()[id];
-        RobotTile robot = board.getRobots()[id];
-        DIRECTION movementDir = robot.getOrientation();
 
-        if (facingWall(here, movementDir)) return false;
+        if (facingWall(here, dir)) return false;
 
-        if (occupiedNextCell(here, movementDir)) return false;
+        if (occupiedNextCell(here, dir)) return false;
 
         return true;
     }
@@ -265,11 +265,11 @@ public class Game implements IGame {
      * An event is a card associated with a player.
      */
     private class Event implements Comparable<Event> {
-        private Integer id;
+        private Integer player;
         private ProgramCard card;
 
-        private Event(Integer id, ProgramCard card) {
-            this.id = id;
+        private Event(Integer player, ProgramCard card) {
+            this.player = player;
             this.card = card;
         }
 
