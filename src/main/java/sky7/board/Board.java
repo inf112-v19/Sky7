@@ -209,7 +209,7 @@ public class Board implements IBoard {
      */
     @Override
     public boolean containsPosition(Vector2 pos) {
-        return (pos.x > 0 && pos.y > 0) && (pos.x < grid.length && pos.y < grid[0].length);
+        return (pos.x >= 0 && pos.y >= 0) && (pos.x < grid.length && pos.y < grid[0].length);
     }
 
     @Override
