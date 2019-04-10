@@ -155,9 +155,8 @@ public class Host implements IHost {
 
     private void runDISTRIBUTE_REGISTRY() {
         currentState = HOST_STATE.DISTRIBUTE_REGISTRY;
-        // TODO send registry to client to render.
-        for (IClient player : players) {
-            player.render(playerRegs);
+        for (int i = 0; i < nPlayers; i++) {
+            players[i].render(playerRegs);
         }
         nextState = HOST_STATE.BEGIN_PROCESSING;
     }
