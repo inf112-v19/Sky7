@@ -85,4 +85,8 @@ public class RobotTile implements IMoving {
     public void rotate180() {
         dir = dir.reverse();
     }
+
+    public int getId() {
+        return playerNr;
+    }
 }
