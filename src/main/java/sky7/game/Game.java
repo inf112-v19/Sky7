@@ -55,7 +55,7 @@ public class Game implements IGame {
                 activatePushers();
                 activateCogwheels();
                 activateLasers();
-                placeMarkers();
+                placeBackup();
                 flags();
                 if (foundWinner()) break;
             }
@@ -90,7 +90,7 @@ public class Game implements IGame {
         render();
     }
 
-    private void placeMarkers() {
+    private void placeBackup() {
         render();
         //REPAIR SITES: A robot on a repair site places their Archive marker (where they respawn) there. (They do NOT repair.)
     }
