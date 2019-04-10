@@ -45,8 +45,6 @@ public class Game implements IGame {
 
     @Override
     public void process(HashMap<Integer, ArrayList<ICard>> playerRegistrys) {
-
-
         Queue<Queue<Pair>> allPhases = findPlayerSequence(playerRegistrys);
         for (Queue<Pair> phase : allPhases) {
             for (Pair player : phase) {
@@ -228,6 +226,11 @@ public class Game implements IGame {
         // TODO call render if this game belongs to a client, else ignore.
         if (client != null) {
             client.updateBoard(board);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
