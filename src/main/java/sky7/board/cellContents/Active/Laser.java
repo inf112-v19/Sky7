@@ -16,6 +16,7 @@ public class Laser implements IActive {
     private final int numberOfLasers;
     private Texture texture;
     private final static int PRIORITY = 10;
+    private boolean visible = true;
 
     public Laser(boolean start, DIRECTION direction, int numberOfLasers) {
         this.start = start;
@@ -117,6 +118,18 @@ public class Laser implements IActive {
         return PRIORITY;
     }
 
+    public void hide(){
+        visible = false;
+    }
+
+    public void reveal(){
+        visible = true;
+    }
+    @Override
+    public boolean isVisible() {
+        return visible;
+    }
+
     @Override
     public int compareTo(ICell other) {
         return Integer.compare(this.drawPriority(), other.drawPriority());
@@ -140,7 +153,7 @@ public class Laser implements IActive {
                 final int DIR_F = dir;
                 for (int nrOfLasers = 0; nrOfLasers < maxNrOfLaserEyes; nrOfLasers++) {
                     final int NR_OF_LASERS = nrOfLasers;
-                    suppliers.add(new AbstractMap.SimpleEntry<>("l" + bools[b] + DIRECTION.values()[dir].symbol(), () -> new Laser(IS_START, DIRECTION.values()[DIR_F], NR_OF_LASERS)));
+                    suppliers.add(new AbstractMap.SimpleEntry<>("l" + bools[b] + DIRECTION.values()[dir].symbol() + nrOfLasers, () -> new Laser(IS_START, DIRECTION.values()[DIR_F], NR_OF_LASERS)));
                 }
             }
         }
