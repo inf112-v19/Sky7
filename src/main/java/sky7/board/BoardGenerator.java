@@ -104,7 +104,7 @@ public class BoardGenerator implements IBoardGenerator {
         int height = Integer.parseInt(json.get("height"));
         int width = Integer.parseInt(json.get("width"));
 
-        TreeSet<ICell>[][] grid = new TreeSet[height][width];
+        TreeSet<ICell>[][] grid = new TreeSet[width][height];
         String[] treeSet = json.get("grid").split(" ");
 
         int pos = 0;
@@ -120,7 +120,7 @@ public class BoardGenerator implements IBoardGenerator {
                     tree.add(createdCell);
                 }
             }
-            grid[pos/width][pos%width] = tree;
+            grid[pos%width][pos/width] = tree;
             pos++;
         }
 
