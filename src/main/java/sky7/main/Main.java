@@ -25,9 +25,9 @@ public class Main {
             e.printStackTrace();
         }
         
-        startGUI g = new startGUI();
-        Thread gui = new Thread(g);
-        gui.start();
+        startHost h = new startHost();
+        Thread host = new Thread(h);
+        host.start();
         
         try {
             Thread.sleep(500);
@@ -35,9 +35,9 @@ public class Main {
             e.printStackTrace();
         }
         
-        startHost h = new startHost();
-        Thread host = new Thread(h);
-        host.start();
+        startGUI g = new startGUI();
+        Thread gui = new Thread(g);
+        gui.start();
     }
     
     public static class clientThread implements Runnable {
