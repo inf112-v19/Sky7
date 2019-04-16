@@ -105,7 +105,7 @@ public class GUI implements ApplicationListener {
 			addSprites();
 			setHandPos(hand);
 			listener = new TextInput();
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

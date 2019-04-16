@@ -1,6 +1,7 @@
 package sky7.Client;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,6 +10,7 @@ import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
 import sky7.card.ICard;
 import sky7.card.IProgramCard;
+import sky7.game.ClientNetHandler;
 import sky7.game.Game;
 import sky7.host.IHost;
 import sky7.player.IPlayer;
@@ -22,13 +24,31 @@ public class Client implements IClient {
     private STATE state;
     private String boardName;
     private Game game;
+    private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
+    private ClientNetHandler netHandler;
 
 
     public Client() {
         //board = new Board(10,8);
         this.player = new Player();
         state = STATE.LOADING;
-
+    }
+    
+    public Client(boolean localClient) {
+        //board = new Board(10,8);
+        this.player = new Player();
+        state = STATE.LOADING;
+        this.localClient = localClient;
+        
+        if(!localClient) {
+            try {
+                netHandler = new ClientNetHandler(this, "");
+                // TODO get host address from input
+            } catch (IOException e) {
+                System.out.println("Unable to connect to Host");
+                // TODO make sure we can try again
+            } 
+        }
     }
 
     @Override

@@ -261,9 +261,8 @@ public class Host implements IHost {
     // NET ------------------------
     
     @Override
-    public void remotePlayerConnected(int connectionNumber) {
-        
-        nRemotePlayers++;
+    public int remotePlayerConnected() {
+        return nRemotePlayers++;
     }
 
     // GETTERS ---------------------

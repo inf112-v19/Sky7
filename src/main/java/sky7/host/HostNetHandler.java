@@ -10,6 +10,7 @@ import com.esotericsoftware.kryonet.Server;
 
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
+import sky7.net.packets.ClientConnectionAccepted;
 import sky7.net.packets.Hand;
 import sky7.net.packets.ProcessRound;
 import sky7.net.packets.RegistryDiscard;
@@ -18,6 +19,8 @@ public class HostNetHandler {
     
     Server server;
     IHost host;
+    HashMap<Integer, Integer> playerToConnection;
+    HashMap<Integer, Integer> connectionToPlayer;
     
     public HostNetHandler(IHost host) throws IOException {
         this.host = host;
@@ -25,7 +28,7 @@ public class HostNetHandler {
         new KryoRegister(server.getKryo());
         server.addListener(new HostListener());
         server.start();
-        server.bind(27273, 27283);
+        server.bind(27273);
     }
     
     public int getNumberOfConnectedPlayers() {
@@ -35,7 +38,7 @@ public class HostNetHandler {
     public void dealCards(int playerID, ArrayList<ICard> cards) {
         Hand h = new Hand();
         h.cards = cards;
-        server.sendToTCP(playerID, h); //need to resolve connection ID =/= player ID
+        server.sendToTCP(playerToConnection.get(playerID), h);
     }
     
     public void distributeRegistries(HashMap<Integer, ArrayList<ICard>> registries) {
@@ -46,17 +49,25 @@ public class HostNetHandler {
     
     private class HostListener extends Listener {
         public void connected (Connection connection) {
-            host.remotePlayerConnected(connection.getID());
+            int newPlayerID = host.remotePlayerConnected();
+            playerToConnection.put(newPlayerID, connection.getID());
+            connectionToPlayer.put(connection.getID(), newPlayerID);
             System.out.println("Client connected, ID: " + connection.getID() + ", IP: " + connection.getRemoteAddressTCP().toString());
+            ClientConnectionAccepted cca = new ClientConnectionAccepted();
+            cca.playerID = newPlayerID;
+            server.sendToTCP(connection.getID(), host.getBoardName());
         }
 
         public void disconnected (Connection connection) {
-            System.out.println("Client disconnected, ID: " + connection.getID());
+            System.out.println("Client disconnected, ID: " + connectionToPlayer.get(connection.getID()));
+            // TODO need to handle disconnected player, Host needs to know not to attempt dealing cards to the player.
         }
 
         public void received (Connection connection, Object object) {
             if (object instanceof RegistryDiscard) {
-                host.ready(connection.getID()+1, ((RegistryDiscard)object).registry, ((RegistryDiscard)object).discard);
+                host.ready(connectionToPlayer.get(connection.getID()), 
+                        ((RegistryDiscard)object).registry, 
+                        ((RegistryDiscard)object).discard);
             }
         }
     }

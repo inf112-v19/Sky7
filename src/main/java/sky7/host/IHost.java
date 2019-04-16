@@ -54,5 +54,8 @@ public interface IHost {
 
     void setWinner(int winner);
     
-    void remotePlayerConnected(int connectionNumber);
+    /**
+     * @return playerID nr to be given to the newly connected player
+     */
+    int remotePlayerConnected();
 }
