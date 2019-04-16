@@ -124,4 +124,16 @@ public class Belt implements IActive {
         }
         return suppliers;
     }
+
+    public DIRECTION getDirectionFrom(){
+        return directionFrom;
+    }
+
+    public DIRECTION getDirectionFromAlt(){
+        return directionFromAlt;
+    }
+
+    public DIRECTION getDirectionTo(){
+        return directionTo;
+    }
 }
