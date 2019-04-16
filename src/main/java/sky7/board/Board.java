@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Vector2;
 
+import sky7.board.cellContents.Active.Belt;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Active.IConveyorBelt;
@@ -24,7 +25,7 @@ public class Board implements IBoard {
     private RobotTile[] robots;
     private List<CogWheel> cogs;
     private List<Vector2> cogPos;
-    private List<IConveyorBelt> convs;
+    private List<Belt> convs;
     private List<Vector2> convPos;
     private List<Laser> lasers;
     private List<Vector2> laserPos;
@@ -83,9 +84,9 @@ public class Board implements IBoard {
                         cogPos.add(new Vector2(i, j));
                         cogs.add((CogWheel) item);
                     }
-                    if (item instanceof IConveyorBelt) {
+                    if (item instanceof Belt) {
                         convPos.add(new Vector2(i, j));
-                        convs.add((IConveyorBelt) item);
+                        convs.add((Belt) item);
                     }
                     if (item instanceof Laser) {
                         laserPos.add(new Vector2(i, j));
@@ -336,7 +337,212 @@ public class Board implements IBoard {
 
     @Override
     public void moveConveyors() {
-        // TODO Auto-generated method stub
+        List<Vector2> positions = new ArrayList<>();
+        List<RobotTile> robosWantsToMove = new ArrayList<>();
+        List<Belt> convsToBeMoved = new ArrayList<>();
+
+        // find all robots on converyor belts, and their position
+        for (int i = 0; i < convs.size(); i++) {
+            for (int j = 0; j < robots.length; j++) {
+                if(convPos.get(i).equals(robotPos[j])){
+                    positions.add(convPos.get(i)); // or robotPos[j]
+                    robosWantsToMove.add(robots[j]);
+                    convsToBeMoved.add(convs.get(i));
+                }
+            }
+        }
+
+        // remove robots (and belts) if the robot can not be moved
+        for (int i = 0; i < robosWantsToMove.size(); i++) {
+            DIRECTION dir = robosWantsToMove.get(i).getOrientation();
+            int x = (int) positions.get(i).x;
+            int y = (int) positions.get(i).y;
+
+            DIRECTION to = convsToBeMoved.get(i).getDirectionTo();
+
+
+            if(!canConvoPush(x,y, to)){
+                System.out.println(robosWantsToMove.get(i).getId() + " can't move");
+                robosWantsToMove.remove(i);
+                positions.remove(i);
+                convsToBeMoved.remove(i);
+                i--;
+            }
+        }
+
+        // TODO: move the robots.
+        for (int i = 0; i < robosWantsToMove.size(); i++) {
+            RobotTile robo = robosWantsToMove.get(i);
+            Belt belt = convsToBeMoved.get(i);
+            Vector2 vec = positions.get(i);
+
+            int[] coords = DIRECTION.getNewPosMoveDir((int)vec.x,(int)vec.y, belt.getDirectionTo());
+            int newx = coords[0];
+            int newy = coords[1];
+
+            TreeSet<ICell> newCells = grid[newx][newy];
+            // if there is no belt, just keep going in same dir;
+            DIRECTION dir = belt.getDirectionTo();
+            for (ICell cell: newCells) {
+                if(cell instanceof Belt){
+                    Belt newBelt = (Belt) cell;
+                    if(newBelt.getDirectionFrom().reverse() == belt.getDirectionTo() ||
+                            (newBelt.getDirectionFromAlt() != null && newBelt.getDirectionFromAlt().reverse() == belt.getDirectionTo())){
+                        dir = newBelt.getDirectionTo();
+                    }
+                }
+            }
+
+            int rotate = belt.getDirectionTo().directionToRotation(dir);
+            int roboNr = robo.getId();
+
+
+            // TODO: make it handle out of bonds
+            moveRobot(roboNr, belt.getDirectionTo());
+            if(rotate != 0) {
+                rotateRobot(roboNr, rotate);
+            }
+        }
+    }
+
+    private boolean canConvoPush(int x, int y, DIRECTION to) {
+        System.out.println("------------ checking if the convo can be pused--------");
+
+        //checking if we can leave current location
+        TreeSet<ICell> localCells = getTileTexture(x,y);
+        for(ICell cell : localCells){
+            if(cell instanceof Wall){
+                Wall wall = (Wall) cell;
+                if(wall.getDirection() == to){
+                    System.out.println(" Early wall return");
+                    return false;
+                }
+            }
+        }
+
+        int newX = x;
+        int newY = y;
+        switch (to){
+            case EAST: newX--; break;
+            case WEST:newX++; break;
+            case NORTH: newY++; break;
+            case SOUTH:newY--; break;
+
+        }
+
+        if(!containsPosition(new Vector2(newX, newY))){
+            System.out.println("early out of bonds return");
+            return true;
+        }
+
+
+
+        // checking if we can enter the new place
+        TreeSet<ICell> nextCells = getTileTexture(newX,newY);
+        boolean canMove = true;
+
+        boolean foundBelt = false;
+        Belt belt = null;
+
+        boolean foundRobo = false;
+        RobotTile robo = null;
+
+
+        for (ICell cell : nextCells) {
+            if(cell instanceof Wall){
+                Wall wall = (Wall) cell;
+                // we are trying to enter, but a wall is blocking
+                if(wall.getDirection().reverse() == to){
+                    System.out.println("hitiing wall fail");
+                    return false;
+                }
+            } else if(cell instanceof Belt){
+                Belt newBelt = (Belt)cell;
+                if(newBelt.getDirectionFrom().reverse() == to || (newBelt.getDirectionFromAlt() != null && newBelt.getDirectionFromAlt().reverse() == to)){
+                    boolean doubleRobo =  tCrossCheck(newX,newY, newBelt);
+                    if(doubleRobo){
+                        System.out.println("early T return");
+                        return false;
+                    }
+                    belt = newBelt;
+                    foundBelt = true;
+                }
+
+            } else if(cell instanceof RobotTile){
+                foundRobo = true;
+                robo = (RobotTile) cell;
+            }
+        }
+
+        if(foundRobo && !foundBelt){
+            System.out.println("early robo no belt return");
+            return false;
+
+        } else if(foundRobo && foundBelt){
+            DIRECTION newTo = belt.getDirectionTo();
+            System.out.println("check if robo can be pushed on wards");
+            return canConvoPush(newX,newY, newTo);
+        }
+
+        System.out.println("final return just true");
+        return true;
+
+    }
+
+    /**
+     * Check if a given belt has two ingoing paths, and if there are two ingoing paths
+     * if there are coming in two robots in to the new point.
+     *
+     * @param beltX
+     * @param beltY
+     * @param checkBelt
+     * @return true if two robos would collide if both moved, false else.
+     */
+    private boolean tCrossCheck(int beltX, int beltY, Belt checkBelt) {
+        DIRECTION from1 = checkBelt.getDirectionFrom();
+        DIRECTION from2 = checkBelt.getDirectionFromAlt();
+        if(from2 == null){
+            System.out.println("early here");
+            return false;
+        }
+
+        int[] fstPair = DIRECTION.getNewPosMoveDir(beltX, beltY, from1);
+        int fstX = fstPair[0];
+        int fstY = fstPair[1];
+
+        int[] sndPair = DIRECTION.getNewPosMoveDir(beltX, beltY, from2);
+        int sndX = sndPair[0];
+        int sndY = sndPair[1];
+
+        //is there a belt and a rbot moving in to this belt on point (fstX, fstY)
+
+        boolean roboFrom1 = isThereABeltAndRobotOnEntryOne(fstX,fstY,from1);
+        boolean roboFrom2 = isThereABeltAndRobotOnEntryOne(sndX,sndY,from2);
+
+        return roboFrom1&&roboFrom2;
+
+    }
+
+    private boolean isThereABeltAndRobotOnEntryOne(int x, int y, DIRECTION from1) {
+        if(!containsPosition(new Vector2(x, y))){
+            return false;
+        }
+        TreeSet<ICell> cells = grid[x][y];
+        boolean foundRobo = false;
+        boolean beltCorrectWay = false;
+        for(ICell cell: cells){
+            if(cell instanceof RobotTile){
+                foundRobo = true;
+            } else if(cell instanceof Belt){
+                Belt newBelt = (Belt) cell;
+                if(newBelt.getDirectionTo() == from1.reverse()){
+                    beltCorrectWay = true;
+                }
+
+            }
+        }
+
+        return foundRobo && beltCorrectWay;
     }
 
     @Override
