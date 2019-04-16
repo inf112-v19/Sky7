@@ -29,6 +29,8 @@ public interface IClient {
 
     void connect(IHost host, int playerNumber, String boardName);
 
+    void connect(int playerNumber, String boardName);
+
     /**
      * A method called by host to give the player program cards
      *
@@ -104,4 +106,5 @@ public interface IClient {
     void finishedProcessing(IBoard board);
 
     void render(HashMap<Integer,ArrayList<ICard>> cards);
+
 }

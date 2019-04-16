@@ -46,7 +46,12 @@ public class Client implements IClient {
         this.host = host;
         player.setPlayerNumber(playerNumber);
         this.boardName = boardName;
-
+    }
+    
+    @Override
+    public void connect(int playerNumber, String boardName) {
+        player.setPlayerNumber(playerNumber);
+        this.boardName = boardName;
     }
 
     @Override
