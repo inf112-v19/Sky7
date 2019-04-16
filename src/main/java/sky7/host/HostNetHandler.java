@@ -38,6 +38,7 @@ public class HostNetHandler {
     
     private class HostListener extends Listener {
         public void connected (Connection connection) {
+            host.remotePlayerConnected(connection.getID());
             System.out.println("Client connected, ID: " + connection.getID() + ", IP: " + connection.getRemoteAddressTCP().toString());
         }
 

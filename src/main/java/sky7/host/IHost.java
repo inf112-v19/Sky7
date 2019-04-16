@@ -53,4 +53,6 @@ public interface IHost {
     void finishedProcessing(IBoard board);
 
     void setWinner(int winner);
+    
+    void remotePlayerConnected(int connectionNumber);
 }

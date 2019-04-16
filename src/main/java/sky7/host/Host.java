@@ -25,7 +25,7 @@ public class Host implements IHost {
     private static int MAX_NR_OF_PLAYERS = 8;
     private String boardName = "assets/Boards/mvp1Board.json";
     private IClient[] players;
-    private int nPlayers = 0, readyPlayers = 0;
+    private int nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0;
     private IDeck pDeck;
     private IBoard board;
     private HashMap<Integer, ArrayList<ICard>> playerRegs; // player registries
@@ -258,6 +258,13 @@ public class Host implements IHost {
         notify();
     }
 
+    // NET ------------------------
+    
+    @Override
+    public void remotePlayerConnected(int connectionNumber) {
+        
+        nRemotePlayers++;
+    }
 
     // GETTERS ---------------------
 
