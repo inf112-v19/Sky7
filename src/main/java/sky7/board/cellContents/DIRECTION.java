@@ -78,6 +78,7 @@ public enum DIRECTION {
     }
 
 
+
     /**
      * Returns the rotation needed to go form THIS to the given direction.
      * @param dir

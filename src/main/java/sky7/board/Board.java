@@ -590,36 +590,11 @@ public class Board implements IBoard {
      * Check if a given belt has two ingoing paths, and if there are two ingoing paths
      * if there are coming in two robots in to the new point.
      *
-     * @param beltX
-     * @param beltY
-     * @param checkBelt
+     * @param x
+     * @param y
+     * @param from1
      * @return true if two robos would collide if both moved, false else.
      */
-    /*
-    private boolean tCrossCheck(int beltX, int beltY, Belt checkBelt) {
-        DIRECTION from1 = checkBelt.getDirectionFrom();
-        DIRECTION from2 = checkBelt.getDirectionFromAlt();
-        if(from2 == null){
-            System.out.println("T check, but convo has only one input");
-            return false;
-        }
-
-        int[] fstPair = DIRECTION.getNewPosMoveDir(beltX, beltY, from1);
-        int fstX = fstPair[0];
-        int fstY = fstPair[1];
-
-        int[] sndPair = DIRECTION.getNewPosMoveDir(beltX, beltY, from2);
-        int sndX = sndPair[0];
-        int sndY = sndPair[1];
-
-        //is there a belt and a rbot moving in to this belt on point (fstX, fstY)
-
-        boolean roboFrom1 = isThereABeltAndRobotOnEntryOne(fstX,fstY,from1);
-        boolean roboFrom2 = isThereABeltAndRobotOnEntryOne(sndX,sndY,from2);
-
-        return roboFrom1&&roboFrom2;
-
-    }*/
 
     private boolean isThereABeltAndRobotOnEntryOne(int x, int y, DIRECTION from1) {
         if(!containsPosition(new Vector2(x, y))){
@@ -653,24 +628,6 @@ public class Board implements IBoard {
 
 
 
-/*
-    private boolean canPusherPush(Vector2 pos, DIRECTION dirToPush) {
-        if(wallInCurrentTile(pos,dirToPush)){
-            return false;
-        }
-        Vector2 newPos = getDestination(pos, dirToPush, 1);
-
-        if(!containsPosition(newPos)){//if the pusher push to outside of the board
-            return true;
-        }
-        if(wallInCurrentTileMadeByMaren(pos,dirToPush)){
-            return false;
-        }
-
-        return true;
-   //TODO hva om to roboter vil til samme felt samtidig?
-
-    }
 
    /* @Override
     public Map<Integer, Flag> robotVisitFlag(){

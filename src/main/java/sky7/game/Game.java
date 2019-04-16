@@ -289,6 +289,7 @@ public class Game implements IGame {
         if (hosting) {
             host.applyDamage(playerID, damage);
         } else if (client.getPlayer().getPlayerNumber() == playerID) client.applyDamage(playerID, damage);
+
     }
 
     /**
