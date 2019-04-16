@@ -8,8 +8,7 @@ import com.esotericsoftware.kryonet.Listener;
 
 import sky7.Client.IClient;
 import sky7.net.KryoRegister;
-import sky7.net.packets.ClientConnectionAccepted;
-import sky7.net.packets.Hand;
+import sky7.net.packets.*;
 
 public class ClientNetHandler {
 
@@ -32,8 +31,9 @@ public class ClientNetHandler {
                 client.chooseCards(((Hand) object).cards);
             } else if (object instanceof ClientConnectionAccepted) {
                 client.connect(((ClientConnectionAccepted)object).playerID, ((ClientConnectionAccepted)object).boardName);
+            } else if (object instanceof ProcessRound) {
+                client.render(((ProcessRound)object).registries);
             }
         }
     }
-    
 }

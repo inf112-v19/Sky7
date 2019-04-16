@@ -2,9 +2,7 @@ package sky7.net;
 
 import com.esotericsoftware.kryo.Kryo;
 
-import sky7.net.packets.ClientConnectionAccepted;
-import sky7.net.packets.Hand;
-import sky7.net.packets.RegistryDiscard;
+import sky7.net.packets.*;
 
 public class KryoRegister {
 
@@ -12,6 +10,7 @@ public class KryoRegister {
         kryo.register(Hand.class);
         kryo.register(RegistryDiscard.class);
         kryo.register(ClientConnectionAccepted.class);
+        kryo.register(ProcessRound.class);
     }
 
 }

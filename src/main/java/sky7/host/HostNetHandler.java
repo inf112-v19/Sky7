@@ -2,6 +2,7 @@ package sky7.host;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -10,6 +11,7 @@ import com.esotericsoftware.kryonet.Server;
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
 import sky7.net.packets.Hand;
+import sky7.net.packets.ProcessRound;
 import sky7.net.packets.RegistryDiscard;
 
 public class HostNetHandler {
@@ -33,7 +35,13 @@ public class HostNetHandler {
     public void dealCards(int playerID, ArrayList<ICard> cards) {
         Hand h = new Hand();
         h.cards = cards;
-        server.sendToTCP(playerID, h);
+        server.sendToTCP(playerID, h); //need to resolve connection ID =/= player ID
+    }
+    
+    public void distributeRegistries(HashMap<Integer, ArrayList<ICard>> registries) {
+        ProcessRound pr = new ProcessRound();
+        pr.registries = registries;
+        server.sendToAllTCP(pr);
     }
     
     private class HostListener extends Listener {
