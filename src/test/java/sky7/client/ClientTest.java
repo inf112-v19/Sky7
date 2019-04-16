@@ -12,8 +12,8 @@ import org.junit.Test;
 import sky7.card.ICard;
 import sky7.card.ProgramCard;
 import sky7.card.ProgramDeck;
-import sky7.game.GameClient;
-import sky7.game.IGameClient;
+import sky7.Client.Client;
+import sky7.Client.IClient;
 import sky7.host.Host;
 import sky7.host.IHost;
 

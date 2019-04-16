@@ -1,4 +1,4 @@
-package sky7.game;
+package sky7.Client;
 
 public enum STATE {
 

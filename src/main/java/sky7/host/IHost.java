@@ -1,10 +1,10 @@
 package sky7.host;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
+import sky7.board.IBoard;
 import sky7.card.ICard;
-import sky7.game.GameClient;
+import sky7.Client.Client;
 
 public interface IHost {
 
@@ -49,4 +49,8 @@ public interface IHost {
      * @return the board name that the host is serving the game on
      */
     String getBoardName();
+
+    void finishedProcessing(IBoard board);
+
+    void setWinner(int winner);
 }

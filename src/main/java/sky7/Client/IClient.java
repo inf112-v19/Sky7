@@ -1,4 +1,4 @@
-package sky7.game;
+package sky7.Client;
 
 import java.util.ArrayList;
 
@@ -9,8 +9,9 @@ import sky7.card.IProgramCard;
 import sky7.player.IPlayer;
 
 import java.io.FileNotFoundException;
+import java.util.HashMap;
 
-public interface IGameClient {
+public interface IClient {
 
     /**
      * Return the board that the current game is being played on.
@@ -100,4 +101,7 @@ public interface IGameClient {
     void activateLasers();
 
 
+    void finishedProcessing(IBoard board);
+
+    void render(HashMap<Integer,ArrayList<ICard>> cards);
 }

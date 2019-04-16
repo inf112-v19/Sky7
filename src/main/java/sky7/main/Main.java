@@ -5,8 +5,8 @@ import java.io.FileNotFoundException;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import sky7.game.GameClient;
-import sky7.game.IGameClient;
+import sky7.Client.Client;
+import sky7.Client.IClient;
 import sky7.gui.GUI;
 import sky7.host.Host;
 
@@ -74,8 +74,7 @@ public class Main {
 
         @Override
         public void run() {
-            Host host = new Host(client);
-
+            Host host = new Host(cli);
             host.Begin();
 
         }
