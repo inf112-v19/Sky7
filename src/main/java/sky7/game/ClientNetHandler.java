@@ -1,12 +1,14 @@
 package sky7.game;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
 import sky7.Client.IClient;
+import sky7.card.ICard;
 import sky7.net.KryoRegister;
 import sky7.net.packets.*;
 
@@ -23,6 +25,10 @@ public class ClientNetHandler {
         netClient.addListener(new ClientListener());
         netClient.connect(6000, host, 27273);
         
+    }
+    
+    public void ready(ArrayList<ICard> registry, ArrayList<ICard> discard) {
+        // TODO create a packet and send to Host
     }
 
     private class ClientListener extends Listener {
