@@ -15,15 +15,15 @@ public class HostTest {
 
 
     static final int NR_OF_CLIENTS = 8;
-    static private GameClient[] clients;
+    static private Client[] clients;
     static private Host host;
 
     @Before
     public void setUp() {
         host = new Host();
-        clients = new GameClient[NR_OF_CLIENTS];
+        clients = new Client[NR_OF_CLIENTS];
         for (int i = 0; i < NR_OF_CLIENTS; i++) {
-            clients[i] = new GameClient();
+            clients[i] = new Client();
         }
         //TODO a Host needs a client
 

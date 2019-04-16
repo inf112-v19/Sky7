@@ -19,7 +19,7 @@ import sky7.host.IHost;
 
 public class ClientTest {
 
-    static List<IGameClient> clients;
+    static List<IClient> clients;
     static final int N_CLIENTS = 8;
     ProgramDeck deck;
     
@@ -29,9 +29,9 @@ public class ClientTest {
     
     @BeforeClass
     public static void testSetup() {
-        clients = new ArrayList<IGameClient>();
+        clients = new ArrayList<IClient>();
         for (int i=0; i<N_CLIENTS ; i++) {
-            clients.add(new GameClient());
+            clients.add(new Client());
         }
         
         IHost host = new Host();

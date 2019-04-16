@@ -25,7 +25,7 @@ import sky7.Client.IClient;
 
 
 public class GUI implements ApplicationListener {
-	private IGameClient game;
+	private IClient game;
 	private int width, height, windowWidth, windowHeight;
 	private SpriteBatch batch;
 	private BitmapFont font;
@@ -48,7 +48,7 @@ public class GUI implements ApplicationListener {
 	private ArrayList<ICard> registry = new ArrayList<>(4);
 	TextInput listener;
 
-	public GUI(IGameClient game) throws FileNotFoundException {
+	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
 		textures = new HashMap<>();
 		sprites = new HashMap<>();

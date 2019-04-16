@@ -24,7 +24,7 @@ public class Host implements IHost {
     // FIELD VARIABLES --------------
     private static int MAX_NR_OF_PLAYERS = 8;
     private String boardName = "assets/Boards/mvp1Board.json";
-    private IGameClient[] players;
+    private IClient[] players;
     private int nPlayers = 0, readyPlayers = 0;
     private IDeck pDeck;
     private IBoard board;
@@ -38,6 +38,7 @@ public class Host implements IHost {
     private Game game;
     private boolean processingFinished = false;
     private int winner = -1;
+    private HostNetHandler netHandler;
 
     // host must know where each player can respawn.
 
@@ -46,7 +47,7 @@ public class Host implements IHost {
     /**
      * @param cli a Client i.e. player
      */
-    public Host(IGameClient cli) {
+    public Host(IClient cli) {
         this();
         players[0] = cli;
         new Thread() {
@@ -85,7 +86,7 @@ public class Host implements IHost {
     /**
      * @param players an array of players
      */
-    public Host(GameClient[] players) {
+    public Host(Client[] players) {
         this();
         this.players = players;
     }
@@ -104,7 +105,7 @@ public class Host implements IHost {
     }
 
     @Override
-    public boolean addPlayer(GameClient player) {
+    public boolean addPlayer(Client player) {
         players[nPlayers++] = player;
         player.connect(this, 0, boardName);
         //TODO add a new player if the board allows it. There is a limit on how many players can play on a board.

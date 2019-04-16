@@ -12,7 +12,7 @@ import sky7.host.Host;
 
 public class Main {
     
-    private static IGameClient client;
+    private static IClient client;
 
     public static void main(String[] args) {
         clientThread cThread = new clientThread();
@@ -44,7 +44,7 @@ public class Main {
 
         @Override
         public void run() {
-            client = new GameClient();
+            client = new Client();
         }
         
     }
@@ -74,7 +74,7 @@ public class Main {
 
         @Override
         public void run() {
-            Host host = new Host(cli);
+            Host host = new Host(client);
             host.Begin();
 
         }

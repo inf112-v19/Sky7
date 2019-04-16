@@ -6,28 +6,29 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
+import sky7.Client.IClient;
 import sky7.net.KryoRegister;
 import sky7.net.packets.Hand;
 
 public class ClientNetHandler {
 
-    Client client;
-    IGameClient gameClient;
+    IClient client;
+    com.esotericsoftware.kryonet.Client netClient;
     
-    public ClientNetHandler(IGameClient gameClient, String host) throws IOException {
-        this.gameClient = gameClient;
-        client = new Client();
-        new KryoRegister(client.getKryo());
-        client.start();
-        client.addListener(new ClientListener());
-        client.connect(6000, host, 27273);
+    public ClientNetHandler(IClient client, String host) throws IOException {
+        this.client = client;
+        netClient = new com.esotericsoftware.kryonet.Client();
+        new KryoRegister(netClient.getKryo());
+        netClient.start();
+        netClient.addListener(new ClientListener());
+        netClient.connect(6000, host, 27273);
         
     }
 
     private class ClientListener extends Listener {
         public void received (Connection connection, Object object) {
             if (object instanceof Hand) {
-                gameClient.chooseCards(((Hand) object).cards);
+                client.chooseCards(((Hand) object).cards);
             }
         }
     }
