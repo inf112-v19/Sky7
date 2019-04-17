@@ -1,8 +1,12 @@
-package sky7.game;
+package sky7.Client;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+<<<<<<< HEAD:src/main/java/sky7/game/Client.java
 import java.util.HashSet;
+=======
+import java.util.HashMap;
+>>>>>>> experimental:src/main/java/sky7/Client/Client.java
 
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
@@ -10,6 +14,7 @@ import sky7.board.IBoardGenerator;
 import sky7.board.cellContents.Inactive.Flag;
 import sky7.card.ICard;
 import sky7.card.IProgramCard;
+import sky7.game.Game;
 import sky7.host.IHost;
 import sky7.player.IPlayer;
 import sky7.player.Player;
@@ -21,14 +26,22 @@ public class Client implements IClient {
     private IPlayer player;
     private STATE state;
     private String boardName;
+<<<<<<< HEAD:src/main/java/sky7/game/Client.java
     private HashSet<Flag> flagVisited;
+=======
+    private Game game;
+>>>>>>> experimental:src/main/java/sky7/Client/Client.java
 
 
     public Client() {
         //board = new Board(10,8);
         this.player = new Player();
         state = STATE.LOADING;
+<<<<<<< HEAD:src/main/java/sky7/game/Client.java
         this.flagVisited = new HashSet<>();
+=======
+
+>>>>>>> experimental:src/main/java/sky7/Client/Client.java
     }
 
     @Override
@@ -38,7 +51,7 @@ public class Client implements IClient {
 
     @Override
     public void connect(IHost host, int playerNumber) {
-        connect(host,playerNumber,""); //TODO add a default board for the game or something.
+        connect(host, playerNumber, ""); //TODO add a default board for the game or something.
     }
 
     @Override
@@ -46,7 +59,7 @@ public class Client implements IClient {
         this.host = host;
         player.setPlayerNumber(playerNumber);
         this.boardName = boardName;
-        
+
     }
 
     @Override
@@ -63,6 +76,7 @@ public class Client implements IClient {
         state = STATE.MOVING_ROBOT;
         board.placeRobot(0, 5, 5);
         board.placeRobot(1, 6, 6);
+        game = new Game(this, board);
     }
 
     @Override
@@ -70,6 +84,10 @@ public class Client implements IClient {
         return player;
     }
 
+
+    public void updateBoard(IBoard board){
+        this.board = board;
+    }
 
     @Override
     public STATE getState() {
@@ -83,7 +101,7 @@ public class Client implements IClient {
 
     @Override
     public void setCard(ICard chosenCard, int positionInRegistry) {
-        player.setCard(chosenCard,positionInRegistry);
+        player.setCard(chosenCard, positionInRegistry);
     }
 
     @Override
@@ -92,7 +110,7 @@ public class Client implements IClient {
         //player.setRegistry(choosingCards)
 
         state = STATE.READY;
-        host.ready(player.getPlayerNumber(),player.getRegistry(),player.getDiscard());
+        host.ready(player.getPlayerNumber(), player.getRegistry(), player.getDiscard());
     }
 
     @Override
@@ -103,11 +121,12 @@ public class Client implements IClient {
 
     @Override
     public void activateCard(int playerNr, IProgramCard card) {
-        if( card.moveType() )
+        // todo not needed.
+        /*if (card.moveType())
             board.moveRobot(playerNr, card.move());
         else
             board.rotateRobot(playerNr, card.rotate());
-
+        */
     }
 
     @Override
@@ -131,11 +150,22 @@ public class Client implements IClient {
         return this.flagVisited.contains(flag);
     }
 
+    @Override
+    public void finishedProcessing(IBoard board) {
+
+    }
+
+    @Override
+    public void render(HashMap<Integer, ArrayList<ICard>> cards) {
+        game.process(cards);
+        
+    }
+
     /**
      * @param programCardsString a string representation of programcards
      * @return a list of IProgramCards
      */
     private ArrayList<ICard> convertStringToProgramCards(String programCardsString) {
-        return null ;//TODO
+        return null;//TODO
     }
 }
