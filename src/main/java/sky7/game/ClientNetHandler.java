@@ -28,7 +28,10 @@ public class ClientNetHandler {
     }
     
     public void ready(ArrayList<ICard> registry, ArrayList<ICard> discard) {
-        // TODO create a packet and send to Host
+        RegistryDiscard rd = new RegistryDiscard();
+        rd.registry = registry;
+        rd.discard = discard;
+        netClient.sendTCP(rd);
     }
 
     private class ClientListener extends Listener {
