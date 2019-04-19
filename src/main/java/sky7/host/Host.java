@@ -170,6 +170,7 @@ public class Host implements IHost {
         for (int i = 0; i < nPlayers; i++) {
             players[i].render(playerRegs);
         }
+        netHandler.distributeRegistries(playerRegs);
         nextState = HOST_STATE.BEGIN_PROCESSING;
     }
 

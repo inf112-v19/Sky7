@@ -10,7 +10,6 @@ import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
 import sky7.card.ICard;
 import sky7.card.IProgramCard;
-import sky7.game.ClientNetHandler;
 import sky7.game.Game;
 import sky7.host.IHost;
 import sky7.player.IPlayer;

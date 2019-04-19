@@ -1,4 +1,4 @@
-package sky7.game;
+package sky7.Client;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,7 +7,6 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
-import sky7.Client.IClient;
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
 import sky7.net.packets.*;
