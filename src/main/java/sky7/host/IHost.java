@@ -58,4 +58,6 @@ public interface IHost {
      * @return playerID nr to be given to the newly connected player
      */
     int remotePlayerConnected();
+
+    void remotePlayerDisconnected(int playerID);
 }
