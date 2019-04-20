@@ -1,6 +1,7 @@
 package sky7.gui;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.*;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -21,6 +22,9 @@ import com.badlogic.gdx.utils.viewport.*;
 import sky7.board.ICell;
 import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
+import sky7.host.Host;
+import sky7.host.HostNetHandler;
+import sky7.host.IHost;
 import sky7.Client.IClient;
 
 
@@ -57,9 +61,9 @@ public class GUI implements ApplicationListener {
 	@Override
 	public void create() {
 		try {
-			game.generateBoard();
-			this.width = game.gameBoard().getWidth();
-			this.height = game.gameBoard().getHeight();
+//			game.generateBoard();
+			this.width = 10;
+			this.height = 10;
 			windowWidth = width+4;
 			windowHeight = height+2;
 
@@ -136,7 +140,7 @@ public class GUI implements ApplicationListener {
 			join.draw(batch);
 
 			if (isClicked(host)) {
-				hosting = true;
+				startHost();
 			}
 			if (isClicked(join)) {
 				// take input from user
@@ -180,6 +184,26 @@ public class GUI implements ApplicationListener {
 		batch.end();
 	}
 
+	private void startHost() {
+	    hosting = true;
+        new Thread() {
+            public void run() {
+                Host h = new Host(game);
+                h.Begin();
+            }
+        }.start();
+        
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+	}
+	
+	private void connectClient() {
+	    
+	}
+	
 	//find the rotation of the robot
 	private int findRotation(RobotTile robot) {
 		switch (robot.getOrientation()) {

@@ -35,9 +35,9 @@ public class Main {
             e.printStackTrace();
         }
         
-        startHost h = new startHost();
-        Thread host = new Thread(h);
-        host.start();
+//        startHost h = new startHost();
+//        Thread host = new Thread(h);
+//        host.start();
     }
     
     public static class clientThread implements Runnable {

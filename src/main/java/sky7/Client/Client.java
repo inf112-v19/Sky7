@@ -31,23 +31,7 @@ public class Client implements IClient {
         //board = new Board(10,8);
         this.player = new Player();
         state = STATE.LOADING;
-    }
-    
-    public Client(boolean localClient) {
-        //board = new Board(10,8);
-        this.player = new Player();
-        state = STATE.LOADING;
-        this.localClient = localClient;
-        
-        if(!localClient) {
-            try {
-                netHandler = new ClientNetHandler(this, "");
-                // TODO get host address from input
-            } catch (IOException e) {
-                System.out.println("Unable to connect to Host");
-                // TODO make sure we can try again
-            } 
-        }
+        localClient = true;
     }
 
     @Override
@@ -55,6 +39,11 @@ public class Client implements IClient {
         return this.board;
     }
 
+    @Override
+    public void join(String hostName) {
+        localClient = false;
+    }
+    
     @Override
     public void connect(IHost host, int playerNumber) {
         connect(host, playerNumber, ""); //TODO add a default board for the game or something.
@@ -65,12 +54,14 @@ public class Client implements IClient {
         this.host = host;
         player.setPlayerNumber(playerNumber);
         this.boardName = boardName;
+        generateBoard();
     }
     
     @Override
     public void connect(int playerNumber, String boardName) {
         player.setPlayerNumber(playerNumber);
         this.boardName = boardName;
+        generateBoard();
     }
 
     @Override
@@ -81,9 +72,13 @@ public class Client implements IClient {
     }
 
 
-    public void generateBoard() throws FileNotFoundException {
+    public void generateBoard() {
         IBoardGenerator generator = new BoardGenerator();
-        board = generator.getBoardFromFile(boardName);
+        try {
+            board = generator.getBoardFromFile(boardName);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         state = STATE.MOVING_ROBOT;
 //        board.placeRobot(0, 5, 5);
 //        board.placeRobot(1, 6, 6);
