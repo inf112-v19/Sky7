@@ -41,6 +41,9 @@ public class ClientNetHandler {
                 client.connect(((ClientConnectionAccepted)object).playerID, ((ClientConnectionAccepted)object).boardName);
             } else if (object instanceof ProcessRound) {
                 client.render(((ProcessRound)object).registries);
+            } else if (object instanceof PlaceRobot) {
+                PlaceRobot pr = (PlaceRobot)object;
+                client.placeRobot(pr.playerID, pr.xPos, pr.yPos);
             }
         }
     }

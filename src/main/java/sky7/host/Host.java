@@ -64,6 +64,14 @@ public class Host implements IHost {
         nPlayers++;
         cli.connect(this, 0, boardName);
         board.placeRobot(0, 5, 5);
+        
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        cli.placeRobot(0, 5, 5);
     }
 
     public Host() {
