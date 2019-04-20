@@ -198,8 +198,6 @@ public class GUI implements ApplicationListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        
-        hosting = true;
 	}
 	
 	public void connectClient(String hostName) {
@@ -210,6 +208,8 @@ public class GUI implements ApplicationListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+	    
+	    hosting = true;
 	}
 	
 	//find the rotation of the robot
