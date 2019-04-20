@@ -2,9 +2,13 @@ package sky7.host;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
@@ -29,6 +33,8 @@ public class Host implements IHost {
     private IBoard board;
     private HashMap<Integer, ArrayList<ICard>> playerRegs; // player registries
     private boolean[] remotePlayers;
+    private int[] dockPos; // number in pos x is player x's dock position
+    private Queue<Integer> availableDockPos;
     
     private BoardGenerator bg;
     private boolean terminated = false;
@@ -79,6 +85,8 @@ public class Host implements IHost {
         players = new Client[MAX_N_PLAYERS];
         playerRegs = new HashMap<>();
         remotePlayers = new boolean[8];
+        dockPos = new int[8];
+        shuffleDockPositions(MAX_N_PLAYERS); // TODO argument should be same as number of dock positions on chosen board
         //pQueue = new LinkedList<>();
         pDeck = new ProgramDeck();
         bg = new BoardGenerator();
@@ -272,6 +280,21 @@ public class Host implements IHost {
         processingFinished = true;
         this.winner = winner;
         notify();
+    }
+    
+    /**
+     * Create a queue of all possible dock positions in a random order.
+     * 
+     * @param numberOfDockPositions
+     */
+    private void shuffleDockPositions(int numberOfDockPositions) {
+        availableDockPos = new ArrayDeque<>();
+        List<Integer> temp = new ArrayList<>();
+        for (int i=0; i<numberOfDockPositions ; i++) {
+            temp.add(i);
+        }
+        Collections.shuffle(temp);
+        availableDockPos.addAll(temp);
     }
 
     // NET ------------------------
