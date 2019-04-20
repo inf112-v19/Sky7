@@ -23,6 +23,8 @@ public class HostNetHandler {
     HashMap<Integer, Integer> connectionToPlayer;
     
     public HostNetHandler(IHost host) throws IOException {
+        playerToConnection = new HashMap<>();
+        connectionToPlayer = new HashMap<>();
         this.host = host;
         server = new Server();
         new KryoRegister(server.getKryo());
@@ -50,12 +52,13 @@ public class HostNetHandler {
     private class HostListener extends Listener {
         public void connected (Connection connection) {
             int newPlayerID = host.remotePlayerConnected();
+            System.out.println("Client connected, ID: " + connection.getID() + ", IP: " + connection.getRemoteAddressTCP().toString());
             playerToConnection.put(newPlayerID, connection.getID());
             connectionToPlayer.put(connection.getID(), newPlayerID);
-            System.out.println("Client connected, ID: " + connection.getID() + ", IP: " + connection.getRemoteAddressTCP().toString());
             ClientConnectionAccepted cca = new ClientConnectionAccepted();
             cca.playerID = newPlayerID;
-            server.sendToTCP(connection.getID(), host.getBoardName());
+            cca.boardName = host.getBoardName();
+            server.sendToTCP(connection.getID(), cca);
         }
 
         public void disconnected (Connection connection) {

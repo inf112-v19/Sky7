@@ -108,7 +108,7 @@ public class GUI implements ApplicationListener {
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
-			listener = new TextInput();
+			listener = new TextInput(this);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -144,7 +144,7 @@ public class GUI implements ApplicationListener {
 			}
 			if (isClicked(join)) {
 				// take input from user
-				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");	
+				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");
 			}
 
 		} else {	
@@ -198,10 +198,18 @@ public class GUI implements ApplicationListener {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
+        hosting = true;
 	}
 	
-	private void connectClient() {
+	public void connectClient(String hostName) {
+	    game.join(hostName);
 	    
+	    try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 	}
 	
 	//find the rotation of the robot

@@ -42,6 +42,11 @@ public class Client implements IClient {
     @Override
     public void join(String hostName) {
         localClient = false;
+        try {
+            netHandler = new ClientNetHandler(this, hostName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override
