@@ -9,6 +9,6 @@ public interface IGame {
 
     void process(HashMap<Integer,ArrayList<ICard>> cards);
 
-    void render();
+    void render(int milliSec);
 
 }

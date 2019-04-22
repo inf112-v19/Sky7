@@ -136,5 +136,11 @@ public class Player implements IPlayer {
 		return lifeTokensStr;
 	}
 
+    @Override
+    public void decreaseHealth(int i) {
+        //TODO check if health is below 0
+        health--;
+    }
+
 
 }

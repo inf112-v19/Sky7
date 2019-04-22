@@ -63,18 +63,18 @@ public class Laser implements IActive {
                 break;
             case WEST:
                 if (numberOfLasers == 1) {
-                    texture = new Texture("assets/laser/LaserStartR.png");
+                    texture = new Texture("assets/laser/LaserStartL.png");
                 } else if (numberOfLasers == 2) {
-                    texture = new Texture("assets/laser/LaserDStartR.png");
+                    texture = new Texture("assets/laser/LaserDStartL.png");
                 } else {
                     throw new IllegalArgumentException("the number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
                 }
                 break;
             case EAST:
                 if (numberOfLasers == 1) {
-                    texture = new Texture("assets/laser/LaserStartL.png");
+                    texture = new Texture("assets/laser/LaserStartR.png");
                 } else if (numberOfLasers == 2) {
-                    texture = new Texture("assets/laser/LaserDStartL.png");
+                    texture = new Texture("assets/laser/LaserDStartR.png");
                 } else {
                     throw new IllegalArgumentException("the number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
                 }
@@ -151,12 +151,20 @@ public class Laser implements IActive {
             final boolean IS_START = b == 0;
             for (int dir = 0; dir < DIRECTION.values().length; dir++) {
                 final int DIR_F = dir;
-                for (int nrOfLasers = 0; nrOfLasers < maxNrOfLaserEyes; nrOfLasers++) {
+                for (int nrOfLasers = 1; nrOfLasers <= maxNrOfLaserEyes; nrOfLasers++) {
                     final int NR_OF_LASERS = nrOfLasers;
                     suppliers.add(new AbstractMap.SimpleEntry<>("l" + bools[b] + DIRECTION.values()[dir].symbol() + nrOfLasers, () -> new Laser(IS_START, DIRECTION.values()[DIR_F], NR_OF_LASERS)));
                 }
             }
         }
         return suppliers;
+    }
+
+    public int nrOfLasers() {
+        return numberOfLasers;
+    }
+
+    public boolean isStartPosition() {
+        return start;
     }
 }

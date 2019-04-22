@@ -86,12 +86,13 @@ public interface IPlayer {
      * 
      * @return player health
      */
-    public CharSequence getHealth();
+     CharSequence getHealth();
     
     /**
      * 
      * @return life tokens
      */
-    public CharSequence getLifeToken();
-    
+     CharSequence getLifeToken();
+
+    void decreaseHealth(int i);
 }

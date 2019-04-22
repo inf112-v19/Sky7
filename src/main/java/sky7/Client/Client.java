@@ -147,4 +147,8 @@ public class Client implements IClient {
     private ArrayList<ICard> convertStringToProgramCards(String programCardsString) {
         return null;//TODO
     }
+
+    public int getID() {
+        return player.getPlayerNumber();
+    }
 }
