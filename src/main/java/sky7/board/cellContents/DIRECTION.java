@@ -32,7 +32,7 @@ public enum DIRECTION {
             case EAST:
                 return WEST;
             default:
-                throw new IllegalArgumentException("The direction you are trying to invers are not one of the standar four");
+                throw new IllegalArgumentException("The direction you are trying to inters are not one of the standard four");
         }
     }
 
@@ -47,7 +47,7 @@ public enum DIRECTION {
             case EAST:
                 return 'E';
             default:
-                throw new IllegalArgumentException("The direction you are trying to invers are not one of the standar four");
+                throw new IllegalArgumentException("The direction you are trying to get symbol from are not one of the standard four");
         }
 
     }
@@ -77,6 +77,12 @@ public enum DIRECTION {
         return newPair;
     }
 
+
+    /**
+     * Returns the rotation needed to go form THIS to the given direction.
+     * @param dir
+     * @return rotation needed to reach new direction.
+     */
     public int directionToRotation(DIRECTION dir){
         if(this == dir){
             return 0;

@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import com.badlogic.gdx.math.Vector2;
 
+
 import sky7.board.cellContents.Active.Belt;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Active.CogWheel;
@@ -360,19 +361,22 @@ public class Board implements IBoard {
 
             DIRECTION to = convsToBeMoved.get(i).getDirectionTo();
 
-
+            System.out.println("------------ trying to move robo nr " +robosWantsToMove.get(i).getId() + "--------");
             if(!canConvoPush(x,y, to)){
-                System.out.println(robosWantsToMove.get(i).getId() + " can't move");
+                System.out.println("------------" + robosWantsToMove.get(i).getId() + " can't move -----------");
                 robosWantsToMove.remove(i);
                 positions.remove(i);
                 convsToBeMoved.remove(i);
                 i--;
+            } else {
+                System.out.println("------------ Done rotating player nr " + robosWantsToMove.get(i).getId() + "--------");
             }
         }
 
         // TODO: move the robots.
         for (int i = 0; i < robosWantsToMove.size(); i++) {
             RobotTile robo = robosWantsToMove.get(i);
+
             Belt belt = convsToBeMoved.get(i);
             Vector2 vec = positions.get(i);
 
@@ -383,6 +387,8 @@ public class Board implements IBoard {
             TreeSet<ICell> newCells = grid[newx][newy];
             // if there is no belt, just keep going in same dir;
             DIRECTION dir = belt.getDirectionTo();
+
+            // check if we have to rotate robo
             for (ICell cell: newCells) {
                 if(cell instanceof Belt){
                     Belt newBelt = (Belt) cell;
@@ -397,16 +403,22 @@ public class Board implements IBoard {
             int roboNr = robo.getId();
 
 
-            // TODO: make it handle out of bonds
+            // do the accual move
+            System.out.println("moving from (" + vec.x + "," + vec.y + ") too (" + newx +"," + newy + ")");
+
             moveRobot(roboNr, belt.getDirectionTo());
+            System.out.println("Moving le Robot");
             if(rotate != 0) {
                 rotateRobot(roboNr, rotate);
+                System.out.println("Rotaing le Robot");
             }
+
+
         }
     }
 
     private boolean canConvoPush(int x, int y, DIRECTION to) {
-        System.out.println("------------ checking if the convo can be pused--------");
+
 
         //checking if we can leave current location
         TreeSet<ICell> localCells = getTileTexture(x,y);
@@ -419,23 +431,19 @@ public class Board implements IBoard {
                 }
             }
         }
+        int[] cords = DIRECTION.getNewPosMoveDir(x, y, to);
+        int newX = cords[0];
+        int newY = cords[1];
 
-        int newX = x;
-        int newY = y;
-        switch (to){
-            case EAST: newX--; break;
-            case WEST:newX++; break;
-            case NORTH: newY++; break;
-            case SOUTH:newY--; break;
-
-        }
 
         if(!containsPosition(new Vector2(newX, newY))){
             System.out.println("early out of bonds return");
-            return true;
+            return true; //the robot can be pushed of the map
         }
 
-
+        if(moreThanOneRoboEnteringThisTile(newX, newY)){
+            return false; //can't enter if two robots try to enter
+        }
 
         // checking if we can enter the new place
         TreeSet<ICell> nextCells = getTileTexture(newX,newY);
@@ -458,17 +466,16 @@ public class Board implements IBoard {
                 }
             } else if(cell instanceof Belt){
                 Belt newBelt = (Belt)cell;
-                if(newBelt.getDirectionFrom().reverse() == to || (newBelt.getDirectionFromAlt() != null && newBelt.getDirectionFromAlt().reverse() == to)){
-                    boolean doubleRobo =  tCrossCheck(newX,newY, newBelt);
-                    if(doubleRobo){
-                        System.out.println("early T return");
-                        return false;
-                    }
+                /* if the belt is leaving somewhere else (then the checking robo is standing)
+                 * then both can move, as long as the next Robo can move (check further down).
+                 */
+                if(newBelt.getDirectionTo().reverse() != to){
                     belt = newBelt;
                     foundBelt = true;
                 }
 
             } else if(cell instanceof RobotTile){
+                System.out.println("FOUND ROBO!");
                 foundRobo = true;
                 robo = (RobotTile) cell;
             }
@@ -489,6 +496,39 @@ public class Board implements IBoard {
 
     }
 
+    private boolean moreThanOneRoboEnteringThisTile(int newX, int newY) {
+        int nrOfRobosGoingToCurrentTile = 0;
+        for (DIRECTION dir : DIRECTION.values()) {
+            int[] newCords = DIRECTION.getNewPosMoveDir(newX,newY,dir);
+            if(roboEntriningFromMultipalDir(newCords[0], newCords[1], dir.reverse())){
+                nrOfRobosGoingToCurrentTile++;
+            }
+        }
+
+        return nrOfRobosGoingToCurrentTile > 1;
+    }
+
+    private boolean roboEntriningFromMultipalDir(int x, int y, DIRECTION dir) {
+        if(!containsPosition(new Vector2(x,y))){
+            return false;
+        }
+        TreeSet<ICell> cells = grid[x][y];
+        boolean foundBeltLeavingInDir = false;
+        boolean foundRobo = false;
+        for(ICell cell : cells){
+            if(cell instanceof Belt){
+                Belt belt = (Belt) cell;
+                if(belt.getDirectionTo() == dir){
+                    foundBeltLeavingInDir = true;
+                }
+            } else if(cell instanceof RobotTile){
+                foundRobo = true;
+            }
+        }
+
+        return foundBeltLeavingInDir && foundRobo;
+    }
+
     /**
      * Check if a given belt has two ingoing paths, and if there are two ingoing paths
      * if there are coming in two robots in to the new point.
@@ -498,11 +538,12 @@ public class Board implements IBoard {
      * @param checkBelt
      * @return true if two robos would collide if both moved, false else.
      */
+    /*
     private boolean tCrossCheck(int beltX, int beltY, Belt checkBelt) {
         DIRECTION from1 = checkBelt.getDirectionFrom();
         DIRECTION from2 = checkBelt.getDirectionFromAlt();
         if(from2 == null){
-            System.out.println("early here");
+            System.out.println("T check, but convo has only one input");
             return false;
         }
 
@@ -521,7 +562,7 @@ public class Board implements IBoard {
 
         return roboFrom1&&roboFrom2;
 
-    }
+    }*/
 
     private boolean isThereABeltAndRobotOnEntryOne(int x, int y, DIRECTION from1) {
         if(!containsPosition(new Vector2(x, y))){
