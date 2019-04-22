@@ -20,7 +20,7 @@ public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
     private int width, height, nPlayers, maxMove;
     private Vector2[] robotPos;
-    private RobotTile[] robots;
+     private RobotTile[] robots;
     private List<CogWheel> cogs;
     private List<Vector2> cogPos;
     private List<IConveyorBelt> convs;
@@ -240,7 +240,7 @@ public class Board implements IBoard {
      * @return the target vector (coordinates)
      */
     public Vector2 getDestination(Vector2 pos, DIRECTION dir, int distance) {
-        return new Vector2(pos.x + dir.getX()*distance,pos.y + dir.getY()*distance);
+        return new Vector2(pos.x + dir.getX() * distance, pos.y + dir.getY() * distance);
         /*Vector2 target;
         switch (dir) {
             case NORTH:
@@ -272,6 +272,27 @@ public class Board implements IBoard {
         }
     }
 
+    @Override
+    public List<Laser> getLasers() {
+        return lasers;
+    }
+
+    @Override
+    public List<Vector2> getLaserPos() {
+        return laserPos;
+    }
+
+    @Override
+    public void addCell(ICell cell, Vector2 pos) {
+        grid[(int) pos.x][(int) pos.y].add(cell);
+    }
+
+    @Override
+    public void removeCell(ICell cell, Vector2 pos) {
+        if (grid[(int) pos.x][(int) pos.y].contains(cell)) {
+            grid[(int) pos.x][(int) pos.y].remove(cell);
+        }
+    }
 
 
     /**
