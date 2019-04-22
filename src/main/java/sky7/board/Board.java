@@ -586,6 +586,7 @@ public class Board implements IBoard {
         return foundBeltLeavingInDir && foundRobo;
     }
 
+
     /**
      * Check if a given belt has two ingoing paths, and if there are two ingoing paths
      * if there are coming in two robots in to the new point.
