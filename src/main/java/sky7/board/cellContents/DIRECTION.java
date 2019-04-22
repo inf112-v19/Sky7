@@ -1,5 +1,7 @@
 package sky7.board.cellContents;
 
+import com.badlogic.gdx.math.Vector2;
+
 public enum DIRECTION {
     NORTH(0,1),
     SOUTH(0,-1),
@@ -60,7 +62,7 @@ public enum DIRECTION {
      * @param dir
      * @return int[x, y]
      */
-    public static int[] getNewPosMoveDir(int x, int y, DIRECTION dir){
+    public static Vector2 getNewPosMoveDir(int x, int y, DIRECTION dir){
         int newX = x;
         int newY = y;
 
@@ -71,10 +73,7 @@ public enum DIRECTION {
             case WEST: newX--; break;
         }
 
-        int[] newPair = new int[2];
-        newPair[0] = newX;
-        newPair[1] = newY;
-        return newPair;
+        return new Vector2(newX, newY);
     }
 
 

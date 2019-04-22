@@ -295,7 +295,7 @@ public class Board implements IBoard {
         Vector2 pos = robotPos[player];
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
-                // Checking that the nr is correct
+                // Checking that the nr is correct NEEDED FOR BELTS TO WORK!
                 RobotTile robo = (RobotTile) item;
                 if(robo.getId() == player) {
                     grid[(int) target.x][(int) target.y].add(item);
@@ -342,9 +342,7 @@ public class Board implements IBoard {
 
     @Override
     public void moveConveyors() {
-        bugPrintLocation(0,1);
-        bugPrintLocation(0,2);
-        bugPrintLocation(0,3);
+
         List<Vector2> positions = new ArrayList<>();
         List<RobotTile> robosWantsToMove = new ArrayList<>();
         List<Belt> convsToBeMoved = new ArrayList<>();
@@ -389,9 +387,9 @@ public class Board implements IBoard {
             Belt belt = convsToBeMoved.get(i);
             Vector2 vec = positions.get(i);
 
-            int[] coords = DIRECTION.getNewPosMoveDir((int)vec.x,(int)vec.y, belt.getDirectionTo());
-            int newx = coords[0];
-            int newy = coords[1];
+            Vector2 coords = DIRECTION.getNewPosMoveDir((int)vec.x,(int)vec.y, belt.getDirectionTo());
+            int newx = (int) coords.x;
+            int newy = (int) coords.y;
 
 
 
@@ -477,9 +475,9 @@ public class Board implements IBoard {
             }
         }
 
-        int[] cords = DIRECTION.getNewPosMoveDir(x, y, to);
-        int newX = cords[0];
-        int newY = cords[1];
+        Vector2 cords = DIRECTION.getNewPosMoveDir(x, y, to);
+        int newX = (int) cords.x;
+        int newY = (int) cords.y;
 
 
         if(!containsPosition(new Vector2(newX, newY))){
@@ -535,8 +533,8 @@ public class Board implements IBoard {
     private boolean moreThanOneRoboEnteringThisTile(int newX, int newY) {
         int nrOfRobosGoingToCurrentTile = 0;
         for (DIRECTION dir : DIRECTION.values()) {
-            int[] newCords = DIRECTION.getNewPosMoveDir(newX,newY,dir);
-            if(roboEntriningFromMultipalDir(newCords[0], newCords[1], dir.reverse())){
+            Vector2 newCords = DIRECTION.getNewPosMoveDir(newX,newY,dir);
+            if(roboEntriningFromMultipalDir((int) newCords.x, (int) newCords.y, dir.reverse())){
                 nrOfRobosGoingToCurrentTile++;
             }
         }
