@@ -595,7 +595,6 @@ public class Board implements IBoard {
      * @param from1
      * @return true if two robos would collide if both moved, false else.
      */
-
     private boolean isThereABeltAndRobotOnEntryOne(int x, int y, DIRECTION from1) {
         if(!containsPosition(new Vector2(x, y))){
             return false;
