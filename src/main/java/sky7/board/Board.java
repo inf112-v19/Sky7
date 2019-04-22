@@ -529,62 +529,8 @@ public class Board implements IBoard {
         return foundBeltLeavingInDir && foundRobo;
     }
 
-    /**
-     * Check if a given belt has two ingoing paths, and if there are two ingoing paths
-     * if there are coming in two robots in to the new point.
-     *
-     * @param beltX
-     * @param beltY
-     * @param checkBelt
-     * @return true if two robos would collide if both moved, false else.
-     */
-    /*
-    private boolean tCrossCheck(int beltX, int beltY, Belt checkBelt) {
-        DIRECTION from1 = checkBelt.getDirectionFrom();
-        DIRECTION from2 = checkBelt.getDirectionFromAlt();
-        if(from2 == null){
-            System.out.println("T check, but convo has only one input");
-            return false;
-        }
 
-        int[] fstPair = DIRECTION.getNewPosMoveDir(beltX, beltY, from1);
-        int fstX = fstPair[0];
-        int fstY = fstPair[1];
 
-        int[] sndPair = DIRECTION.getNewPosMoveDir(beltX, beltY, from2);
-        int sndX = sndPair[0];
-        int sndY = sndPair[1];
-
-        //is there a belt and a rbot moving in to this belt on point (fstX, fstY)
-
-        boolean roboFrom1 = isThereABeltAndRobotOnEntryOne(fstX,fstY,from1);
-        boolean roboFrom2 = isThereABeltAndRobotOnEntryOne(sndX,sndY,from2);
-
-        return roboFrom1&&roboFrom2;
-
-    }*/
-
-    private boolean isThereABeltAndRobotOnEntryOne(int x, int y, DIRECTION from1) {
-        if(!containsPosition(new Vector2(x, y))){
-            return false;
-        }
-        TreeSet<ICell> cells = grid[x][y];
-        boolean foundRobo = false;
-        boolean beltCorrectWay = false;
-        for(ICell cell: cells){
-            if(cell instanceof RobotTile){
-                foundRobo = true;
-            } else if(cell instanceof Belt){
-                Belt newBelt = (Belt) cell;
-                if(newBelt.getDirectionTo() == from1.reverse()){
-                    beltCorrectWay = true;
-                }
-
-            }
-        }
-
-        return foundRobo && beltCorrectWay;
-    }
 
     @Override
     public TreeSet<ICell> getCell(Vector2 a) {
