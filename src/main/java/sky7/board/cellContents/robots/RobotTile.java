@@ -7,6 +7,8 @@ import sky7.board.ICell;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.IMoving;
 
+import java.util.Objects;
+
 public class RobotTile implements IMoving {
     String textureRef = "robot";
     Texture texture;
@@ -35,7 +37,12 @@ public class RobotTile implements IMoving {
     
     @Override
     public int compareTo(ICell other) {
-        return Integer.compare(this.drawPriority(), other.drawPriority());
+        if(other == this) return 0;
+        if(other instanceof RobotTile ){
+            return -1;
+        } else {
+            return Integer.compare(this.drawPriority(), other.drawPriority());
+        }
     }
 
     @Override
@@ -98,5 +105,22 @@ public class RobotTile implements IMoving {
 
     public void setArchiveMarker(Vector2 archiveMarker) {
         this.archiveMarker = archiveMarker;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RobotTile robotTile = (RobotTile) o;
+        return playerNr == robotTile.playerNr &&
+                Objects.equals(textureRef, robotTile.textureRef) &&
+                Objects.equals(texture, robotTile.texture) &&
+                dir == robotTile.dir &&
+                Objects.equals(archiveMarker, robotTile.archiveMarker);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(textureRef, texture, playerNr, dir, archiveMarker);
     }
 }
