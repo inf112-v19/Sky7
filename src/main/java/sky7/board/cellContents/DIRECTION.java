@@ -61,6 +61,7 @@ public enum DIRECTION {
      * @return int[x, y]
      */
     public static int[] getNewPosMoveDir(int x, int y, DIRECTION dir){
+
         int newX = x;
         int newY = y;
 
@@ -71,11 +72,13 @@ public enum DIRECTION {
             case WEST: newX--; break;
         }
 
+
         int[] newPair = new int[2];
         newPair[0] = newX;
         newPair[1] = newY;
         return newPair;
     }
+
 
 
 

@@ -363,6 +363,7 @@ public class Board implements IBoard {
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
                 // Checking that the nr is correct
+
                 RobotTile robo = (RobotTile) item;
                 if(robo.getId() == player) {
                     grid[(int) target.x][(int) target.y].add(item);
@@ -399,9 +400,6 @@ public class Board implements IBoard {
 
     @Override
     public void moveConveyors() {
-        bugPrintLocation(0,1);
-        bugPrintLocation(0,2);
-        bugPrintLocation(0,3);
         List<Vector2> positions = new ArrayList<>();
         List<RobotTile> robosWantsToMove = new ArrayList<>();
         List<Belt> convsToBeMoved = new ArrayList<>();
@@ -417,15 +415,12 @@ public class Board implements IBoard {
             }
         }
 
-        // remove robots (and belts) if the robot can not be moved
+        // remove robots (and belts and vectors) if the robot can not be moved
         for (int i = 0; i < robosWantsToMove.size(); i++) {
-            int x = (int) positions.get(i).x;
-            int y = (int) positions.get(i).y;
-
             DIRECTION to = convsToBeMoved.get(i).getDirectionTo();
 
             System.out.println("------------ Checking if robo nr " +robosWantsToMove.get(i).getId() + " can be moved--------");
-            if(!canConvoPush(x,y, to)){
+            if(!canConvoPush(positions.get(i), to)){
                 System.out.println("------------ Robo nr" + robosWantsToMove.get(i).getId() + " can't move -----------");
                 robosWantsToMove.remove(i);
                 positions.remove(i);
@@ -440,116 +435,87 @@ public class Board implements IBoard {
 
         // TODO: move the robots.
         for (int i = 0; i < robosWantsToMove.size(); i++) {
-            System.out.println("----- acualy moving robo nr " + robosWantsToMove.get(i).getId() + "---------");
             RobotTile robo = robosWantsToMove.get(i);
-
             Belt belt = convsToBeMoved.get(i);
-            Vector2 vec = positions.get(i);
 
-            int[] coords = DIRECTION.getNewPosMoveDir((int)vec.x,(int)vec.y, belt.getDirectionTo());
-            int newx = coords[0];
-            int newy = coords[1];
+            Vector2 coords = positions.get(i);
+            activateBelt(robo,belt,coords);
 
-
-
-
-            TreeSet<ICell> newCells = getTileTexture(newx,newy);
-            // if there is no belt, just keep going in same dir;
-            DIRECTION dir = belt.getDirectionTo();
-
-            // check if we have to rotate robo
-            for (ICell cell: newCells) {
-                if(cell instanceof Belt){
-                    Belt newBelt = (Belt) cell;
-                    if(newBelt.getDirectionFrom().reverse() == belt.getDirectionTo() ||
-                            (newBelt.getDirectionFromAlt() != null && newBelt.getDirectionFromAlt().reverse() == belt.getDirectionTo())){
-                        dir = newBelt.getDirectionTo();
-                    }
-                }
-            }
-
-            int rotate = belt.getDirectionTo().directionToRotation(dir);
-            int roboNr = robo.getId();
-
-
-            // do the accual move
-            System.out.println("moving from (" + vec.x + "," + vec.y + ") too (" + newx +"," + newy + ")");
-            bugPrintLocation(0,1);
-            bugPrintLocation(0,2);
-            bugPrintLocation(0,3);
-            Vector2 newCords = new Vector2(newx, newy);
-            updateRobotPos(roboNr, newCords);
-            System.out.println("current Robot is at " + robotPos[roboNr].toString());
-            bugPrintLocation(0,1);
-            bugPrintLocation(0,2);
-            bugPrintLocation(0,3);
-            if(rotate != 0) {
-                rotateRobot(roboNr, rotate);
-            }
-
-            System.out.println("------------ Done moving robot nr: " + roboNr + "-----------");
 
 
         }
     }
 
-    private boolean isRoboAtCord(int roboNr, Vector2 newCords) {
-        System.out.println("Checking if the robo moved");
-        TreeSet<ICell> cells = getCell(newCords);
-        for(ICell cell : cells){
-            if(cell instanceof RobotTile){
-                RobotTile robo = (RobotTile) cell;
-                if(robo.getId() == roboNr){
-                    return true;
+    private void activateBelt(RobotTile robo, Belt belt, Vector2 coords) {
+        int roboNr = robo.getId();
+        System.out.println("----- acualy moving robo nr " + roboNr + "---------");
+
+        Vector2 newCoords = getDestination(coords,belt.getDirectionTo(),1);
+        int rotate = getRotateValue(belt, newCoords);
+        // do the accual move
+        updateRobotPos(roboNr, newCoords);
+        if(rotate != 0) {
+            rotateRobot(roboNr, rotate);
+        }
+
+        System.out.println("------------ Done moving robot nr: " + roboNr + "-----------");
+    }
+
+    private int getRotateValue(Belt belt, Vector2 coords) {
+        TreeSet<ICell> newCells = getCell(coords);
+        // if there is no belt, just keep going in same dir;
+        DIRECTION dir = belt.getDirectionTo();
+
+        // check if we have to rotate robo
+        for (ICell cell: newCells) {
+            if(cell instanceof Belt){
+                Belt newBelt = (Belt) cell;
+                if(newBelt.getDirectionFrom().reverse() == belt.getDirectionTo() ||
+                        (newBelt.getDirectionFromAlt() != null && newBelt.getDirectionFromAlt().reverse() == belt.getDirectionTo())){
+                    dir = newBelt.getDirectionTo();
                 }
             }
         }
-        return false;
+
+        return belt.getDirectionTo().directionToRotation(dir);
     }
 
-    private void bugPrintLocation(int x, int y) {
-        Vector2 bugTesting = new Vector2(x,y);
-        TreeSet<ICell> bugTestsingCell = getCell(bugTesting);
-        System.out.println("BUG testing cells at(" + x +"," + y + ")");
-        for (ICell bugCell : bugTestsingCell){
-            if(bugCell instanceof RobotTile){
-                System.out.println("Robo nr: " + ((RobotTile) bugCell).getId());
-            }
-            System.out.println(bugCell.toString());
-        }
-        System.out.println("ALL items printed");
-    }
-
-    private boolean canConvoPush(int x, int y, DIRECTION to) {
+    private boolean canConvoPush(Vector2 curCoords, DIRECTION to) {
 
 
         //checking if we can leave current location
-        TreeSet<ICell> localCells = getTileTexture(x,y);
-        for(ICell cell : localCells){
-            if(cell instanceof Wall){
-                Wall wall = (Wall) cell;
-                if(wall.getDirection() == to){
-                    return false;
-                }
-            }
+        if(wallInCurrentTile(curCoords, to)){
+            return false;
         }
 
-        int[] cords = DIRECTION.getNewPosMoveDir(x, y, to);
-        int newX = cords[0];
-        int newY = cords[1];
 
+        Vector2 newCoords = getDestination(curCoords, to,1);
+        int newX = (int) newCoords.x;
+        int newY = (int) newCoords.y;
 
-        if(!containsPosition(new Vector2(newX, newY))){
+        if(!containsPosition(newCoords)){
             return true; //the robot can be pushed of the map
         }
 
-        if(moreThanOneRoboEnteringThisTile(newX, newY)){
+        if(moreThanOneRoboEnteringThisTile(newCoords)){
             return false; //can't enter if two robots try to enter
         }
 
-        // checking if we can enter the new place
-        TreeSet<ICell> nextCells = getTileTexture(newX,newY);
 
+
+
+        // checking if we can enter the new place
+
+        TreeSet<ICell> nextCells = getCell(newCoords);
+
+        /*
+         * The two boolean under is used to check if there is  a belt, and a robot in the tile we are trying to move to.
+         * If there is, we have to check if the robot on the convo belt can be moved.
+         * If there is robot, and no belt. Current robot can't move.
+         *
+         * If there is a wall on the way in to the next tile, current Robot can't move.
+         *
+         */
         boolean foundBelt = false;
         Belt belt = null;
 
@@ -583,17 +549,18 @@ public class Board implements IBoard {
 
         } else if(foundRobo && foundBelt){
             DIRECTION newTo = belt.getDirectionTo();
-            return canConvoPush(newX,newY, newTo);
+            return canConvoPush(newCoords, newTo);
         }
         return true;
 
     }
 
-    private boolean moreThanOneRoboEnteringThisTile(int newX, int newY) {
+    private boolean moreThanOneRoboEnteringThisTile(Vector2 coord) {
         int nrOfRobosGoingToCurrentTile = 0;
         for (DIRECTION dir : DIRECTION.values()) {
-            int[] newCords = DIRECTION.getNewPosMoveDir(newX,newY,dir);
-            if(roboEntriningFromMultipalDir(newCords[0], newCords[1], dir.reverse())){
+
+            Vector2 newCords = getDestination(coord,dir,1);
+            if(roboEntriningFromMultipalDir(new Vector2(newCords.x, newCords.y), dir.reverse())){
                 nrOfRobosGoingToCurrentTile++;
             }
         }
@@ -601,11 +568,11 @@ public class Board implements IBoard {
         return nrOfRobosGoingToCurrentTile > 1;
     }
 
-    private boolean roboEntriningFromMultipalDir(int x, int y, DIRECTION dir) {
-        if(!containsPosition(new Vector2(x,y))){
+    private boolean roboEntriningFromMultipalDir(Vector2 coords, DIRECTION dir) {
+        if(!containsPosition(coords)){
             return false;
         }
-        TreeSet<ICell> cells = grid[x][y];
+        TreeSet<ICell> cells = getCell(coords);
         boolean foundBeltLeavingInDir = false;
         boolean foundRobo = false;
         for(ICell cell : cells){
