@@ -377,7 +377,7 @@ public class Board implements IBoard {
 
 
 
-        // TODO: move the robots.
+        // Moving the robots
         for (int i = 0; i < robosWantsToMove.size(); i++) {
             RobotTile robo = robosWantsToMove.get(i);
             Belt belt = convsToBeMoved.get(i);
@@ -432,8 +432,6 @@ public class Board implements IBoard {
         }
 
         Vector2 newCoords = getDestination(curCoords, to,1);
-        int newX = (int) newCoords.x;
-        int newY = (int) newCoords.y;
 
 
         if(!containsPosition(newCoords)){
@@ -459,6 +457,8 @@ public class Board implements IBoard {
          * If there is a wall on the way in to the next tile, current Robot can't move.
          *
          */
+
+        // todo: might putting this in a method
         boolean foundBelt = false;
         Belt belt = null;
 
@@ -502,7 +502,7 @@ public class Board implements IBoard {
         int nrOfRobosGoingToCurrentTile = 0;
         for (DIRECTION dir : DIRECTION.values()) {
             Vector2 newCords = getDestination(coord,dir,1);
-            if(roboEntriningFromMultipalDir(new Vector2(newCords.x, newCords.y), dir.reverse())){
+            if(roboEntriningFromMultipalDir(newCords, dir.reverse())){
                 nrOfRobosGoingToCurrentTile++;
             }
         }
