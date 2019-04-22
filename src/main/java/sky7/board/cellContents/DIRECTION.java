@@ -62,7 +62,9 @@ public enum DIRECTION {
      * @param dir
      * @return int[x, y]
      */
-    public static Vector2 getNewPosMoveDir(int x, int y, DIRECTION dir){
+
+    // TODO: checking if can use game.getDestination() instead.
+    /*public static Vector2 getNewPosMoveDir(int x, int y, DIRECTION dir){
         int newX = x;
         int newY = y;
 
@@ -74,7 +76,7 @@ public enum DIRECTION {
         }
 
         return new Vector2(newX, newY);
-    }
+    }*/
 
 
     /**
