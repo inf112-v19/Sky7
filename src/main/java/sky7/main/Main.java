@@ -34,10 +34,6 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        
-//        startHost h = new startHost();
-//        Thread host = new Thread(h);
-//        host.start();
     }
     
     public static class clientThread implements Runnable {
@@ -69,14 +65,4 @@ public class Main {
             }
         }
      }
-    
-    public static class startHost implements Runnable {
-
-        @Override
-        public void run() {
-            Host host = new Host(client);
-            host.Begin();
-
-        }
-    }
 }
