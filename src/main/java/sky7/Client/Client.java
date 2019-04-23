@@ -3,11 +3,8 @@ package sky7.Client;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-<<<<<<< HEAD:src/main/java/sky7/game/Client.java
 import java.util.HashSet;
-=======
 import java.util.HashMap;
->>>>>>> experimental:src/main/java/sky7/Client/Client.java
 
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
@@ -27,31 +24,18 @@ public class Client implements IClient {
     private IPlayer player;
     private STATE state;
     private String boardName;
-<<<<<<< HEAD:src/main/java/sky7/game/Client.java
-    private HashSet<Flag> flagVisited;
-=======
+    private HashSet<Integer> flagVisited;
     private Game game;
-<<<<<<< HEAD
->>>>>>> experimental:src/main/java/sky7/Client/Client.java
-=======
     private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
     private ClientNetHandler netHandler;
->>>>>>> experimental
 
 
     public Client() {
         //board = new Board(10,8);
         this.player = new Player();
         state = STATE.LOADING;
-<<<<<<< HEAD
-<<<<<<< HEAD:src/main/java/sky7/game/Client.java
         this.flagVisited = new HashSet<>();
-=======
-
->>>>>>> experimental:src/main/java/sky7/Client/Client.java
-=======
         localClient = true;
->>>>>>> experimental
     }
 
     @Override
@@ -174,10 +158,20 @@ public class Client implements IClient {
 
     }
     public void setFlagVisited(Flag visitedFlag){
-        this.flagVisited.add(visitedFlag);
-
+        int flagNumber = visitedFlag.getFlagNumber();
+        boolean canVisit= true;
+        //check if the player has visited every previous flag
+        for(int i=1; i<flagNumber; i++){
+            if(!hasVisitedFlag(i)){
+                canVisit = false;
+            }
+        }
+        if(canVisit){//if the player has visited every previous
+            this.flagVisited.add(flagNumber);
+        }
     }
-    public boolean hasVisitedFlag(Flag flag){
+
+    public boolean hasVisitedFlag(int flag){
         return this.flagVisited.contains(flag);
     }
 

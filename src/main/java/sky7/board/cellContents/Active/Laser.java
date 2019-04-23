@@ -48,7 +48,7 @@ public class Laser implements IActive {
                 } else if (numberOfLasers == 2) {
                     texture = new Texture("assets/laser/LaserDStartU.png");
                 } else {
-                    throw new IllegalArgumentException("the number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
+                    throw new IllegalArgumentException("The number of laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
                 }
                 break;
             case SOUTH:
@@ -57,7 +57,7 @@ public class Laser implements IActive {
                 } else if (numberOfLasers == 2) {
                     texture = new Texture("assets/laser/LaserDStartD.png");
                 } else {
-                    throw new IllegalArgumentException("the number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
+                    throw new IllegalArgumentException("The number of laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
                 }
                 break;
             case WEST:
@@ -66,7 +66,7 @@ public class Laser implements IActive {
                 } else if (numberOfLasers == 2) {
                     texture = new Texture("assets/laser/LaserDStartR.png");
                 } else {
-                    throw new IllegalArgumentException("the number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
+                    throw new IllegalArgumentException("The number of laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
                 }
                 break;
             case EAST:
@@ -75,7 +75,7 @@ public class Laser implements IActive {
                 } else if (numberOfLasers == 2) {
                     texture = new Texture("assets/laser/LaserDStartL.png");
                 } else {
-                    throw new IllegalArgumentException("the number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
+                    throw new IllegalArgumentException("The number of laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
                 }
                 break;
             default:
@@ -96,7 +96,7 @@ public class Laser implements IActive {
             } else if (numberOfLasers == 2) {
                 texture = new Texture("assets/laser/LaserDVert.png");
             } else {
-                throw new IllegalArgumentException("The number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
+                throw new IllegalArgumentException("The number of laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
             }
         } else if (direction == DIRECTION.EAST || direction == DIRECTION.WEST) {
             if (numberOfLasers == 1) {
@@ -104,10 +104,10 @@ public class Laser implements IActive {
             } else if (numberOfLasers == 2) {
                 texture = new Texture("assets/laser/LaserDHor.png");
             } else {
-                throw new IllegalArgumentException("The number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
+                throw new IllegalArgumentException("The number of laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
             }
         } else {
-            throw new IllegalArgumentException("The number og laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
+            throw new IllegalArgumentException("The number of laser has invalid value. Should be 1 or 2, was  " + numberOfLasers);
         }
         return texture;
     }
