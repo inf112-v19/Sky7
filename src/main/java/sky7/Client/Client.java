@@ -1,6 +1,7 @@
 package sky7.Client;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 <<<<<<< HEAD:src/main/java/sky7/game/Client.java
 import java.util.HashSet;
@@ -30,18 +31,27 @@ public class Client implements IClient {
     private HashSet<Flag> flagVisited;
 =======
     private Game game;
+<<<<<<< HEAD
 >>>>>>> experimental:src/main/java/sky7/Client/Client.java
+=======
+    private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
+    private ClientNetHandler netHandler;
+>>>>>>> experimental
 
 
     public Client() {
         //board = new Board(10,8);
         this.player = new Player();
         state = STATE.LOADING;
+<<<<<<< HEAD
 <<<<<<< HEAD:src/main/java/sky7/game/Client.java
         this.flagVisited = new HashSet<>();
 =======
 
 >>>>>>> experimental:src/main/java/sky7/Client/Client.java
+=======
+        localClient = true;
+>>>>>>> experimental
     }
 
     @Override
@@ -49,6 +59,16 @@ public class Client implements IClient {
         return this.board;
     }
 
+    @Override
+    public void join(String hostName) {
+        localClient = false;
+        try {
+            netHandler = new ClientNetHandler(this, hostName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
     @Override
     public void connect(IHost host, int playerNumber) {
         connect(host, playerNumber, ""); //TODO add a default board for the game or something.
@@ -59,7 +79,14 @@ public class Client implements IClient {
         this.host = host;
         player.setPlayerNumber(playerNumber);
         this.boardName = boardName;
-
+        generateBoard();
+    }
+    
+    @Override
+    public void connect(int playerNumber, String boardName) {
+        player.setPlayerNumber(playerNumber);
+        this.boardName = boardName;
+        generateBoard();
     }
 
     @Override
@@ -70,12 +97,16 @@ public class Client implements IClient {
     }
 
 
-    public void generateBoard() throws FileNotFoundException {
+    public void generateBoard() {
         IBoardGenerator generator = new BoardGenerator();
-        board = generator.getBoardFromFile(boardName);
+        try {
+            board = generator.getBoardFromFile(boardName);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         state = STATE.MOVING_ROBOT;
-        board.placeRobot(0, 5, 5);
-        board.placeRobot(1, 6, 6);
+//        board.placeRobot(0, 5, 5);
+//        board.placeRobot(1, 6, 6);
         game = new Game(this, board);
     }
 
