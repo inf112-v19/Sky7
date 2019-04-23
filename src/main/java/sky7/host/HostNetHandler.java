@@ -63,6 +63,7 @@ public class HostNetHandler {
 
         public void disconnected (Connection connection) {
             System.out.println("Client disconnected, ID: " + connectionToPlayer.get(connection.getID()));
+            host.remotePlayerDisconnected(connectionToPlayer.get(connection.getID()));
             // TODO need to handle disconnected player, Host needs to know not to attempt dealing cards to the player.
         }
 

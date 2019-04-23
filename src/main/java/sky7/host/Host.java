@@ -246,6 +246,7 @@ public class Host implements IHost {
         for (int i=1; i<MAX_N_PLAYERS ; i++) {
             if (remotePlayers[i]) {
                 netHandler.dealCards(i, pDeck.draw(9));
+                System.out.println("Cards given to player " + i);
             }
         }
     }
