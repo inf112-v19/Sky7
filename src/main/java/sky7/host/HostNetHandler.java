@@ -1,19 +1,18 @@
 package sky7.host;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
 import sky7.net.packets.ClientConnectionAccepted;
 import sky7.net.packets.Hand;
 import sky7.net.packets.ProcessRound;
 import sky7.net.packets.RegistryDiscard;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class HostNetHandler {
     
