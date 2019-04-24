@@ -6,6 +6,7 @@ import sky7.board.IBoard;
 import sky7.board.ICell;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Inactive.Hole;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
@@ -20,6 +21,7 @@ public class Game implements IGame {
     private Client client;
     private static final int NR_OF_PHASES = 5;
     private IBoard board;
+    private List<Integer> destroyedRobots = new ArrayList<>();
 
     /**
      * The construct for a game engine on host.
@@ -46,11 +48,14 @@ public class Game implements IGame {
 
     @Override
     public void process(HashMap<Integer, ArrayList<ICard>> playerRegistrys) {
+        destroyedRobots = new ArrayList<>();
         Queue<Queue<Event>> allPhases = findPlayerSequence(playerRegistrys);
-        List<Integer> destroyedRobots = new ArrayList<>();
+        int count = 0;
         for (Queue<Event> phase : allPhases) {
-            for (Event player : phase) {
-                tryToMove(player);
+            System.out.println("phase: " + count++);
+            for (Event action : phase) {
+                if (!destroyedRobots.contains(action.player))
+                    tryToMove(action);
                 expressConveyor();
                 normalAndExpressConveyor();
                 activatePushers();
@@ -191,7 +196,7 @@ public class Game implements IGame {
             for (ICell aheadCell : board.getCell(ahead)) {
                 if (aheadCell instanceof Wall) return true;
                 if (aheadCell instanceof RobotTile) {
-                    if(client!= null){
+                    if (client != null) {
                         client.getPlayer().decreaseHealth(1);
                     }
                     return true;
@@ -249,15 +254,15 @@ public class Game implements IGame {
      * @param action a Event containing the playerId and ProgramCard
      */
     private void tryToMove(Event action) {
+        boolean dead = false;
         if (action.card.moveType()) {
             int steps = Math.abs(action.card.move());
-            while (steps > 0) {
+            while (!dead && steps > 0) {
                 DIRECTION dir = board.getRobots()[action.player].getOrientation();
                 if (action.card.move() < 1) dir = dir.reverse();
                 if (canGo(action.player, dir)) {
-                    movePlayer(action.player, dir);
+                    dead = movePlayer(action.player, dir);
                     steps--;
-                    render(50);
                 }
             }
         } else {
@@ -267,10 +272,10 @@ public class Game implements IGame {
 
     }
 
-    private void movePlayer(int player, DIRECTION dir) {
+    private boolean movePlayer(int player, DIRECTION dir) {
         // move player 1 step in direction dir
         Vector2 ahead = board.getDestination(board.getRobotPos()[player], dir, 1);
-
+        boolean dead;
         if (board.containsPosition(ahead)) {
             for (ICell cell : board.getCell(ahead)) {
                 if (cell instanceof RobotTile) {
@@ -279,9 +284,30 @@ public class Game implements IGame {
                 }
             }
             board.moveRobot(player, dir);
-        } else {
+            render(100);
+            dead = checkForHole(player);
+        } else { // robot is outside the board.
             board.hideRobot(player);
+            destroyedRobots.add(player);
+            dead = true;
         }
+        if (dead) render(50);
+        return dead;
+    }
+
+    private boolean checkForHole(int player) {
+        for (int i = 0; i < board.getRobots().length; i++) {
+            if (board.getRobots()[i] != null && player == board.getRobots()[i].getId()) {
+                for (ICell cell : board.getCell(board.getRobotPos()[i])) {
+                    if (cell instanceof Hole) {
+                        board.hideRobot(player);
+                        destroyedRobots.add(player);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private void rotatePlayer(Event action) {
@@ -332,9 +358,6 @@ public class Game implements IGame {
      */
     private boolean facingWall(Vector2 pos, DIRECTION direction) {
         // TODO check if there is a wall facing movement direction in the current cell
-        System.out.println(board.getWidth());
-        System.out.println(board.getHeight());
-        System.out.println(pos);
         if (board.containsPosition(pos))
             for (ICell cell : board.getCell(pos)) {
                 if (cell instanceof Wall && ((Wall) cell).getDirection() == direction) {

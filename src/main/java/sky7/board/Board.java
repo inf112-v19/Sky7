@@ -21,7 +21,9 @@ public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
     private int width, height, nPlayers, maxMove;
     private Vector2[] robotPos;
-     private RobotTile[] robots;
+    private RobotTile[] robots;
+    private Vector2[] deadRobotPos;
+    private RobotTile[] deadRobots;
     private List<CogWheel> cogs;
     private List<Vector2> cogPos;
     private List<IConveyorBelt> convs;
@@ -64,6 +66,8 @@ public class Board implements IBoard {
         this.nPlayers = 0;
         this.robotPos = new Vector2[8];
         this.robots = new RobotTile[8];
+        this.deadRobotPos = new Vector2[8];
+        this.deadRobots = new RobotTile[8];
         this.cogs = new ArrayList<>();
         this.cogPos = new ArrayList<>();
         this.convs = new ArrayList<>();
@@ -273,6 +277,11 @@ public class Board implements IBoard {
     @Override
     public void hideRobot(int player) {
         Vector2 pos = robotPos[player];
+        deadRobots[player] = robots[player];
+        robots[player] = null;
+        deadRobotPos[player] = robotPos[player];
+        robotPos[player] = null;
+
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
                 grid[(int) pos.x][(int) pos.y].remove(item);
