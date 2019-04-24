@@ -12,10 +12,9 @@ import sky7.host.Host;
 
 public class Main {
     
-    private static IClient cli;
+    private static IClient client;
 
     public static void main(String[] args) {
-
         clientThread cThread = new clientThread();
         Thread client = new Thread(cThread);
         client.start();
@@ -36,16 +35,16 @@ public class Main {
             e.printStackTrace();
         }
         
-        startHost h = new startHost();
-        Thread host = new Thread(h);
-        host.start();
+//        startHost h = new startHost();
+//        Thread host = new Thread(h);
+//        host.start();
     }
     
     public static class clientThread implements Runnable {
 
         @Override
         public void run() {
-            cli = new Client();
+            client = new Client();
         }
         
     }
@@ -58,13 +57,13 @@ public class Main {
             LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
             cfg.title = "Sky7 Games";
             // TODO Width and Height should adapt to the resolution of a screen.
-            cfg.width = 1280;
-            cfg.height = 1024;
+            cfg.width = 1755;
+            cfg.height = 1536;
             cfg.foregroundFPS = 30;
             cfg.backgroundFPS = 30;
             
             try {
-                new LwjglApplication(new GUI(cli), cfg);
+                new LwjglApplication(new GUI(client), cfg);
             } catch (FileNotFoundException e) {
                 System.out.println(e.getMessage());
             }
@@ -75,7 +74,7 @@ public class Main {
 
         @Override
         public void run() {
-            Host host = new Host(cli);
+            Host host = new Host(client);
             host.Begin();
 
         }

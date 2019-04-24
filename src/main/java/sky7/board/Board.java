@@ -12,6 +12,7 @@ import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Active.IConveyorBelt;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Active.Laser;
+import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.Inactive.Hole;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
@@ -29,6 +30,8 @@ public class Board implements IBoard {
     private List<Vector2> laserPos;
     private ArrayList<Vector2> holePos;
     private ArrayList<Hole> holes;
+    private List<Vector2> pusherPos;
+    private List<Pusher> pushers;
 
     public Board(int width, int height) {
         this.width = width;
@@ -69,6 +72,8 @@ public class Board implements IBoard {
         this.laserPos = new ArrayList<>();
         this.holes = new ArrayList<>();
         this.holePos = new ArrayList<>();
+        this.pushers = new ArrayList<>();
+        this.pusherPos = new ArrayList<>();
 
         // find and store locations of cogwheels, conveyor belts
         for (int i = 0; i < grid.length; i++) {
@@ -89,6 +94,10 @@ public class Board implements IBoard {
                     if (item instanceof Hole) {
                         holePos.add(new Vector2(i, j));
                         holes.add((Hole) item);
+                    }
+                    if (item instanceof Pusher) {
+                        pusherPos.add(new Vector2(i, j));
+                        pushers.add((Pusher) item);
                     }
                 }
             }

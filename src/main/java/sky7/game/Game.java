@@ -104,6 +104,7 @@ public class Game implements IGame {
 
     private void activateCogwheels() {
         //TODO
+        board.rotateCogs();
         render(50);
     }
 

@@ -1,9 +1,14 @@
 package sky7.host;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
@@ -21,14 +26,16 @@ public class Host implements IHost {
 
 
     // FIELD VARIABLES --------------
-    private static int MAX_NR_OF_PLAYERS = 8;
     private String boardName = "assets/Boards/mvp1Board.json";
     private IClient[] players;
-    private int nPlayers = 0, readyPlayers = 0;
+    private int nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0;
     private IDeck pDeck;
     private IBoard board;
     private HashMap<Integer, ArrayList<ICard>> playerRegs; // player registries
-
+    private boolean[] remotePlayers;
+    private int[] dockPos; // number in pos x is player x's dock position
+    private Queue<Integer> availableDockPos;
+    
     private BoardGenerator bg;
     private boolean terminated = false;
     private HOST_STATE nextState = HOST_STATE.BEGIN;
@@ -37,6 +44,8 @@ public class Host implements IHost {
     private Game game;
     private boolean processingFinished = false;
     private int winner = -1;
+    private HostNetHandler netHandler;
+    private int MAX_N_PLAYERS = 8; // TODO: set according to board size
 
     // host must know where each player can respawn.
 
@@ -48,15 +57,29 @@ public class Host implements IHost {
     public Host(IClient cli) {
         this();
         players[0] = cli;
+        new Thread() {
+            public void run() {
+                try {
+                    netHandler = new HostNetHandler((IHost)Host.this);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+        
         nPlayers++;
         cli.connect(this, 0, boardName);
         board.placeRobot(0, 5, 5);
+        cli.placeRobot(0, 5, 5);
     }
 
     public Host() {
 
-        players = new Client[MAX_NR_OF_PLAYERS];
+        players = new Client[MAX_N_PLAYERS];
         playerRegs = new HashMap<>();
+        remotePlayers = new boolean[8];
+        dockPos = new int[8];
+        shuffleDockPositions(MAX_N_PLAYERS); // TODO argument should be same as number of dock positions on chosen board
         //pQueue = new LinkedList<>();
         pDeck = new ProgramDeck();
         bg = new BoardGenerator();
@@ -158,6 +181,7 @@ public class Host implements IHost {
         for (int i = 0; i < nPlayers; i++) {
             players[i].render(playerRegs);
         }
+        netHandler.distributeRegistries(playerRegs);
         nextState = HOST_STATE.BEGIN_PROCESSING;
     }
 
@@ -215,9 +239,14 @@ public class Host implements IHost {
      */
     private void giveOutCards() {
         // give 9 cards to each player
-        for (int i = 0; i < nPlayers; i++) {
-            players[i].chooseCards(pDeck.draw(9));
-            System.out.println("Cards given to player " + i);
+        // TODO: handle situation where host should hand out less than 9 cards to damaged robots
+        players[0].chooseCards(pDeck.draw(9));
+        System.out.println("Cards given to player " + 0);
+        
+        for (int i=1; i<MAX_N_PLAYERS ; i++) {
+            if (remotePlayers[i]) {
+                netHandler.dealCards(i, pDeck.draw(9));
+            }
         }
     }
 
@@ -245,7 +274,41 @@ public class Host implements IHost {
         this.winner = winner;
         notify();
     }
+    
+    /**
+     * Create a queue of all possible dock positions in a random order.
+     * 
+     * @param numberOfDockPositions
+     */
+    private void shuffleDockPositions(int numberOfDockPositions) {
+        availableDockPos = new ArrayDeque<>();
+        List<Integer> temp = new ArrayList<>();
+        for (int i=0; i<numberOfDockPositions ; i++) {
+            temp.add(i);
+        }
+        Collections.shuffle(temp);
+        availableDockPos.addAll(temp);
+    }
 
+    // NET ------------------------
+    
+    @Override
+    public int remotePlayerConnected() {
+        for (int i=1; i<MAX_N_PLAYERS  ; i++) {
+            if (!remotePlayers[i]) {
+                remotePlayers[i] = true;
+                nRemotePlayers++;
+                return i;
+            }
+        }
+        throw new IllegalStateException("Could not find legal playerID for newly connected player");
+    }
+    
+    @Override
+    public void remotePlayerDisconnected(int playerID) {
+        remotePlayers[playerID] = false;
+        nRemotePlayers--;
+    }
 
     // GETTERS ---------------------
 
