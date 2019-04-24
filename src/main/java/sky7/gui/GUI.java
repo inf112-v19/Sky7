@@ -33,6 +33,7 @@ public class GUI implements ApplicationListener {
 	private int width, height, windowWidth, windowHeight;
 	private SpriteBatch batch;
 	private BitmapFont font;
+	private Host h;
 
 	//abstract the name of textures.
 	private HashMap<String, Texture> textures;
@@ -41,13 +42,16 @@ public class GUI implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	private TextureAtlas textureAtlas;
-	private Sprite reset, confirm, host, join, powerdown;
+	private Sprite reset, confirm, host, join, powerdown, wait;
 
 	private boolean cardsChoosen = false;
 	private boolean hosting = false;
+	private boolean waiting = false;
+
 	private int pointer, cardXpos = 0;
 	private int yPos = 64;
 	private int scaler = 128;
+
 	private ArrayList<ICard> hand;
 	private ArrayList<ICard> registry = new ArrayList<>(4);
 	TextInput listener;
@@ -61,9 +65,9 @@ public class GUI implements ApplicationListener {
 	@Override
 	public void create() {
 		try {
-//			game.generateBoard();
-			this.width = 10;
-			this.height = 10;
+			//			game.generateBoard();
+			this.width = 12;
+			this.height = 12;
 			windowWidth = width+4;
 			windowHeight = height+2;
 
@@ -87,7 +91,7 @@ public class GUI implements ApplicationListener {
 			textures.put("Join", new Texture("assets/menu/Join.png"));
 			textures.put("PowerDown", new Texture("assets/menu/PowerDown.png"));
 			textures.put("PowerDownPressed", new Texture("assets/menu/PowerDownPressed.png"));
-			
+
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
 
 			reset = new Sprite(textures.get("reset"));
@@ -101,9 +105,14 @@ public class GUI implements ApplicationListener {
 
 			join = new Sprite(textures.get("Join"));
 			join.setPosition(scaler*5, scaler*7);
-			
+
 			powerdown = new Sprite(textures.get("PowerDown"));
 			powerdown.setPosition(scaler*12+72, 16);
+
+			wait = new Sprite(textures.get("confirm"));
+			wait.setPosition(scaler*9, scaler*7);
+
+
 
 			hand = game.getHand();
 			addSprites();
@@ -141,77 +150,96 @@ public class GUI implements ApplicationListener {
 
 			if (isClicked(host)) {
 				startHost();
-			}
+			} 
+
 			if (isClicked(join)) {
 				// take input from user
 				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");
 			}
+		}
 
-		} else {	
+		//		if (waiting) {
+		//			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
+		//			wait.draw(batch);
+		//
+		//			if (isClicked(wait)) {
+		//				waiting = false;
+		//				h.Begin();
+		//				try {
+		//					Thread.sleep(500);
+		//				} catch (InterruptedException e) {
+		//					e.printStackTrace();
+		//				}
+		//			}
+		//		} 
+		else {
 			showDockBG(); //Render background and registry slots
 			showBoard(); //Render gameboard
 			showHealth(); //Render health of player
 			showRegistry(); //Render the cards the player has chosen
 			chooseCards(); //Render 9 selectable cards
+		}
 
-			/*
-			 * render reset button only if at least one card is selected and
-			 * when the player has not pressed the "ready" button
-			 */
-			if(!cardsChoosen && pointer != 0) {
-				reset.draw(batch);
-				if (isClicked(reset)) {
-					reset();
-				}
+
+		/*
+		 * render reset button only if at least one card is selected and
+		 * when the player has not pressed the "ready" button
+		 */
+
+		if(!cardsChoosen && pointer != 0) {
+			reset.draw(batch);
+			if (isClicked(reset)) {
+				reset();
 			}
+		}
 
-			// Render "GO" button only if 5 cards are choosen
-			if (pointer == 5) {
-				confirm.draw(batch);
-				powerdown.draw(batch);
-				//if powerdown is clicked:
-				if(isClicked(powerdown)) {
-					System.out.println("Powering down next round");
-					//TODO: some logic for powering down
-				}
-				// if confirm is clicked:
-				if (isClicked(confirm)) {
-					setRegistry();
-					pointer = 0;
-				}
+		// Render "GO" button only if 5 cards are choosen
+		if (pointer == 5) {
+			confirm.draw(batch);
+			powerdown.draw(batch);
+			//if powerdown is clicked:
+			if(isClicked(powerdown)) {
+				System.out.println("Powering down next round");
+				//TODO: some logic for powering down
+			}
+			// if confirm is clicked:
+			if (isClicked(confirm)) {
+				setRegistry();
+				pointer = 0;
 			}
 		}
 		batch.end();
 	}
 
 	private void startHost() {
-	    hosting = true;
-        new Thread() {
-            public void run() {
-                Host h = new Host(game);
-                h.Begin();
-            }
-        }.start();
-        
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+		hosting = true;
+		waiting = true;
+		new Thread() {
+			public void run() {
+				h = new Host(game);
+				h.Begin();
+			}
+		}.start();
+
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 	}
-	
+
 	public void connectClient(String hostName) {
-	    game.join(hostName);
-	    
-	    try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-	    
-	    hosting = true;
+		game.join(hostName);
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		hosting = true;
 	}
-	
+
 	//find the rotation of the robot
 	private int findRotation(RobotTile robot) {
 		switch (robot.getOrientation()) {
