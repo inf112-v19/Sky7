@@ -55,6 +55,7 @@ public class GUI implements ApplicationListener {
 	private ArrayList<ICard> hand;
 	private ArrayList<ICard> registry = new ArrayList<>(4);
 	TextInput listener;
+	BackGround bg;
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -112,12 +113,12 @@ public class GUI implements ApplicationListener {
 			wait = new Sprite(textures.get("confirm"));
 			wait.setPosition(scaler*9, scaler*7);
 
-
-
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
 			listener = new TextInput(this);
+			
+			bg = new BackGround(windowWidth, windowHeight, scaler, textures, batch);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -173,7 +174,8 @@ public class GUI implements ApplicationListener {
 		//			}
 		//		} 
 		else {
-			showDockBG(); //Render background and registry slots
+//			showDockBG(); //Render background and registry slots
+			bg.showDock(); //Render background and registry slots
 			showBoard(); //Render gameboard
 			showHealth(); //Render health of player
 			showRegistry(); //Render the cards the player has chosen
@@ -264,23 +266,6 @@ public class GUI implements ApplicationListener {
 	public void resume() {
 	}
 
-	public void showDockBG() {
-		/*
-		 * go through the width and height of gamewindow and print background/dock texture
-		 */
-		for (int i = 0; i < windowWidth; i++) {
-			for (int j=0; j < windowHeight; j++) {
-				batch.draw(textures.get("dock"), i * scaler, j*scaler);
-			}
-		}
-		/*
-		 * Render outline of cards in registry slots
-		 * i = 5 because the registry starts at gridplace 5
-		 */
-		for (int i = 5; i < 10; i++) {
-			batch.draw(textures.get("outline"), i * scaler+64, scaler);
-		}
-	}
 
 	// draw the gameboard as a grid of width*height, each square at 128*128 pixels
 	public void showBoard() {
