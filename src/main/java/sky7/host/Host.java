@@ -70,9 +70,12 @@ public class Host implements IHost {
         nPlayers++;
         cli.connect(this, 0, boardName);
         board.placeRobot(0, 9, 6);
-        board.placeRobot(1, 8, 6);
+        board.placeRobot(1, 0, 4);
+        board.placeRobot(2, 0, 2);
         cli.placeRobot(0, 9, 6);
-        cli.placeRobot(1,8,6);
+        cli.placeRobot(1,0,4);
+        cli.placeRobot(2, 0,2);
+
     }
 
     public Host() {

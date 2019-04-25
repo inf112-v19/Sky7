@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import sky7.board.cellContents.Active.Belt;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Active.CogWheel;
-import sky7.board.cellContents.Active.IConveyorBelt;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Active.Pusher;
@@ -86,6 +85,7 @@ public class Board implements IBoard {
                         cogs.add((CogWheel) item);
                     }
                     if (item instanceof Belt) {
+                        System.out.println("CONVO ADDED WITH TYPE: " + ((Belt) item).getType());
                         convPos.add(new Vector2(i, j));
                         convs.add((Belt) item);
                     }
@@ -342,7 +342,7 @@ public class Board implements IBoard {
     }
 
     @Override
-    public void moveConveyors() {
+    public void moveConveyors(boolean singelAndDouble) {
 
         List<Vector2> positions = new ArrayList<>();
         List<RobotTile> robosWantsToMove = new ArrayList<>();
@@ -352,9 +352,12 @@ public class Board implements IBoard {
         for (int i = 0; i < convs.size(); i++) {
             for (int j = 0; j < robots.length; j++) {
                 if(convPos.get(i).equals(robotPos[j])){
-                    positions.add(convPos.get(i)); // or robotPos[j]
-                    robosWantsToMove.add(robots[j]);
-                    convsToBeMoved.add(convs.get(i));
+                    if(singelAndDouble || convs.get(i).getType() == 0) {
+                        positions.add(convPos.get(i)); // or robotPos[j]
+                        robosWantsToMove.add(robots[j]);
+                        convsToBeMoved.add(convs.get(i));
+                    }
+
                 }
             }
         }
@@ -364,7 +367,7 @@ public class Board implements IBoard {
             DIRECTION to = convsToBeMoved.get(i).getDirectionTo();
 
             System.out.println("------------ Checking if robo nr " +robosWantsToMove.get(i).getId() + " can be moved--------");
-            if(!canConvoPush(positions.get(i), to)){
+            if(!canConvoPush(positions.get(i), to, !singelAndDouble)){
                 System.out.println("------------ Robo nr" + robosWantsToMove.get(i).getId() + " can't move -----------");
                 robosWantsToMove.remove(i);
                 positions.remove(i);
@@ -423,8 +426,8 @@ public class Board implements IBoard {
         return belt.getDirectionTo().directionToRotation(dir);
     }
 
-    private boolean canConvoPush(Vector2 curCoords, DIRECTION to) {
-
+    private boolean canConvoPush(Vector2 curCoords, DIRECTION to, boolean onlyExpress) {
+        System.out.println("Recurtion trap");
 
         //checking if we can leave current location
         if(wallInCurrentTile(curCoords, to)){
@@ -438,7 +441,7 @@ public class Board implements IBoard {
             return true; //the robot can be pushed of the map
         }
 
-        if(moreThanOneRoboEnteringThisTile(newCoords)){
+        if(moreThanOneRoboEnteringThisTile(newCoords, onlyExpress)){
             return false; //can't enter if two robots try to enter
         }
 
@@ -474,6 +477,11 @@ public class Board implements IBoard {
                 }
             } else if(cell instanceof Belt){
                 Belt newBelt = (Belt)cell;
+
+                // checking if the other belt is singel typed.
+                if(onlyExpress && newBelt.getType()!=0){
+                    continue;
+                }
                 /* if the belt is leaving somewhere else (then the checking robo is standing)
                  * then both can move, as long as the next Robo can move (check further down).
                  */
@@ -492,17 +500,17 @@ public class Board implements IBoard {
 
         } else if(foundRobo && foundBelt){
             DIRECTION newTo = belt.getDirectionTo();
-            return canConvoPush(newCoords, newTo);
+            return canConvoPush(newCoords, newTo, onlyExpress);
         }
         return true;
 
     }
 
-    private boolean moreThanOneRoboEnteringThisTile(Vector2 coord) {
+    private boolean moreThanOneRoboEnteringThisTile(Vector2 coord, boolean onlyExpress) {
         int nrOfRobosGoingToCurrentTile = 0;
         for (DIRECTION dir : DIRECTION.values()) {
             Vector2 newCords = getDestination(coord,dir,1);
-            if(roboEntriningFromMultipalDir(newCords, dir.reverse())){
+            if(roboEntriningFromMultipalDir(newCords, dir.reverse(), onlyExpress)){
                 nrOfRobosGoingToCurrentTile++;
             }
         }
@@ -510,7 +518,7 @@ public class Board implements IBoard {
         return nrOfRobosGoingToCurrentTile > 1;
     }
 
-    private boolean roboEntriningFromMultipalDir(Vector2 coords, DIRECTION dir) {
+    private boolean roboEntriningFromMultipalDir(Vector2 coords, DIRECTION dir, boolean onlyExpress) {
         if(!containsPosition(coords)){
             return false;
         }
@@ -520,6 +528,9 @@ public class Board implements IBoard {
         for(ICell cell : cells){
             if(cell instanceof Belt){
                 Belt belt = (Belt) cell;
+                if(onlyExpress && belt.getType() != 0){
+                    continue;
+                }
                 if(belt.getDirectionTo() == dir){
                     foundBeltLeavingInDir = true;
                 }

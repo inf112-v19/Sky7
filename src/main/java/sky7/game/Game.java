@@ -48,17 +48,19 @@ public class Game implements IGame {
         Queue<Queue<Event>> allPhases = findPlayerSequence(playerRegistrys);
         List<Integer> destroyedRobots = new ArrayList<>();
         for (Queue<Event> phase : allPhases) {
+            System.out.println("START PASHE");
             for (Event player : phase) {
                 tryToMove(player);
-                expressConveyor();
-                normalAndExpressConveyor();
-                activatePushers();
-                activateCogwheels();
-                activateLasers();
-                placeBackup();
-                flags();
-                if (foundWinner()) break;
             }
+            expressConveyor();
+            normalAndExpressConveyor();
+            activatePushers();
+            activateCogwheels();
+            activateLasers();
+            placeBackup();
+            flags();
+            if (foundWinner()) break;
+            System.out.println("END OF PASHE");
         }
         //after 5th phaze
         repairRobotsOnRepairSite();
@@ -118,13 +120,13 @@ public class Game implements IGame {
     }
 
     private void normalAndExpressConveyor() {
-        //TODO
+        board.moveConveyors(true);
         render();
     }
 
     private void expressConveyor() {
         // TODO check if this robot is on a conveyor belt and there is another robot in front that is also on the convoyer belt
-        board.moveConveyors();
+        board.moveConveyors(false);
         render();
     }
 

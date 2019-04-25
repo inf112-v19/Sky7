@@ -61,7 +61,7 @@ public interface IBoard {
 
     void rotateCogs();
 
-    void moveConveyors();
+    void moveConveyors(boolean b);
 
     TreeSet<ICell> getCell(Vector2 a);
 
