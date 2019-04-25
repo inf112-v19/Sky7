@@ -117,7 +117,7 @@ public class GUI implements ApplicationListener {
 			addSprites();
 			setHandPos(hand);
 			listener = new TextInput(this);
-			
+
 			bg = new BackGround(windowWidth, windowHeight, scaler, textures, batch);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -157,24 +157,16 @@ public class GUI implements ApplicationListener {
 				// take input from user
 				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");
 			}
-		}
+		} else if (hosting && waiting) {
+			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
+			wait.draw(batch);
 
-		//		if (waiting) {
-		//			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
-		//			wait.draw(batch);
-		//
-		//			if (isClicked(wait)) {
-		//				waiting = false;
-		//				h.Begin();
-		//				try {
-		//					Thread.sleep(500);
-		//				} catch (InterruptedException e) {
-		//					e.printStackTrace();
-		//				}
-		//			}
-		//		} 
-		else {
-//			showDockBG(); //Render background and registry slots
+			if (isClicked(wait)) {
+				waiting = false;
+				h.Begin();
+			}
+		} else {
+			//			showDockBG(); //Render background and registry slots
 			bg.showDock(); //Render background and registry slots
 			showBoard(); //Render gameboard
 			showHealth(); //Render health of player
@@ -219,7 +211,7 @@ public class GUI implements ApplicationListener {
 		new Thread() {
 			public void run() {
 				h = new Host(game);
-				h.Begin();
+				//				h.Begin();
 			}
 		}.start();
 
