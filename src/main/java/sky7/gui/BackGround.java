@@ -12,7 +12,7 @@ public class BackGround {
 	SpriteBatch batch;
 	
 	public BackGround(int width, int height, int scaler, HashMap<String, Texture> textures, SpriteBatch batch) {
-		windowWidth= width;
+		windowWidth = width;
 		windowHeight = height;
 		this.scaler = scaler;
 		this.textures = textures;

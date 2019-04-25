@@ -1,11 +1,9 @@
 package sky7.gui;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -23,8 +21,6 @@ import sky7.board.ICell;
 import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
 import sky7.host.Host;
-import sky7.host.HostNetHandler;
-import sky7.host.IHost;
 import sky7.Client.IClient;
 
 
@@ -44,9 +40,8 @@ public class GUI implements ApplicationListener {
 	private TextureAtlas textureAtlas;
 	private Sprite reset, confirm, host, join, powerdown, wait;
 
-	private boolean cardsChoosen = false;
+	private boolean cardsChoosen, lobby = false;
 	private boolean mainMenu = true;
-	private boolean lobby = false;
 
 	private int pointer, cardXpos = 0;
 	private int yPos = 64;
@@ -55,7 +50,8 @@ public class GUI implements ApplicationListener {
 	private ArrayList<ICard> hand;
 	private ArrayList<ICard> registry = new ArrayList<>(4);
 	TextInput listener;
-	BackGround bg;
+	BackGround background;
+	BoardPrinter boardprinter;
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -66,9 +62,8 @@ public class GUI implements ApplicationListener {
 	@Override
 	public void create() {
 		try {
-			//			game.generateBoard();
-			this.width = 12;
-			this.height = 12;
+			width = 12;
+			height = 12;
 			windowWidth = width+4;
 			windowHeight = height+2;
 
@@ -84,22 +79,22 @@ public class GUI implements ApplicationListener {
 			textures.put("floor", new Texture("assets/floor/plain.png"));
 			textures.put("outline", new Texture("assets/cards/Outline.png"));
 			textures.put("dock", new Texture("assets/dock.png"));
-			textures.put("reset", new Texture("assets/dock/Reset.png"));
-			textures.put("confirm", new Texture("assets/dock/Confirm.png"));
+			textures.put("reset", new Texture("assets/menu/Reset2.png"));
+			textures.put("Go", new Texture("assets/menu/Go2.png"));
 			textures.put("health", new Texture("assets/health.png"));
 			textures.put("Splashscreen", new Texture("assets/menu/splashscreen.png"));
-			textures.put("Host", new Texture("assets/menu/Host.png"));
-			textures.put("Join", new Texture("assets/menu/Join.png"));
-			textures.put("PowerDown", new Texture("assets/menu/PowerDown.png"));
-			textures.put("PowerDownPressed", new Texture("assets/menu/PowerDownPressed.png"));
+			textures.put("Host", new Texture("assets/menu/Host2.png"));
+			textures.put("Join", new Texture("assets/menu/Join2.png"));
+			textures.put("PowerDown", new Texture("assets/menu/PowerDown2.png"));
+			textures.put("Begin", new Texture("assets/menu/Begin.png"));
 
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
 
 			reset = new Sprite(textures.get("reset"));
-			reset.setPosition(scaler*4, scaler+20);
+			reset.setPosition(scaler*4, scaler+32);
 
-			confirm = new Sprite(textures.get("confirm"));
-			confirm.setPosition(scaler*11, scaler+20);
+			confirm = new Sprite(textures.get("Go"));
+			confirm.setPosition(scaler*11, scaler+32);
 
 			host = new Sprite(textures.get("Host"));
 			host.setPosition(scaler*9, scaler*7);
@@ -108,17 +103,18 @@ public class GUI implements ApplicationListener {
 			join.setPosition(scaler*5, scaler*7);
 
 			powerdown = new Sprite(textures.get("PowerDown"));
-			powerdown.setPosition(scaler*12+72, 16);
+			powerdown.setPosition(scaler*13, 32);
 
-			wait = new Sprite(textures.get("confirm"));
-			wait.setPosition(scaler*9, scaler*7);
+			wait = new Sprite(textures.get("Begin"));
+			wait.setPosition(scaler*7, scaler*7);
 
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
 			listener = new TextInput(this);
 
-			bg = new BackGround(windowWidth, windowHeight, scaler, textures, batch);
+			background = new BackGround(windowWidth, windowHeight, scaler, textures, batch);
+			boardprinter = new BoardPrinter(width, height, scaler, batch);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -150,7 +146,7 @@ public class GUI implements ApplicationListener {
 			join.draw(batch);
 
 			if (isClicked(host)) {
-			    mainMenu = false;
+				mainMenu = false;
 				startHost();
 			} 
 
@@ -158,22 +154,26 @@ public class GUI implements ApplicationListener {
 				// take input from user
 				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");
 			}
+
 		} else if (lobby) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
 			wait.draw(batch);
+			font.draw(batch, h.getnPlayers() + " Connected Players", 7*scaler, 6*scaler);
 
 			if (isClicked(wait)) {
 				lobby = false;
 				new Thread() {
-		            public void run() {
-		                h.Begin();
-		            }
-		        }.start();
+					public void run() {
+						h.Begin();
+					}
+				}.start();
+				this.width = game.gameBoard().getWidth();
+				this.height = game.gameBoard().getHeight();
 			}
+
 		} else {
-			//			showDockBG(); //Render background and registry slots
-			bg.showDock(); //Render background and registry slots
-			showBoard(); //Render gameboard
+			background.showDock(); //Render background and registry slots
+			boardprinter.showBoard(game);
 			showHealth(); //Render health of player
 			showRegistry(); //Render the cards the player has chosen
 			chooseCards(); //Render 9 selectable cards
@@ -233,23 +233,10 @@ public class GUI implements ApplicationListener {
 		mainMenu = true;
 	}
 
-	//find the rotation of the robot
-	private int findRotation(RobotTile robot) {
-		switch (robot.getOrientation()) {
-			case EAST:
-				return 270;
-			case SOUTH:
-				return 180;
-			case WEST:
-				return 90;
-			default:
-				return 0;
-		}
-	}
-
 	@Override
 	public void resize(int width, int height) {
-		viewport.update(width, height, true);
+		//		viewport.update(width, height), true);
+		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		batch.setProjectionMatrix(camera.combined);
 	}
 
@@ -257,23 +244,6 @@ public class GUI implements ApplicationListener {
 	public void resume() {
 	}
 
-
-	// draw the gameboard as a grid of width*height, each square at 128*128 pixels
-	public void showBoard() {
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
-					if (cell instanceof RobotTile) {
-						int rotation = findRotation((RobotTile)cell);
-						batch.draw(new TextureRegion(cell.getTexture()), (i+2)*scaler, (j+2)*scaler, scaler/2, scaler/2, scaler, scaler, 1, 1, rotation);
-					} else {
-						batch.draw(cell.getTexture(), (i+2) * scaler, (j + 2) * scaler, scaler, scaler);
-					}
-
-				}
-			}
-		}
-	}
 
 	// Show health and healthtokens
 	public void showHealth() {
