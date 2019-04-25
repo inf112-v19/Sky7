@@ -45,8 +45,8 @@ public class GUI implements ApplicationListener {
 	private Sprite reset, confirm, host, join, powerdown, wait;
 
 	private boolean cardsChoosen = false;
-	private boolean hosting = false;
-	private boolean waiting = false;
+	private boolean mainMenu = true;
+	private boolean lobby = false;
 
 	private int pointer, cardXpos = 0;
 	private int yPos = 64;
@@ -144,12 +144,13 @@ public class GUI implements ApplicationListener {
 
 		batch.begin();
 
-		if (!hosting) {
+		if (mainMenu && !lobby) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
 			host.draw(batch);
 			join.draw(batch);
 
 			if (isClicked(host)) {
+			    mainMenu = false;
 				startHost();
 			} 
 
@@ -157,13 +158,17 @@ public class GUI implements ApplicationListener {
 				// take input from user
 				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");
 			}
-		} else if (hosting && waiting) {
+		} else if (lobby) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
 			wait.draw(batch);
 
 			if (isClicked(wait)) {
-				waiting = false;
-				h.Begin();
+				lobby = false;
+				new Thread() {
+		            public void run() {
+		                h.Begin();
+		            }
+		        }.start();
 			}
 		} else {
 			//			showDockBG(); //Render background and registry slots
@@ -206,14 +211,8 @@ public class GUI implements ApplicationListener {
 	}
 
 	private void startHost() {
-		hosting = true;
-		waiting = true;
-		new Thread() {
-			public void run() {
-				h = new Host(game);
-				//				h.Begin();
-			}
-		}.start();
+		lobby = true;
+		h = new Host(game);
 
 		try {
 			Thread.sleep(500);
@@ -231,7 +230,7 @@ public class GUI implements ApplicationListener {
 			e.printStackTrace();
 		}
 
-		hosting = true;
+		mainMenu = true;
 	}
 
 	//find the rotation of the robot
