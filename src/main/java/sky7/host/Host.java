@@ -336,7 +336,7 @@ public class Host implements IHost {
 
     @Override
     public int getnPlayers() {
-        return nPlayers;
+        return nRemotePlayers;
     }
 
     @Override
