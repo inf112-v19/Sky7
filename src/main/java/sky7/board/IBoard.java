@@ -67,7 +67,8 @@ public interface IBoard {
      */
     void rotateRobot(int currentPlayer, int rotate);
 
-    void moveConveyors();
+
+    void moveConveyors(boolean b);
 
     List<Vector2> getPusherPos();
 

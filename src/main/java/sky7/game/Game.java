@@ -274,14 +274,15 @@ public class Game implements IGame {
     }
 
     private void normalAndExpressConveyor() {
-        //TODO
+        board.moveConveyors(true);
         render(50);
     }
 
     private void expressConveyor() {
         // TODO check if this robot is on a conveyor belt and there is another robot in front that is also on the convoyer belt
 
-        board.moveConveyors();
+
+        board.moveConveyors(true);
         render(50);
     }
 

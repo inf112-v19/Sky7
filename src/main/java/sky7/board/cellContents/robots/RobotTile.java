@@ -43,7 +43,7 @@ public class RobotTile implements IMoving {
     @Override
     public int compareTo(ICell other) {
         if(other == this) return 0;
-        if(other instanceof RobotTile ){
+        else if(other instanceof RobotTile ){
             return -1;
         } else {
             return Integer.compare(this.drawPriority(), other.drawPriority());
