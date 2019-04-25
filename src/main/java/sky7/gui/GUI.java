@@ -1,11 +1,9 @@
 package sky7.gui;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.*;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input.TextInputListener;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -23,8 +21,6 @@ import sky7.board.ICell;
 import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
 import sky7.host.Host;
-import sky7.host.HostNetHandler;
-import sky7.host.IHost;
 import sky7.Client.IClient;
 
 
@@ -33,6 +29,7 @@ public class GUI implements ApplicationListener {
 	private int width, height, windowWidth, windowHeight;
 	private SpriteBatch batch;
 	private BitmapFont font;
+	private Host h;
 
 	//abstract the name of textures.
 	private HashMap<String, Texture> textures;
@@ -41,16 +38,20 @@ public class GUI implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	private TextureAtlas textureAtlas;
-	private Sprite reset, confirm, host, join, powerdown;
+	private Sprite reset, confirm, host, join, powerdown, wait;
 
-	private boolean cardsChoosen = false;
-	private boolean hosting = false;
+	private boolean cardsChoosen, lobby = false;
+	private boolean mainMenu = true;
+
 	private int pointer, cardXpos = 0;
 	private int yPos = 64;
 	private int scaler = 128;
+
 	private ArrayList<ICard> hand;
 	private ArrayList<ICard> registry = new ArrayList<>(4);
 	TextInput listener;
+	BackGround background;
+	BoardPrinter boardprinter;
 
 	public GUI(IClient game) throws FileNotFoundException {
 		this.game = game;
@@ -61,9 +62,8 @@ public class GUI implements ApplicationListener {
 	@Override
 	public void create() {
 		try {
-//			game.generateBoard();
-			this.width = 10;
-			this.height = 10;
+			width = 12;
+			height = 12;
 			windowWidth = width+4;
 			windowHeight = height+2;
 
@@ -79,36 +79,42 @@ public class GUI implements ApplicationListener {
 			textures.put("floor", new Texture("assets/floor/plain.png"));
 			textures.put("outline", new Texture("assets/cards/Outline.png"));
 			textures.put("dock", new Texture("assets/dock.png"));
-			textures.put("reset", new Texture("assets/dock/Reset.png"));
-			textures.put("confirm", new Texture("assets/dock/Confirm.png"));
+			textures.put("reset", new Texture("assets/menu/Reset2.png"));
+			textures.put("Go", new Texture("assets/menu/Go2.png"));
 			textures.put("health", new Texture("assets/health.png"));
 			textures.put("Splashscreen", new Texture("assets/menu/splashscreen.png"));
-			textures.put("Host", new Texture("assets/menu/Host.png"));
-			textures.put("Join", new Texture("assets/menu/Join.png"));
-			textures.put("PowerDown", new Texture("assets/menu/PowerDown.png"));
-			textures.put("PowerDownPressed", new Texture("assets/menu/PowerDownPressed.png"));
-			
+			textures.put("Host", new Texture("assets/menu/Host2.png"));
+			textures.put("Join", new Texture("assets/menu/Join2.png"));
+			textures.put("PowerDown", new Texture("assets/menu/PowerDown2.png"));
+			textures.put("Begin", new Texture("assets/menu/Begin.png"));
+
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
 
 			reset = new Sprite(textures.get("reset"));
-			reset.setPosition(scaler*4, scaler+20);
+			reset.setPosition(scaler*4, scaler+32);
 
-			confirm = new Sprite(textures.get("confirm"));
-			confirm.setPosition(scaler*11, scaler+20);
+			confirm = new Sprite(textures.get("Go"));
+			confirm.setPosition(scaler*11, scaler+32);
 
 			host = new Sprite(textures.get("Host"));
 			host.setPosition(scaler*9, scaler*7);
 
 			join = new Sprite(textures.get("Join"));
 			join.setPosition(scaler*5, scaler*7);
-			
+
 			powerdown = new Sprite(textures.get("PowerDown"));
-			powerdown.setPosition(scaler*12+72, 16);
+			powerdown.setPosition(scaler*13, 32);
+
+			wait = new Sprite(textures.get("Begin"));
+			wait.setPosition(scaler*7, scaler*7);
 
 			hand = game.getHand();
 			addSprites();
 			setHandPos(hand);
 			listener = new TextInput(this);
+
+			background = new BackGround(windowWidth, windowHeight, scaler, textures, batch);
+			boardprinter = new BoardPrinter(width, height, scaler, batch);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -134,101 +140,103 @@ public class GUI implements ApplicationListener {
 
 		batch.begin();
 
-		if (!hosting) {
+		if (mainMenu && !lobby) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
 			host.draw(batch);
 			join.draw(batch);
 
 			if (isClicked(host)) {
+				mainMenu = false;
 				startHost();
-			}
+			} 
+
 			if (isClicked(join)) {
 				// take input from user
 				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");
 			}
 
-		} else {	
-			showDockBG(); //Render background and registry slots
-			showBoard(); //Render gameboard
+		} else if (lobby) {
+			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
+			wait.draw(batch);
+			font.draw(batch, h.getnPlayers() + " Connected Players", 7*scaler, 6*scaler);
+
+			if (isClicked(wait)) {
+				lobby = false;
+				new Thread() {
+					public void run() {
+						h.Begin();
+					}
+				}.start();
+				this.width = game.gameBoard().getWidth();
+				this.height = game.gameBoard().getHeight();
+			}
+
+		} else {
+			background.showDock(); //Render background and registry slots
+			boardprinter.showBoard(game);
 			showHealth(); //Render health of player
 			showRegistry(); //Render the cards the player has chosen
 			chooseCards(); //Render 9 selectable cards
+		}
 
-			/*
-			 * render reset button only if at least one card is selected and
-			 * when the player has not pressed the "ready" button
-			 */
-			if(!cardsChoosen && pointer != 0) {
-				reset.draw(batch);
-				if (isClicked(reset)) {
-					reset();
-				}
+
+		/*
+		 * render reset button only if at least one card is selected and
+		 * when the player has not pressed the "ready" button
+		 */
+
+		if(!cardsChoosen && pointer != 0) {
+			reset.draw(batch);
+			if (isClicked(reset)) {
+				reset();
 			}
+		}
 
-			// Render "GO" button only if 5 cards are choosen
-			if (pointer == 5) {
-				confirm.draw(batch);
-				powerdown.draw(batch);
-				//if powerdown is clicked:
-				if(isClicked(powerdown)) {
-					System.out.println("Powering down next round");
-					//TODO: some logic for powering down
-				}
-				// if confirm is clicked:
-				if (isClicked(confirm)) {
-					setRegistry();
-					pointer = 0;
-				}
+		// Render "GO" button only if 5 cards are choosen
+		if (pointer == 5) {
+			confirm.draw(batch);
+			powerdown.draw(batch);
+			//if powerdown is clicked:
+			if(isClicked(powerdown)) {
+				System.out.println("Powering down next round");
+				//TODO: some logic for powering down
+			}
+			// if confirm is clicked:
+			if (isClicked(confirm)) {
+				setRegistry();
+				pointer = 0;
 			}
 		}
 		batch.end();
 	}
 
 	private void startHost() {
-	    hosting = true;
-        new Thread() {
-            public void run() {
-                Host h = new Host(game);
-                h.Begin();
-            }
-        }.start();
-        
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-	}
-	
-	public void connectClient(String hostName) {
-	    game.join(hostName);
-	    
-	    try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-	    
-	    hosting = true;
-	}
-	
-	//find the rotation of the robot
-	private int findRotation(RobotTile robot) {
-		switch (robot.getOrientation()) {
-			case EAST:
-				return 270;
-			case SOUTH:
-				return 180;
-			case WEST:
-				return 90;
-			default:
-				return 0;
+		lobby = true;
+		h = new Host(game);
+
+		try {
+			Thread.sleep(500);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
+	}
+
+	public void connectClient(String hostName) {
+		game.join(hostName);
+
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		mainMenu = true;
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		viewport.update(width, height, true);
+		//		viewport.update(width, height), true);
+		viewport.update(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
 		batch.setProjectionMatrix(camera.combined);
 	}
 
@@ -236,40 +244,6 @@ public class GUI implements ApplicationListener {
 	public void resume() {
 	}
 
-	public void showDockBG() {
-		/*
-		 * go through the width and height of gamewindow and print background/dock texture
-		 */
-		for (int i = 0; i < windowWidth; i++) {
-			for (int j=0; j < windowHeight; j++) {
-				batch.draw(textures.get("dock"), i * scaler, j*scaler);
-			}
-		}
-		/*
-		 * Render outline of cards in registry slots
-		 * i = 5 because the registry starts at gridplace 5
-		 */
-		for (int i = 5; i < 10; i++) {
-			batch.draw(textures.get("outline"), i * scaler+64, scaler);
-		}
-	}
-
-	// draw the gameboard as a grid of width*height, each square at 128*128 pixels
-	public void showBoard() {
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
-				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
-					if (cell instanceof RobotTile) {
-						int rotation = findRotation((RobotTile)cell);
-						batch.draw(new TextureRegion(cell.getTexture()), (i+2)*scaler, (j+2)*scaler, scaler/2, scaler/2, scaler, scaler, 1, 1, rotation);
-					} else {
-						batch.draw(cell.getTexture(), (i+2) * scaler, (j + 2) * scaler, scaler, scaler);
-					}
-
-				}
-			}
-		}
-	}
 
 	// Show health and healthtokens
 	public void showHealth() {
