@@ -4,10 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import sky7.board.ICell;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.IActive;
-
 import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -31,7 +29,8 @@ public class Pusher implements IActive {
      * @return true if pusher is oddPhased and phase is odd, or if pusher is not oddPhased and phase is equal,
      * false otherwise.
      */
-    boolean doActivate(int phase) {
+
+    public boolean doActivate(int phase) {
         assert phase > 0 && phase < 5;
         return (phase % 2 == 1 && oddPhased) || (phase % 2 == 0 && !oddPhased);
     }

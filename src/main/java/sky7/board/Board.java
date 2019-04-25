@@ -1,21 +1,20 @@
 package sky7.board;
 
+import com.badlogic.gdx.math.Vector2;
+import sky7.board.cellContents.Active.CogWheel;
+import sky7.board.cellContents.Active.IConveyorBelt;
+import sky7.board.cellContents.Active.Laser;
+import sky7.board.cellContents.Active.Pusher;
+import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Inactive.FloorTile;
+import sky7.board.cellContents.Inactive.Hole;
+import sky7.board.cellContents.Inactive.Wall;
+import sky7.board.cellContents.robots.RobotTile;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
-
-import com.badlogic.gdx.math.Vector2;
-
-import sky7.board.cellContents.DIRECTION;
-import sky7.board.cellContents.Active.CogWheel;
-import sky7.board.cellContents.Active.IConveyorBelt;
-import sky7.board.cellContents.Inactive.FloorTile;
-import sky7.board.cellContents.Active.Laser;
-import sky7.board.cellContents.Active.Pusher;
-import sky7.board.cellContents.Inactive.Hole;
-import sky7.board.cellContents.Inactive.Wall;
-import sky7.board.cellContents.robots.RobotTile;
 
 public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
@@ -338,6 +337,87 @@ public class Board implements IBoard {
     public void moveConveyors() {
         // TODO Auto-generated method stub
     }
+
+    @Override
+    public void movePushers(int phase){
+        List<Vector2> positions = new ArrayList<>();
+        List<RobotTile> robotsToPush = new ArrayList<>();
+        List<Pusher> pusherToPush = new ArrayList<>();
+
+        //find every robot on a pusher and their position
+        for(int i=0; i<pushers.size(); i++){
+            for(int j=0; j<robots.length; j++){
+                if(pusherPos.get(i).equals(robotPos[j])){
+                    positions.add(pusherPos.get(i));
+                    robotsToPush.add(robots[j]);
+                    pusherToPush.add(pushers.get(i));
+                }
+            }
+        }
+
+        //remove every pusher that dont activate in current phase
+        for(int i=0; i<pusherToPush.size(); i++){
+            Pusher thisPusher = pusherToPush.get(i);
+            if(!thisPusher.doActivate(phase)) {//check if pusher activates in this phase
+                pusherToPush.remove(thisPusher);
+            }
+
+        }
+        //remove every robot and pusher that can not push, ex if there is a robot and a wall in front
+        for(int i=0; i<pusherToPush.size(); i++){
+            DIRECTION dirToPush = pusherToPush.get(i).getDirection();
+
+            RobotTile robot = robotsToPush.get(i);
+            Vector2 pos = positions.get(i);
+            Pusher pusher = pusherToPush.get(i);
+            if(!canPusherPush(positions.get(i), dirToPush)){
+                robotsToPush.remove(robot);
+                positions.remove(pos);
+                pusherToPush.remove(pusher);
+                i--;
+            }
+        }
+        for(int i=0; i<pusherToPush.size(); i++){
+            RobotTile robot = robotsToPush.get(i);
+            int robotId = robot.getId();
+            DIRECTION pusherDir = pusherToPush.get(i).getDirection();
+            movePlayer(robotId,pusherDir);
+
+        }
+    }
+//hentet fra game
+    private void movePlayer(int player, DIRECTION dir) {
+        // move player 1 step in direction dir
+        Vector2 ahead = getDestination(getRobotPos()[player], dir, 1);
+
+        if (containsPosition(ahead)) {
+            for (ICell cell : getCell(ahead)) {
+                if (cell instanceof RobotTile) {
+                    int newPlayer = ((RobotTile) cell).getId();
+                    movePlayer(newPlayer, dir);
+                }
+            }
+            moveRobot(player, dir);
+        } else {
+            hideRobot(player);
+        }
+    }
+///
+
+    private boolean canPusherPush(Vector2 pos, DIRECTION dirToPush) {
+        if(wallInCurrentTile(pos,dirToPush)){
+            return false;
+        }
+        Vector2 newPos = getDestination(pos, dirToPush, 1);
+        if(!containsPosition(newPos)){//if the pusher push to outside of the board
+            return true;
+        }
+
+        return true;
+
+    }
+   //TODO hva om to roboter vil til samme felt samtidig?
+
 
     @Override
     public TreeSet<ICell> getCell(Vector2 a) {

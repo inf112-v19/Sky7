@@ -63,6 +63,8 @@ public interface IBoard {
 
     void moveConveyors();
 
+    void movePushers(int phase);
+
     TreeSet<ICell> getCell(Vector2 a);
 
     Vector2[] getRobotPos();

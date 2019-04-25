@@ -47,18 +47,21 @@ public class Game implements IGame {
     public void process(HashMap<Integer, ArrayList<ICard>> playerRegistrys) {
         Queue<Queue<Event>> allPhases = findPlayerSequence(playerRegistrys);
         List<Integer> destroyedRobots = new ArrayList<>();
+        int phaseNr =1;
         for (Queue<Event> phase : allPhases) {
+
             for (Event player : phase) {
                 tryToMove(player);
                 expressConveyor();
                 normalAndExpressConveyor();
-                activatePushers();
+                activatePushers(phaseNr);
                 activateCogwheels();
                 activateLasers();
                 placeBackup();
                 flags();
                 if (foundWinner()) break;
             }
+            phaseNr++;
         }
         //after 5th phaze
         repairRobotsOnRepairSite();
@@ -112,8 +115,9 @@ public class Game implements IGame {
         render();
     }
 
-    private void activatePushers() {
+    private void activatePushers(int phaseNr) {
         //TODO
+        board.movePushers(phaseNr);
         render();
     }
 
