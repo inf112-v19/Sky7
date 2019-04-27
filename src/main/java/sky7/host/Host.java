@@ -194,8 +194,8 @@ public class Host implements IHost {
 
     private void runDISTRIBUTE_REGISTRY() {
         currentState = HOST_STATE.DISTRIBUTE_REGISTRY;
-        players[0].render(playerRegs);
         netHandler.distributeRegistries(playerRegs);
+        players[0].render(playerRegs);
         nextState = HOST_STATE.BEGIN_PROCESSING;
     }
 
