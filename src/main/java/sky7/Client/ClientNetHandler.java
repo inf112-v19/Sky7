@@ -16,6 +16,7 @@ public class ClientNetHandler {
     IClient client;
     com.esotericsoftware.kryonet.Client netClient;
     
+    
     public ClientNetHandler(IClient client, String host) throws IOException {
         this.client = client;
         netClient = new com.esotericsoftware.kryonet.Client();
@@ -44,7 +45,11 @@ public class ClientNetHandler {
             } else if (object instanceof PlaceRobot) {
                 PlaceRobot pr = (PlaceRobot)object;
                 client.placeRobot(pr.playerID, pr.xPos, pr.yPos);
+            } else if (object instanceof NumberOfPlayers) {
+                client.updateNPlayers(((NumberOfPlayers)object).nPlayers);
             }
         }
     }
+
+
 }

@@ -107,7 +107,10 @@ public interface IClient {
 
     void render(HashMap<Integer,ArrayList<ICard>> cards);
 
-
     void join(String hostName);
+
+    int getNPlayers();
+
+    void updateNPlayers(int nPlayers);
 
 }

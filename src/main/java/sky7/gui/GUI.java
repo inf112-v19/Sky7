@@ -40,8 +40,7 @@ public class GUI implements ApplicationListener {
 	private TextureAtlas textureAtlas;
 	private Sprite reset, confirm, host, join, powerdown, wait;
 
-	private boolean cardsChoosen, lobby = false;
-	private boolean mainMenu = true;
+	private boolean cardsChoosen, hostLobby = false, clientLobby = false, mainMenu = true;
 
 	private int pointer, cardXpos = 0;
 	private int yPos = 64;
@@ -140,7 +139,7 @@ public class GUI implements ApplicationListener {
 
 		batch.begin();
 
-		if (mainMenu && !lobby) {
+		if (mainMenu) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
 			host.draw(batch);
 			join.draw(batch);
@@ -155,13 +154,13 @@ public class GUI implements ApplicationListener {
 				Gdx.input.getTextInput(listener, "Enter Host IP", "", "Enter IP here");
 			}
 
-		} else if (lobby) {
+		} else if (hostLobby) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
 			wait.draw(batch);
 			font.draw(batch, h.getnPlayers() + " Connected Players", 7*scaler, 6*scaler);
 
 			if (isClicked(wait)) {
-				lobby = false;
+				hostLobby = false;
 				new Thread() {
 					public void run() {
 						h.Begin();
@@ -171,6 +170,9 @@ public class GUI implements ApplicationListener {
 				this.height = game.gameBoard().getHeight();
 			}
 
+		} else if (clientLobby) {
+		    batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
+		    font.draw(batch, game.getNPlayers() + " Connected Players", 7*scaler, 6*scaler);
 		} else {
 			background.showDock(); //Render background and registry slots
 			boardprinter.showBoard(game);
@@ -211,7 +213,7 @@ public class GUI implements ApplicationListener {
 	}
 
 	private void startHost() {
-		lobby = true;
+		hostLobby = true;
 		h = new Host(game);
 
 		try {
@@ -230,7 +232,8 @@ public class GUI implements ApplicationListener {
 			e.printStackTrace();
 		}
 
-		mainMenu = true;
+		mainMenu = false;
+		clientLobby = true;
 	}
 
 	@Override

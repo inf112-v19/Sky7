@@ -19,6 +19,7 @@ public class KryoRegister {
         kryo.register(ClientConnectionAccepted.class);
         kryo.register(ProcessRound.class);
         kryo.register(PlaceRobot.class);
+        kryo.register(NumberOfPlayers.class);
         
         //other necessary resources
         kryo.register(ICard.class);

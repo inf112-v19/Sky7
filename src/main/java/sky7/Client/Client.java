@@ -25,6 +25,7 @@ public class Client implements IClient {
     private Game game;
     private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
     private ClientNetHandler netHandler;
+    private int nPlayers;
 
 
     public Client() {
@@ -170,5 +171,15 @@ public class Client implements IClient {
      */
     private ArrayList<ICard> convertStringToProgramCards(String programCardsString) {
         return null;//TODO
+    }
+
+    @Override
+    public int getNPlayers() {
+        return this.nPlayers;
+    }
+    
+    @Override
+    public void updateNPlayers(int nPlayers) {
+        this.nPlayers = nPlayers;
     }
 }
