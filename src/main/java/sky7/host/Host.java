@@ -69,8 +69,6 @@ public class Host implements IHost {
         
         nPlayers++;
         cli.connect(this, 0, boardName);
-        board.placeRobot(0, 5, 5);
-        cli.placeRobot(0, 5, 5);
     }
 
     public Host() {
@@ -90,8 +88,6 @@ public class Host implements IHost {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
-
     }
 
     /**
@@ -113,7 +109,26 @@ public class Host implements IHost {
         // Check if clients are ready.
         // Check other conditions if necessary
         netHandler.distributeBoard(boardName);
+        placeRobots();
         run3();
+    }
+
+    private void placeRobots() {
+        // TODO implement placing of robots at random starting positions when we have boards with starting positions
+        
+        // temporary scheme to place robots on a line at y=5
+        board.placeRobot(0, 1, 5);
+        players[0].placeRobot(0, 1, 5);
+        netHandler.placeRobot(0, 1, 5);
+        int x = 2;
+        
+        for (int i=0; i<remotePlayers.length; i++) {
+            if (remotePlayers[i]) {
+                board.placeRobot(i, x, 5);
+                players[0].placeRobot(i, x, 5);
+                netHandler.placeRobot(i, x++, 5);
+            }
+        }
     }
 
     @Override

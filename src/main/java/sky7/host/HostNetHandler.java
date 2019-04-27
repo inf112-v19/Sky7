@@ -14,6 +14,7 @@ import sky7.net.packets.Begin;
 import sky7.net.packets.ClientConnectionAccepted;
 import sky7.net.packets.Hand;
 import sky7.net.packets.NumberOfPlayers;
+import sky7.net.packets.PlaceRobot;
 import sky7.net.packets.ProcessRound;
 import sky7.net.packets.RegistryDiscard;
 
@@ -55,6 +56,14 @@ public class HostNetHandler {
         Begin b = new Begin();
         b.boardName = boardName;
         server.sendToAllTCP(b);
+    }
+    
+    public void placeRobot(int playerID, int xPos, int yPos) {
+        PlaceRobot pr = new PlaceRobot();
+        pr.playerID = playerID;
+        pr.xPos = xPos;
+        pr.yPos = yPos;
+        server.sendToAllTCP(pr);
     }
     
     private class HostListener extends Listener {
