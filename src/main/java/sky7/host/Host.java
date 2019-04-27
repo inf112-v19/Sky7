@@ -112,6 +112,7 @@ public class Host implements IHost {
         //TODO check if ready to begin.
         // Check if clients are ready.
         // Check other conditions if necessary
+        netHandler.distributeBoard(boardName);
         run3();
     }
 

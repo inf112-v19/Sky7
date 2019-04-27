@@ -1,5 +1,6 @@
 package sky7.Client;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -38,18 +39,29 @@ public class ClientNetHandler {
         public void received (Connection connection, Object object) {
             if (object instanceof Hand) {
                 client.chooseCards(((Hand) object).cards);
+                
             } else if (object instanceof ClientConnectionAccepted) {
-                client.connect(((ClientConnectionAccepted)object).playerID, ((ClientConnectionAccepted)object).boardName);
+                client.connect(((ClientConnectionAccepted)object).playerID);
+                
             } else if (object instanceof ProcessRound) {
                 client.render(((ProcessRound)object).registries);
+                
             } else if (object instanceof PlaceRobot) {
                 PlaceRobot pr = (PlaceRobot)object;
                 client.placeRobot(pr.playerID, pr.xPos, pr.yPos);
+                
             } else if (object instanceof NumberOfPlayers) {
                 client.updateNPlayers(((NumberOfPlayers)object).nPlayers);
+                
+            } else if (object instanceof Begin) {
+                client.setBoardName(((Begin)object).boardName);
+                try {
+                    client.generateBoard();
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
     }
-
-
 }

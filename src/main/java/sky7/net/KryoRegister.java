@@ -20,6 +20,7 @@ public class KryoRegister {
         kryo.register(ProcessRound.class);
         kryo.register(PlaceRobot.class);
         kryo.register(NumberOfPlayers.class);
+        kryo.register(Begin.class);
         
         //other necessary resources
         kryo.register(ICard.class);
@@ -27,5 +28,4 @@ public class KryoRegister {
         kryo.register(ArrayList.class);
         kryo.register(HashMap.class);
     }
-
 }

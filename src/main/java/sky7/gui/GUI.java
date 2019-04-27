@@ -173,6 +173,7 @@ public class GUI implements ApplicationListener {
 		} else if (clientLobby) {
 		    batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
 		    font.draw(batch, game.getNPlayers() + " Connected Players", 7*scaler, 6*scaler);
+		    if (game.readyToRender()) clientLobby = false;
 		} else {
 			background.showDock(); //Render background and registry slots
 			boardprinter.showBoard(game);

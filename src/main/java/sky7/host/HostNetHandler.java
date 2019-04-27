@@ -10,6 +10,7 @@ import com.esotericsoftware.kryonet.Server;
 
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
+import sky7.net.packets.Begin;
 import sky7.net.packets.ClientConnectionAccepted;
 import sky7.net.packets.Hand;
 import sky7.net.packets.NumberOfPlayers;
@@ -50,6 +51,12 @@ public class HostNetHandler {
         server.sendToAllTCP(pr);
     }
     
+    public void distributeBoard(String boardName) {
+        Begin b = new Begin();
+        b.boardName = boardName;
+        server.sendToAllTCP(b);
+    }
+    
     private class HostListener extends Listener {
         public void connected (Connection connection) {
             int newPlayerID = host.remotePlayerConnected();
@@ -58,7 +65,6 @@ public class HostNetHandler {
             connectionToPlayer.put(connection.getID(), newPlayerID);
             ClientConnectionAccepted cca = new ClientConnectionAccepted();
             cca.playerID = newPlayerID;
-            cca.boardName = host.getBoardName();
             server.sendToTCP(connection.getID(), cca);
             
             //inform all connected clients that number of players increased

@@ -29,7 +29,7 @@ public interface IClient {
 
     void connect(IHost host, int playerNumber, String boardName);
 
-    void connect(int playerNumber, String boardName);
+    void connect(int playerNumber);
 
     /**
      * A method called by host to give the player program cards
@@ -112,5 +112,9 @@ public interface IClient {
     int getNPlayers();
 
     void updateNPlayers(int nPlayers);
+
+    void setBoardName(String boardName);
+
+    boolean readyToRender();
 
 }

@@ -23,7 +23,7 @@ public class Client implements IClient {
     private STATE state;
     private String boardName;
     private Game game;
-    private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
+    private boolean localClient, readyToRender = false; // True if this user is also running Host, false if remotely connected to Host.
     private ClientNetHandler netHandler;
     private int nPlayers;
 
@@ -64,10 +64,8 @@ public class Client implements IClient {
     }
     
     @Override
-    public void connect(int playerNumber, String boardName) {
+    public void connect(int playerNumber) {
         player.setPlayerNumber(playerNumber);
-        this.boardName = boardName;
-        generateBoard();
     }
 
     @Override
@@ -86,9 +84,8 @@ public class Client implements IClient {
             e.printStackTrace();
         }
         state = STATE.MOVING_ROBOT;
-//        board.placeRobot(0, 5, 5);
-//        board.placeRobot(1, 6, 6);
         game = new Game(this, board);
+        readyToRender = true;
     }
 
     @Override
@@ -181,5 +178,15 @@ public class Client implements IClient {
     @Override
     public void updateNPlayers(int nPlayers) {
         this.nPlayers = nPlayers;
+    }
+
+    @Override
+    public void setBoardName(String boardName) {
+        this.boardName = boardName;
+    }
+    
+    @Override
+    public boolean readyToRender() {
+        return this.readyToRender;
     }
 }
