@@ -119,7 +119,11 @@ public class Client implements IClient {
         //player.setRegistry(choosingCards)
 
         state = STATE.READY;
-        host.ready(player.getPlayerNumber(), player.getRegistry(), player.getDiscard());
+        if (localClient) {
+            host.ready(player.getPlayerNumber(), player.getRegistry(), player.getDiscard());
+        } else {
+            netHandler.ready(player.getRegistry(), player.getDiscard());
+        }
     }
 
     @Override

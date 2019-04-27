@@ -194,9 +194,7 @@ public class Host implements IHost {
 
     private void runDISTRIBUTE_REGISTRY() {
         currentState = HOST_STATE.DISTRIBUTE_REGISTRY;
-        for (int i = 0; i < nPlayers; i++) {
-            players[i].render(playerRegs);
-        }
+        players[0].render(playerRegs);
         netHandler.distributeRegistries(playerRegs);
         nextState = HOST_STATE.BEGIN_PROCESSING;
     }
@@ -259,7 +257,7 @@ public class Host implements IHost {
         players[0].chooseCards(pDeck.draw(9));
         System.out.println("Cards given to player " + 0);
         
-        for (int i=1; i<MAX_N_PLAYERS ; i++) {
+        for (int i=1; i<remotePlayers.length ; i++) {
             if (remotePlayers[i]) {
                 netHandler.dealCards(i, pDeck.draw(9));
                 System.out.println("Cards given to player " + i);
@@ -315,6 +313,7 @@ public class Host implements IHost {
             if (!remotePlayers[i]) {
                 remotePlayers[i] = true;
                 nRemotePlayers++;
+                nPlayers++;
                 return i;
             }
         }
@@ -325,6 +324,7 @@ public class Host implements IHost {
     public void remotePlayerDisconnected(int playerID) {
         remotePlayers[playerID] = false;
         nRemotePlayers--;
+        nPlayers--;
     }
 
     // GETTERS ---------------------
