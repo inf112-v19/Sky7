@@ -6,15 +6,13 @@ import sky7.board.cellContents.Active.IConveyorBelt;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Inactive.Flag;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Inactive.Hole;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
@@ -31,7 +29,8 @@ public class Board implements IBoard {
     private ArrayList<Hole> holes;
     private List<Vector2> pusherPos;
     private List<Pusher> pushers;
-
+    private List<Flag> flags;
+    private ArrayList<Vector2> flagsPos;
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
@@ -73,6 +72,9 @@ public class Board implements IBoard {
         this.holePos = new ArrayList<>();
         this.pushers = new ArrayList<>();
         this.pusherPos = new ArrayList<>();
+        this.flags = new ArrayList<>();
+        this.flagsPos = new ArrayList<>();
+
 
         // find and store locations of cogwheels, conveyor belts
         for (int i = 0; i < grid.length; i++) {
@@ -97,6 +99,11 @@ public class Board implements IBoard {
                     if (item instanceof Pusher) {
                         pusherPos.add(new Vector2(i, j));
                         pushers.add((Pusher) item);
+                    }
+                    if (item instanceof Flag){
+                        flagsPos.add(new Vector2(i,j));
+                        flags.add((Flag) item);
+
                     }
                 }
             }
@@ -337,87 +344,49 @@ public class Board implements IBoard {
     public void moveConveyors() {
         // TODO Auto-generated method stub
     }
-
     @Override
-    public void movePushers(int phase){
-        List<Vector2> positions = new ArrayList<>();
-        List<RobotTile> robotsToPush = new ArrayList<>();
-        List<Pusher> pusherToPush = new ArrayList<>();
-
-        //find every robot on a pusher and their position
-        for(int i=0; i<pushers.size(); i++){
-            for(int j=0; j<robots.length; j++){
-                if(pusherPos.get(i).equals(robotPos[j])){
-                    positions.add(pusherPos.get(i));
-                    robotsToPush.add(robots[j]);
-                    pusherToPush.add(pushers.get(i));
-                }
-            }
-        }
-
-        //remove every pusher that dont activate in current phase
-        for(int i=0; i<pusherToPush.size(); i++){
-            Pusher thisPusher = pusherToPush.get(i);
-            if(!thisPusher.doActivate(phase)) {//check if pusher activates in this phase
-                pusherToPush.remove(thisPusher);
-            }
-
-        }
-        //remove every robot and pusher that can not push, ex if there is a robot and a wall in front
-        for(int i=0; i<pusherToPush.size(); i++){
-            DIRECTION dirToPush = pusherToPush.get(i).getDirection();
-
-            RobotTile robot = robotsToPush.get(i);
-            Vector2 pos = positions.get(i);
-            Pusher pusher = pusherToPush.get(i);
-            if(!canPusherPush(positions.get(i), dirToPush)){
-                robotsToPush.remove(robot);
-                positions.remove(pos);
-                pusherToPush.remove(pusher);
-                i--;
-            }
-        }
-        for(int i=0; i<pusherToPush.size(); i++){
-            RobotTile robot = robotsToPush.get(i);
-            int robotId = robot.getId();
-            DIRECTION pusherDir = pusherToPush.get(i).getDirection();
-            movePlayer(robotId,pusherDir);
-
-        }
+    public List<Vector2> getPusherPos(){
+        return pusherPos;
     }
-//hentet fra game
-    private void movePlayer(int player, DIRECTION dir) {
-        // move player 1 step in direction dir
-        Vector2 ahead = getDestination(getRobotPos()[player], dir, 1);
-
-        if (containsPosition(ahead)) {
-            for (ICell cell : getCell(ahead)) {
-                if (cell instanceof RobotTile) {
-                    int newPlayer = ((RobotTile) cell).getId();
-                    movePlayer(newPlayer, dir);
-                }
-            }
-            moveRobot(player, dir);
-        } else {
-            hideRobot(player);
-        }
+    @Override
+    public List<Pusher> getPushers(){
+        return pushers;
     }
-///
 
+
+
+/*
     private boolean canPusherPush(Vector2 pos, DIRECTION dirToPush) {
         if(wallInCurrentTile(pos,dirToPush)){
             return false;
         }
         Vector2 newPos = getDestination(pos, dirToPush, 1);
+
         if(!containsPosition(newPos)){//if the pusher push to outside of the board
             return true;
         }
+        if(wallInCurrentTileMadeByMaren(pos,dirToPush)){
+            return false;
+        }
 
         return true;
-
-    }
    //TODO hva om to roboter vil til samme felt samtidig?
 
+    }
+
+   /* @Override
+    public Map<Integer, Flag> robotVisitFlag(){
+        Map<Integer,Flag> robotWhoVisitedFlag = new HashMap<>();
+        for(int i=0; i<flags.size(); i++){
+            for(int j=0; j<robots.length; j++){
+                if(flagsPos.get(i).equals(robotPos[j])){
+                    int idOfRobot = robots[j].getId();
+                    robotWhoVisitedFlag.put(idOfRobot,flags.get(i));
+                }
+            }
+        }
+        return robotWhoVisitedFlag;
+    }*/
 
     @Override
     public TreeSet<ICell> getCell(Vector2 a) {
@@ -428,6 +397,14 @@ public class Board implements IBoard {
     public RobotTile[] getRobots() {
         return robots;
     }
+  /*  private boolean wallInCurrentTileMadeByMaren(Vector2 robotPos, DIRECTION dir) {
+        for (ICell item : grid[(int) robotPos.x][(int) robotPos.y]) {
+            if (item instanceof Wall) {
+                return (((Wall) item).getDirection() == dir.reverse());
+            }
+        }
+        return false;
+    }*/
 
 
 }
