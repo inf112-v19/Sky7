@@ -19,6 +19,7 @@ public class Game implements IGame {
     private Client client;
     private static final int NR_OF_PHASES = 5;
     private IBoard board;
+    private boolean hosting;
 
     /**
      * The construct for a game engine on host.
@@ -29,6 +30,7 @@ public class Game implements IGame {
     public Game(Host host, IBoard board) {
         this.host = host;
         this.board = board;
+        hosting = true;
     }
 
     /**
@@ -64,7 +66,7 @@ public class Game implements IGame {
         repairRobotsOnRepairSite();
         cleanUp();
 
-        if (host != null) {
+        if (hosting) {
             host.finishedProcessing(board);
         } else client.finishedProcessing(board);
     }
@@ -125,6 +127,13 @@ public class Game implements IGame {
     private void expressConveyor() {
         // TODO check if this robot is on a conveyor belt and there is another robot in front that is also on the convoyer belt
         render();
+    }
+    
+    private void applyDamage(int playerID, int damage) {
+        if (hosting) {
+            host.applyDamage(playerID, damage);
+            
+        } else if (client.getPlayer().getPlayerNumber() == playerID) client.applyDamage(playerID, damage);
     }
 
     /**

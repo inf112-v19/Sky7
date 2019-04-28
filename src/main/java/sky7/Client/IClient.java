@@ -117,4 +117,6 @@ public interface IClient {
 
     boolean readyToRender();
 
+    void applyDamage(int playerID, int damage);
+
 }

@@ -193,4 +193,10 @@ public class Client implements IClient {
     public boolean readyToRender() {
         return this.readyToRender;
     }
+
+    @Override
+    public void applyDamage(int playerID, int damage) {
+        // TODO Auto-generated method stub
+        
+    }
 }

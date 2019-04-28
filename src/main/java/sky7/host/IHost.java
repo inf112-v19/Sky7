@@ -60,4 +60,6 @@ public interface IHost {
     int remotePlayerConnected();
 
     void remotePlayerDisconnected(int playerID);
+
+    void applyDamage(int playerID, int damage);
 }
