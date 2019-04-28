@@ -25,7 +25,7 @@ public class StartPosition implements IInactive {
     @Override
     public Texture getTexture() {
         if (texture == null) {
-            texture = new Texture("");//TODO add start position pictures
+            texture = new Texture("startposition/"+startNumber+".png");//TODO add start position pictures
         }
         return texture;
     }
@@ -49,8 +49,8 @@ public class StartPosition implements IInactive {
         List<AbstractMap.SimpleEntry<String, Supplier<ICell>>> suppliers = new ArrayList<>();
         int maxNrOfPlayer = 8;
         for (int i = 0; i < maxNrOfPlayer; i++) {
-            final int pos = i;
-            suppliers.add(new AbstractMap.SimpleEntry<>("s" + i + 1, () -> new StartPosition(pos)));
+            final int pos = i+1;
+            suppliers.add(new AbstractMap.SimpleEntry<>("s" + pos, () -> new StartPosition(pos)));
         }
         return suppliers;
     }

@@ -14,6 +14,7 @@ import com.google.gson.stream.JsonReader;
 import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.Active.Belt;
 import sky7.board.cellContents.Active.CogWheel;
+import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Inactive.Flag;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Inactive.Hole;
@@ -21,11 +22,12 @@ import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.board.cellContents.Inactive.Wall;
 
+import javax.swing.*;
+
 /**
  * A Class for generating a board object parsed from a json file.
  */
 public class BoardGenerator implements IBoardGenerator {
-    private static HashMap<String, String> json = new HashMap<>();
     private static HashMap<String, Supplier<ICell>> ICellFactory = new HashMap<>();
 
     public BoardGenerator() {
@@ -33,7 +35,6 @@ public class BoardGenerator implements IBoardGenerator {
     }
 
     /**
-     *
      * @param syntax the string read from the json file.
      * @return a object with the specified values in the syntax
      */
@@ -94,11 +95,146 @@ public class BoardGenerator implements IBoardGenerator {
     @Override
     public Board getBoardFromFile(String filePath) throws FileNotFoundException {
 
-        getJson(filePath);
-        int height = Integer.parseInt(json.get("height"));
-        int width = Integer.parseInt(json.get("width"));
-        TreeSet<ICell>[][] grid = new TreeSet[width][height];
-        String[] treeSet = json.get("grid").split(" ");
+        HashMap<String, String> boardJson = getJson(filePath);
+        HashMap<String, String> startBoardJson = getJson("assets/Boards/startBoard2.json");
+
+
+        // add the startBoard.
+        int startHeight = Integer.parseInt(startBoardJson.get("height"));
+        int startWidth = Integer.parseInt(startBoardJson.get("width"));
+        TreeSet<ICell>[][] startGrid = new TreeSet[startHeight][startWidth];
+        fillGrid(startWidth, startGrid, startBoardJson);
+
+        int height = Integer.parseInt(boardJson.get("height"));
+        int width = Integer.parseInt(boardJson.get("width"));
+        TreeSet<ICell>[][] grid = new TreeSet[height][width];
+        fillGrid(width, grid, boardJson);
+        grid = rotate(grid,1);
+
+        TreeSet<ICell>[][] finalGrid = combineGrids(startGrid, grid, DIRECTION.SOUTH);
+
+        finalGrid = rotate(finalGrid,3);
+
+        return new Board(finalGrid, height, width);
+    }
+
+
+    /**
+     * Appends the start grid to the {@param dir} of the grid.
+     *
+     * @param startGrid
+     * @param grid
+     * @param dir
+     * @return
+     */
+    private TreeSet<ICell>[][] combineGrids(TreeSet<ICell>[][] startGrid, TreeSet<ICell>[][] grid, DIRECTION dir) {
+        TreeSet<ICell>[][] finalGrid;
+
+
+        switch (dir) {
+            case WEST:
+                TreeSet<ICell>[][] rotatedWithClock = rotate(startGrid, 1);
+                finalGrid = new TreeSet[grid.length][grid[0].length + rotatedWithClock[0].length];
+                for (int i = 0; i < rotatedWithClock.length; i++) {
+                    for (int j = 0; j < rotatedWithClock[0].length; j++) {
+                        finalGrid[i][j] = rotatedWithClock[i][j];
+                    }
+                }
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[0].length; j++) {
+                        finalGrid[i][j + rotatedWithClock[0].length] = grid[i][j];
+                    }
+                }
+                break;
+            case NORTH:
+                finalGrid = new TreeSet[grid.length + startGrid.length][grid[0].length];
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[0].length; j++) {
+                        finalGrid[i][j] = grid[i][j];
+                    }
+                }
+                for (int i = 0; i < startGrid.length; i++) {
+                    for (int j = 0; j < startGrid[0].length; j++) {
+                        finalGrid[i + grid.length][j] = startGrid[i][j];
+                    }
+                }
+                break;
+            case EAST:
+                TreeSet<ICell>[][] rotatedAgainstClock = rotate(startGrid, 3);
+                 finalGrid = new TreeSet[grid.length][grid[0].length + rotatedAgainstClock[0].length];
+                for (int i = 0; i < rotatedAgainstClock.length; i++) {
+                    for (int j = 0; j < rotatedAgainstClock[0].length; j++) {
+                        finalGrid[i][j+grid[0].length] = rotatedAgainstClock[i][j];
+                    }
+                }
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[0].length; j++) {
+                        finalGrid[i][j] = grid[i][j];
+                    }
+                }
+                break;
+            default:
+                TreeSet<ICell>[][] flipped = rotate(startGrid, 2);
+                finalGrid = new TreeSet[grid.length + flipped.length][grid[0].length];
+                for (int i = 0; i < flipped.length; i++) {
+                    for (int j = 0; j < flipped[0].length; j++) {
+                        finalGrid[i][j] = flipped[i][j];
+                    }
+                }
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[0].length; j++) {
+                        finalGrid[i + flipped.length][j] = grid[i][j];
+                    }
+                }
+                break;
+        }
+
+        return finalGrid;
+    }
+
+    /**
+     * Rotate a grid 90,180 or 270 degrees clockwise
+     *
+     * @param grid                       an array of arrays.
+     * @param numberOfRotationsClockWise 1 for 90 deg with clock, 2 for 180 deg, 3 for 270 deg
+     * @return
+     */
+    private TreeSet<ICell>[][] rotate(TreeSet<ICell>[][] grid, int numberOfRotationsClockWise) {
+        TreeSet<ICell>[][] rotated;
+        switch (numberOfRotationsClockWise) {
+            case 1:
+                rotated = new TreeSet[grid[0].length][grid.length];
+                for (int width = 0; width < grid[0].length; width++) {
+                    for (int height = 0; height < grid.length; height++) {
+                        rotated[width][height] = grid[grid.length - height - 1][width];
+                    }
+                }
+                return rotated;
+            case 2:
+                rotated = new TreeSet[grid.length][grid[0].length];
+                for (int height = 0; height < grid.length; height++) {
+                    for (int width = 0; width < grid[0].length; width++) {
+                        rotated[height][width] = grid[grid.length - 1 - height][grid[0].length - 1 - width];
+                    }
+                }
+                return rotated;
+            case 3:
+                rotated = new TreeSet[grid[0].length][grid.length];
+                for (int width = 0; width < grid[0].length; width++) {
+                    for (int height = 0; height < grid.length; height++) {
+                        rotated[width][height] = grid[height][grid[0].length - 1 - width];
+                    }
+
+                }
+                return rotated;
+            default:
+                return grid;
+        }
+    }
+
+
+    private void fillGrid(int width, TreeSet<ICell>[][] grid, HashMap<String, String> bJson) {
+        String[] treeSet = bJson.get("grid").split(" ");
 
         int pos = 0;
         for (String layer : treeSet) {
@@ -113,22 +249,20 @@ public class BoardGenerator implements IBoardGenerator {
                     tree.add(createdCell);
                 }
             }
-            grid[pos % width][pos / width] = tree;
+            grid[pos / width][pos % width] = tree;
             pos++;
         }
-
-        return new Board(grid, height, width);
     }
 
     /**
      * Converts the json file to a HashMap data structure.
+     *
      * @param filePath a relative or absolute path to a json file
      * @throws FileNotFoundException if the json file is not found.
      */
-    private static void getJson(String filePath) throws FileNotFoundException {
+    private static HashMap<String, String> getJson(String filePath) throws FileNotFoundException {
         JsonReader boardReader = new JsonReader(new FileReader(filePath));
         Gson j = new Gson();
-        json = j.fromJson(boardReader, HashMap.class);
-
+        return j.fromJson(boardReader, HashMap.class);
     }
 }

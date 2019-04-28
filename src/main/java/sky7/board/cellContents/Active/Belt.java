@@ -124,9 +124,6 @@ public class Belt implements IActive {
                 }
             }
         }
-        for (int i = 0; i < suppliers.size(); i++) {
-            System.out.println(suppliers.get(i).getKey());
-        }
         return suppliers;
     }
 }
