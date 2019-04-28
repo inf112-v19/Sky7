@@ -116,8 +116,17 @@ public class Game implements IGame {
     }
 
     private void activatePushers(int phaseNr) {
-        //TODO
-        board.movePushers(phaseNr);
+        for(int i=0; i<board.getPushers().size(); i++){
+            for(int j=0; j<board.getRobots().length; j++){
+                if(board.getPusherPos().get(i).equals(board.getRobotPos()[j])){
+                    if(board.getPushers().get(i).doActivate(phaseNr)){
+                        if(robotCanGo(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection())){
+                            movePlayer(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection());
+                        }
+                    }
+                }
+            }
+        }
         render();
     }
 
@@ -142,7 +151,7 @@ public class Game implements IGame {
             while (steps > 0) {
                 DIRECTION dir = board.getRobots()[action.player].getOrientation();
                 if (action.card.move() < 1) dir = dir.reverse();
-                if (canGo(action.player, dir)) {
+                if (robotCanGo(action.player, dir)) {
                     movePlayer(action.player, dir);
                     steps--;
                     render();
@@ -176,9 +185,9 @@ public class Game implements IGame {
         board.rotateRobot(action.player, action.card.rotate());
     }
 
-    private boolean canGo(Integer id, DIRECTION dir) {
+    private boolean robotCanGo(Integer playerId, DIRECTION dir) {
 
-        Vector2 here = board.getRobotPos()[id];
+        Vector2 here = board.getRobotPos()[playerId];
 
         if (facingWall(here, dir)) return false;
 
@@ -223,12 +232,13 @@ public class Game implements IGame {
         System.out.println(board.getWidth());
         System.out.println(board.getHeight());
         System.out.println(pos);
-        if (board.containsPosition(pos))
+        if (board.containsPosition(pos)) {
             for (ICell cell : board.getCell(pos)) {
                 if (cell instanceof Wall && ((Wall) cell).getDirection() == direction) {
                     return true;
                 }
             }
+        }
         return false;
     }
 
