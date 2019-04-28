@@ -15,9 +15,12 @@ public class Main {
     private static IClient client;
 
     public static void main(String[] args) {
-        clientThread cThread = new clientThread();
-        Thread client = new Thread(cThread);
-        client.start();
+        
+        new Thread() {
+            public void run() {
+                client = new Client();
+            }
+        }.start();
         
         try {
             Thread.sleep(500);
@@ -34,15 +37,6 @@ public class Main {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-    
-    public static class clientThread implements Runnable {
-
-        @Override
-        public void run() {
-            client = new Client();
-        }
-        
     }
     
     public static class startGUI implements Runnable {
