@@ -1,9 +1,11 @@
 package sky7.board;
 
 import com.badlogic.gdx.math.Vector2;
+import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.robots.RobotTile;
 
+import java.util.List;
 import java.util.TreeSet;
 
 public interface IBoard {
@@ -63,7 +65,11 @@ public interface IBoard {
 
     void moveConveyors();
 
-    void movePushers(int phase);
+    List<Vector2> getPusherPos();
+
+    List<Pusher> getPushers();
+
+    //Map<Integer, Flag> robotVisitFlag();
 
     TreeSet<ICell> getCell(Vector2 a);
 
