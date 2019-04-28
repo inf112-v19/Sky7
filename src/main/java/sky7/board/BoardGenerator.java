@@ -97,12 +97,10 @@ public class BoardGenerator implements IBoardGenerator {
         TreeSet<ICell>[][] startGrid = fillGrid(startBoard);
 
         HashMap<String, String> mainBoard = getJson(jsonFilePath);
-        TreeSet<ICell>[][] grid = fillGrid(mainBoard);
+        TreeSet<ICell>[][] mainGrid = fillGrid(mainBoard);
 
-        grid = rotate(grid,1);
-
-        TreeSet<ICell>[][] finalGrid = combineGrids(startGrid, grid, DIRECTION.SOUTH);
-
+        mainGrid = rotate(mainGrid,1);
+        TreeSet<ICell>[][] finalGrid = combineGrids(startGrid, mainGrid, DIRECTION.SOUTH);
         finalGrid = rotate(finalGrid,3);
 
         return new Board(finalGrid, finalGrid.length, finalGrid[0].length);
