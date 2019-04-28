@@ -20,22 +20,10 @@ public interface IPlayer {
     void repair(int damage);
 
     /**
-     * If health is less than 6 lock numberOfCards.
-     * @param numberOfCards integer representing how many cards
+     * update damage with totalDamage
+     * @param totalDamage the new total damage status of this player/robot.
      */
-    void lockCards(int numberOfCards);
-
-    /**
-     * unlock numberOfCards number of cards.
-     * @param numberOfCards integer representing how many cards
-     */
-    void unlockCards(int numberOfCards);
-
-    /**
-     * update health with newHealth
-     * @param newHealth the new health of this player.
-     */
-    void updateHealth(int newHealth);
+    void updateDamage(int totalDamage);
 
     /**
      * @return a list of cards chosen by player
@@ -84,15 +72,17 @@ public interface IPlayer {
     
     /**
      * 
-     * @return player health
+     * @return player damage
      */
+    public CharSequence getDamage();
      CharSequence getHealth();
     
     /**
      * 
      * @return life tokens
      */
-     CharSequence getLifeToken();
 
     void decreaseHealth(int i);
+     CharSequence getLifeToken();
+    int getNLocked();
 }

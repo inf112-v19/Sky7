@@ -23,8 +23,9 @@ public class Client implements IClient {
     private STATE state;
     private String boardName;
     private Game game;
-    private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
+    private boolean localClient, readyToRender = false; // True if this user is also running Host, false if remotely connected to Host.
     private ClientNetHandler netHandler;
+    private int nPlayers;
 
 
     public Client() {
@@ -52,6 +53,7 @@ public class Client implements IClient {
     @Override
     public void connect(IHost host, int playerNumber) {
         connect(host, playerNumber, ""); //TODO add a default board for the game or something.
+        player.setPlayerNumber(playerNumber);
     }
 
     @Override
@@ -63,10 +65,8 @@ public class Client implements IClient {
     }
     
     @Override
-    public void connect(int playerNumber, String boardName) {
+    public void connect(int playerNumber) {
         player.setPlayerNumber(playerNumber);
-        this.boardName = boardName;
-        generateBoard();
     }
 
     @Override
@@ -85,9 +85,8 @@ public class Client implements IClient {
             e.printStackTrace();
         }
         state = STATE.MOVING_ROBOT;
-//        board.placeRobot(0, 5, 5);
-//        board.placeRobot(1, 6, 6);
         game = new Game(this, board);
+        readyToRender = true;
     }
 
     @Override
@@ -121,23 +120,17 @@ public class Client implements IClient {
         //player.setRegistry(choosingCards)
 
         state = STATE.READY;
-        host.ready(player.getPlayerNumber(), player.getRegistry(), player.getDiscard());
+        if (localClient) {
+            host.ready(player.getPlayerNumber(), player.getRegistry(), player.getDiscard());
+        } else {
+            netHandler.ready(player.getRegistry(), player.getDiscard());
+        }
     }
 
     @Override
     public void placeRobot(int playerNr, int xPos, int yPos) {
         board.placeRobot(playerNr, xPos, yPos);
 
-    }
-
-    @Override
-    public void activateCard(int playerNr, IProgramCard card) {
-        // todo not needed.
-        /*if (card.moveType())
-            board.moveRobot(playerNr, card.move());
-        else
-            board.rotateRobot(playerNr, card.rotate());
-        */
     }
 
     @Override
@@ -174,5 +167,30 @@ public class Client implements IClient {
 
     public int getID() {
         return player.getPlayerNumber();
+    }
+
+    @Override
+    public int getNPlayers() {
+        return this.nPlayers;
+    }
+    
+    @Override
+    public void updateNPlayers(int nPlayers) {
+        this.nPlayers = nPlayers;
+    }
+
+    @Override
+    public void setBoardName(String boardName) {
+        this.boardName = boardName;
+    }
+    
+    @Override
+    public boolean readyToRender() {
+        return this.readyToRender;
+    }
+
+    @Override
+    public void applyDamage(int playerID, int damage) {
+        player.applyDamage(damage);
     }
 }

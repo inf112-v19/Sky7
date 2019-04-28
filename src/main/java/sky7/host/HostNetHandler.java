@@ -10,8 +10,11 @@ import com.esotericsoftware.kryonet.Server;
 
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
+import sky7.net.packets.Begin;
 import sky7.net.packets.ClientConnectionAccepted;
 import sky7.net.packets.Hand;
+import sky7.net.packets.NumberOfPlayers;
+import sky7.net.packets.PlaceRobot;
 import sky7.net.packets.ProcessRound;
 import sky7.net.packets.RegistryDiscard;
 
@@ -49,6 +52,20 @@ public class HostNetHandler {
         server.sendToAllTCP(pr);
     }
     
+    public void distributeBoard(String boardName) {
+        Begin b = new Begin();
+        b.boardName = boardName;
+        server.sendToAllTCP(b);
+    }
+    
+    public void placeRobot(int playerID, int xPos, int yPos) {
+        PlaceRobot pr = new PlaceRobot();
+        pr.playerID = playerID;
+        pr.xPos = xPos;
+        pr.yPos = yPos;
+        server.sendToAllTCP(pr);
+    }
+    
     private class HostListener extends Listener {
         public void connected (Connection connection) {
             int newPlayerID = host.remotePlayerConnected();
@@ -57,14 +74,17 @@ public class HostNetHandler {
             connectionToPlayer.put(connection.getID(), newPlayerID);
             ClientConnectionAccepted cca = new ClientConnectionAccepted();
             cca.playerID = newPlayerID;
-            cca.boardName = host.getBoardName();
             server.sendToTCP(connection.getID(), cca);
+            
+            //inform all connected clients that number of players increased
+            NumberOfPlayers nop = new NumberOfPlayers();
+            nop.nPlayers = server.getConnections().length+1;
+            server.sendToAllTCP(nop);
         }
 
         public void disconnected (Connection connection) {
             System.out.println("Client disconnected, ID: " + connectionToPlayer.get(connection.getID()));
             host.remotePlayerDisconnected(connectionToPlayer.get(connection.getID()));
-            // TODO need to handle disconnected player, Host needs to know not to attempt dealing cards to the player.
         }
 
         public void received (Connection connection, Object object) {
