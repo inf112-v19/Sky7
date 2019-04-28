@@ -128,12 +128,6 @@ public class Player implements IPlayer {
 		String lifeTokensStr = Integer.toString(lifeTokens);
 		return lifeTokensStr;
 	}
-
-    @Override
-    public void decreaseHealth(int i) {
-        //TODO check if health is below 0
-        health--;
-    }
-
+	
 
 }

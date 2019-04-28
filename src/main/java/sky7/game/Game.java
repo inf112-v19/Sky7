@@ -199,7 +199,7 @@ public class Game implements IGame {
                 if (aheadCell instanceof Wall) return true;
                 if (aheadCell instanceof RobotTile) {
                     if (client != null) {
-                        client.getPlayer().decreaseHealth(1);
+                        client.getPlayer().applyDamage(1);
                     }
                     return true;
                 }

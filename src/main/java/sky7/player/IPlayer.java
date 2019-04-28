@@ -9,18 +9,21 @@ public interface IPlayer {
 
     /**
      * Subtract damage from players health
+     *
      * @param damage integer representing damage
      */
     void applyDamage(int damage);
 
     /**
      * Add damage to health with upper MAX_HEALTH. Unlock locked cards as much as health allows.
+     *
      * @param damage integer representing damage
      */
     void repair(int damage);
 
     /**
      * update damage with totalDamage
+     *
      * @param totalDamage the new total damage status of this player/robot.
      */
     void updateDamage(int totalDamage);
@@ -33,11 +36,11 @@ public interface IPlayer {
     /**
      * @param programCards the program cards the player can choose from.
      */
-    void setHand(ArrayList<ICard>  programCards);
+    void setHand(ArrayList<ICard> programCards);
 
     /**
      * Clear the registry
-     * 
+     *
      * @param
      */
     void clearRegistry();
@@ -48,7 +51,6 @@ public interface IPlayer {
     ArrayList<ICard> getHand();
 
     /**
-     *
      * @return the id of this player
      */
     public int getPlayerNumber();
@@ -65,24 +67,22 @@ public interface IPlayer {
 
     /**
      * Put in the register a new chosen card at a position.
-     * @param chosenCard the card that the player chose
+     *
+     * @param chosenCard         the card that the player chose
      * @param positionInRegistry the position of the card in the registry.
      */
     void setCard(ICard chosenCard, int positionInRegistry);
-    
+
     /**
-     * 
      * @return player damage
      */
-    public CharSequence getDamage();
-     CharSequence getHealth();
-    
+    CharSequence getDamage();
+
     /**
-     * 
      * @return life tokens
      */
 
-    void decreaseHealth(int i);
-     CharSequence getLifeToken();
+    CharSequence getLifeToken();
+
     int getNLocked();
 }
