@@ -22,8 +22,6 @@ import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.board.cellContents.Inactive.Wall;
 
-import javax.swing.*;
-
 /**
  * A Class for generating a board object parsed from a json file.
  */
@@ -93,29 +91,21 @@ public class BoardGenerator implements IBoardGenerator {
     }
 
     @Override
-    public Board getBoardFromFile(String filePath) throws FileNotFoundException {
+    public Board getBoardFromFile(String jsonFilePath) throws FileNotFoundException {
 
-        HashMap<String, String> boardJson = getJson(filePath);
-        HashMap<String, String> startBoardJson = getJson("assets/Boards/startBoard2.json");
+        HashMap<String, String> startBoard = getJson("assets/Boards/startBoard2.json");
+        TreeSet<ICell>[][] startGrid = fillGrid(startBoard);
 
+        HashMap<String, String> mainBoard = getJson(jsonFilePath);
+        TreeSet<ICell>[][] grid = fillGrid(mainBoard);
 
-        // add the startBoard.
-        int startHeight = Integer.parseInt(startBoardJson.get("height"));
-        int startWidth = Integer.parseInt(startBoardJson.get("width"));
-        TreeSet<ICell>[][] startGrid = new TreeSet[startHeight][startWidth];
-        fillGrid(startWidth, startGrid, startBoardJson);
-
-        int height = Integer.parseInt(boardJson.get("height"));
-        int width = Integer.parseInt(boardJson.get("width"));
-        TreeSet<ICell>[][] grid = new TreeSet[height][width];
-        fillGrid(width, grid, boardJson);
         grid = rotate(grid,1);
 
         TreeSet<ICell>[][] finalGrid = combineGrids(startGrid, grid, DIRECTION.SOUTH);
 
         finalGrid = rotate(finalGrid,3);
 
-        return new Board(finalGrid, height, width);
+        return new Board(finalGrid, finalGrid.length, finalGrid[0].length);
     }
 
 
@@ -129,8 +119,6 @@ public class BoardGenerator implements IBoardGenerator {
      */
     private TreeSet<ICell>[][] combineGrids(TreeSet<ICell>[][] startGrid, TreeSet<ICell>[][] grid, DIRECTION dir) {
         TreeSet<ICell>[][] finalGrid;
-
-
         switch (dir) {
             case WEST:
                 TreeSet<ICell>[][] rotatedWithClock = rotate(startGrid, 1);
@@ -232,8 +220,15 @@ public class BoardGenerator implements IBoardGenerator {
         }
     }
 
+    /**
+     * Fill the
+     * @param bJson
+     */
+    private TreeSet<ICell>[][] fillGrid(HashMap<String, String> bJson) {
+        int height = Integer.parseInt(bJson.get("height"));
+        int width = Integer.parseInt(bJson.get("width"));
 
-    private void fillGrid(int width, TreeSet<ICell>[][] grid, HashMap<String, String> bJson) {
+        TreeSet<ICell>[][] grid = new TreeSet[height][width];
         String[] treeSet = bJson.get("grid").split(" ");
 
         int pos = 0;
@@ -252,6 +247,7 @@ public class BoardGenerator implements IBoardGenerator {
             grid[pos / width][pos % width] = tree;
             pos++;
         }
+        return grid;
     }
 
     /**
