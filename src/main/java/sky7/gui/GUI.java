@@ -47,7 +47,7 @@ public class GUI implements ApplicationListener {
 	private int scaler = 128;
 
 	private ArrayList<ICard> hand;
-	private ArrayList<ICard> registry = new ArrayList<>(4);
+	private ArrayList<ICard> registry = new ArrayList<>(5);
 	TextInput listener;
 	BackGround background;
 	BoardPrinter boardprinter;
@@ -251,7 +251,7 @@ public class GUI implements ApplicationListener {
 
 	// Show health and healthtokens
 	public void showHealth() {
-		font.draw(batch, "Health: " + game.getPlayer().getHealth() + "\nTokens: " + game.getPlayer().getLifeToken(), 12*scaler+72, 2*scaler-32);
+		font.draw(batch, "Health: " + game.getPlayer().getDamage() + "\nTokens: " + game.getPlayer().getLifeToken(), 12*scaler+72, 2*scaler-32);
 	}
 
 	/*

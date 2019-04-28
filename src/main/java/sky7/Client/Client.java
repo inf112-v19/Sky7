@@ -53,6 +53,7 @@ public class Client implements IClient {
     @Override
     public void connect(IHost host, int playerNumber) {
         connect(host, playerNumber, ""); //TODO add a default board for the game or something.
+        player.setPlayerNumber(playerNumber);
     }
 
     @Override
@@ -133,16 +134,6 @@ public class Client implements IClient {
     }
 
     @Override
-    public void activateCard(int playerNr, IProgramCard card) {
-        // todo not needed.
-        /*if (card.moveType())
-            board.moveRobot(playerNr, card.move());
-        else
-            board.rotateRobot(playerNr, card.rotate());
-        */
-    }
-
-    @Override
     public void activateBoardElements() {
         //board.moveConveyors();
         board.rotateCogs();
@@ -196,7 +187,6 @@ public class Client implements IClient {
 
     @Override
     public void applyDamage(int playerID, int damage) {
-        // TODO Auto-generated method stub
-        
+        player.applyDamage(damage);
     }
 }

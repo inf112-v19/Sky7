@@ -273,13 +273,13 @@ public class Host implements IHost {
     private void giveOutCards() {
         // give 9 cards to each player
         // TODO: handle situation where host should hand out less than 9 cards to damaged robots
+        System.out.println("Handing out " + (9-robotDamage[0]) + " cards to player " + 0);
         players[0].chooseCards(pDeck.draw(9-robotDamage[0]));
-        System.out.println("Cards given to player " + 0);
         
         for (int i=1; i<remotePlayers.length ; i++) {
             if (remotePlayers[i]) {
                 netHandler.dealCards(i, pDeck.draw(9-robotDamage[i]));
-                System.out.println("Cards given to player " + i);
+                System.out.println("Handing out " + (9-robotDamage[i]) + " cards to player " + i);
             }
         }
     }

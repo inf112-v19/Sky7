@@ -82,15 +82,6 @@ public interface IClient {
     void placeRobot (int playerNr, int xPos, int yPos);
 
     /**
-     * check if card is of type move or rotate, if move then move robot, else rotate robot
-     * called from host
-     *
-     * @param playerNr id of the current player
-     * @param card the card that should be played
-     */
-    void activateCard (int playerNr, IProgramCard card);
-
-    /**
      * activate the board elements by calling board method
      * called from host
      */
