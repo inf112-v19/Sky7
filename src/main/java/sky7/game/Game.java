@@ -272,7 +272,7 @@ public class Game implements IGame {
                 if (canGo(action.player, dir)) {
                     dead = movePlayer(action.player, dir);
                     steps--;
-                }
+                }else steps = 0;
             }
         } else {
             rotatePlayer(action);
@@ -355,7 +355,7 @@ public class Game implements IGame {
                     }
 
                 }
-        return false;
+        return true;
     }
 
     /**
