@@ -165,6 +165,10 @@ public class Client implements IClient {
         return null;//TODO
     }
 
+    public int getID() {
+        return player.getPlayerNumber();
+    }
+
     @Override
     public int getNPlayers() {
         return this.nPlayers;

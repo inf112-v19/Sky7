@@ -128,6 +128,6 @@ public class Player implements IPlayer {
 		String lifeTokensStr = Integer.toString(lifeTokens);
 		return lifeTokensStr;
 	}
-
+	
 
 }

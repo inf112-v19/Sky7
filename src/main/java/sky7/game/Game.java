@@ -4,7 +4,9 @@ import com.badlogic.gdx.math.Vector2;
 import sky7.Client.Client;
 import sky7.board.IBoard;
 import sky7.board.ICell;
+import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Inactive.Hole;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
@@ -19,6 +21,7 @@ public class Game implements IGame {
     private Client client;
     private static final int NR_OF_PHASES = 5;
     private IBoard board;
+    private List<Integer> destroyedRobots = new ArrayList<>();
     private boolean hosting;
 
     /**
@@ -47,11 +50,14 @@ public class Game implements IGame {
 
     @Override
     public void process(HashMap<Integer, ArrayList<ICard>> playerRegistrys) {
+        destroyedRobots = new ArrayList<>();
         Queue<Queue<Event>> allPhases = findPlayerSequence(playerRegistrys);
-        List<Integer> destroyedRobots = new ArrayList<>();
+        int count = 0;
         for (Queue<Event> phase : allPhases) {
-            for (Event player : phase) {
-                tryToMove(player);
+            System.out.println("phase: " + count++);
+            for (Event action : phase) {
+                if (!destroyedRobots.contains(action.player))
+                    tryToMove(action);
                 expressConveyor();
                 normalAndExpressConveyor();
                 activatePushers();
@@ -89,44 +95,159 @@ public class Game implements IGame {
         // check winning condition.
         //TODO
 
-        render();
+        render(50);
     }
 
     private void placeBackup() {
-        render();
+        render(50);
         //REPAIR SITES: A robot on a repair site places their Archive marker (where they respawn) there. (They do NOT repair.)
     }
 
     private void repairRobotsOnRepairSite() {
         // REPAIR SITES: A robot on a repair site repairs 1 point of damage. A robot on a double tool repair site also draws 1 Option card.
         //TODO
-        render();
+        render(50);
     }
 
     private void activateCogwheels() {
         //TODO
         board.rotateCogs();
-        render();
+        render(50);
     }
 
     private void activateLasers() {
-        //TODO
-        render();
+        //TODO lasers should only be laser start position.
+
+        List<ICell> lasersHeads = new ArrayList<>();
+        List<Vector2> headPosition = new ArrayList<>();
+
+        lasersHeads.addAll(board.getLasers());
+        headPosition.addAll(board.getLaserPos());
+
+        for (int i = 0; i < board.getRobots().length; i++) {
+            if (board.getRobots()[i] != null) {
+                lasersHeads.add(board.getRobots()[i]);
+                headPosition.add(board.getRobotPos()[i]);
+
+            }
+        }
+        fireLasers(lasersHeads, headPosition); // presume that lasers are only laser start positions and robot position
+    }
+
+    private void fireLasers(List<?> heads, List<?> positions) {
+        //presume that lasers and laserPos are the head positions of the lasers and robots.
+        if (heads.isEmpty()) return;
+        show(heads, positions);
+
+        render(20);
+
+        List<List<?>> next = moveLaserHeads(heads, positions);
+
+        fireLasers(next.get(0), next.get(1));
+
+        hide(heads, positions);
+        render(20);
+    }
+
+    private List<List<?>> moveLaserHeads(List<?> heads, List<?> positions) {
+        List<List<?>> list = new ArrayList<>();
+
+        List<ICell> nextHeads = new ArrayList<>();
+        List<Vector2> nextHeadPositions = new ArrayList<>();
+
+        for (int i = 0; i < heads.size(); i++) {
+            //For each laser head, get the next position of the head.
+
+            ICell cell = (ICell) heads.get(i);
+            Vector2 position = (Vector2) positions.get(i);
+
+            if (!laserStopped(cell, position)) {
+                if (cell instanceof Laser) {
+                    Laser laser = (Laser) cell;
+                    nextHeads.add(new Laser(false, laser.getDirection(), laser.nrOfLasers()));
+                    nextHeadPositions.add(board.getDestination(position, laser.getDirection(), 1));
+                } else if (cell instanceof RobotTile) {
+                    RobotTile robot = (RobotTile) cell;
+                    // TODO modifity the number of lasers for a robot when implemented.
+                    nextHeads.add(new Laser(false, robot.getOrientation(), 1));
+                    nextHeadPositions.add(board.getDestination(position, robot.getOrientation(), 1));
+                }
+
+            }
+        }
+        list.add(nextHeads);
+        list.add(nextHeadPositions);
+
+        return list;
+    }
+
+    private boolean laserStopped(ICell cell, Vector2 pos) {
+        // if there is a wall it is edge of the board, then return true;
+        // if the is a robot infront, then add damage to the robots health.
+        Vector2 ahead = null;
+        if (cell instanceof RobotTile) {
+            RobotTile robot = (RobotTile) cell;
+            ahead = board.getDestination(pos, robot.getOrientation(), 1);
+        } else if (cell instanceof Laser) {
+            Laser laser = (Laser) cell;
+            ahead = board.getDestination(pos, laser.getDirection(), 1);
+        }
+        if (ahead == null || !board.containsPosition(ahead)) {
+            return true;
+        } else {
+            for (ICell aheadCell : board.getCell(ahead)) {
+                if (aheadCell instanceof Wall) return true;
+                if (aheadCell instanceof RobotTile) {
+                    if (client != null) {
+                        client.getPlayer().applyDamage(1);
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void hide(List<?> lasers, List<?> laserPos) {
+        // hide all lasers in the list.
+        for (int i = 0; i < laserPos.size(); i++) {
+            Vector2 pos = (Vector2) laserPos.get(i);
+            ICell cell = (ICell) lasers.get(i);
+            if (!(cell instanceof RobotTile) && !((Laser) cell).isStartPosition()) {
+                board.removeCell(cell, pos);
+            }
+        }
+    }
+
+    private void show(List<?> lasers, List<?> laserPos) {
+        // show all lasers in the list.
+        for (int i = 0; i < lasers.size(); i++) {
+            Object cell = lasers.get(i);
+            if (cell instanceof Laser) {
+                Laser laser = (Laser) cell;
+
+                if (!laser.isStartPosition()) {
+                    Vector2 pos = (Vector2) laserPos.get(i);
+                    board.addCell(laser, pos);
+                }
+            }
+
+        }
     }
 
     private void activatePushers() {
         //TODO
-        render();
+        render(50);
     }
 
     private void normalAndExpressConveyor() {
         //TODO
-        render();
+        render(50);
     }
 
     private void expressConveyor() {
         // TODO check if this robot is on a conveyor belt and there is another robot in front that is also on the convoyer belt
-        render();
+        render(50);
     }
     
     private void applyDamage(int playerID, int damage) {
@@ -142,28 +263,28 @@ public class Game implements IGame {
      * @param action a Event containing the playerId and ProgramCard
      */
     private void tryToMove(Event action) {
+        boolean dead = false;
         if (action.card.moveType()) {
             int steps = Math.abs(action.card.move());
-            while (steps > 0) {
+            while (!dead && steps > 0) {
                 DIRECTION dir = board.getRobots()[action.player].getOrientation();
                 if (action.card.move() < 1) dir = dir.reverse();
                 if (canGo(action.player, dir)) {
-                    movePlayer(action.player, dir);
+                    dead = movePlayer(action.player, dir);
                     steps--;
-                    render();
                 }
             }
         } else {
             rotatePlayer(action);
-            render();
+            render(50);
         }
 
     }
 
-    private void movePlayer(int player, DIRECTION dir) {
+    private boolean movePlayer(int player, DIRECTION dir) {
         // move player 1 step in direction dir
         Vector2 ahead = board.getDestination(board.getRobotPos()[player], dir, 1);
-
+        boolean dead;
         if (board.containsPosition(ahead)) {
             for (ICell cell : board.getCell(ahead)) {
                 if (cell instanceof RobotTile) {
@@ -172,9 +293,30 @@ public class Game implements IGame {
                 }
             }
             board.moveRobot(player, dir);
-        } else {
+            render(100);
+            dead = checkForHole(player);
+        } else { // robot is outside the board.
             board.hideRobot(player);
+            destroyedRobots.add(player);
+            dead = true;
         }
+        if (dead) render(50);
+        return dead;
+    }
+
+    private boolean checkForHole(int player) {
+        for (int i = 0; i < board.getRobots().length; i++) {
+            if (board.getRobots()[i] != null && player == board.getRobots()[i].getId()) {
+                for (ICell cell : board.getCell(board.getRobotPos()[i])) {
+                    if (cell instanceof Hole) {
+                        board.hideRobot(player);
+                        destroyedRobots.add(player);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     private void rotatePlayer(Event action) {
@@ -225,9 +367,6 @@ public class Game implements IGame {
      */
     private boolean facingWall(Vector2 pos, DIRECTION direction) {
         // TODO check if there is a wall facing movement direction in the current cell
-        System.out.println(board.getWidth());
-        System.out.println(board.getHeight());
-        System.out.println(pos);
         if (board.containsPosition(pos))
             for (ICell cell : board.getCell(pos)) {
                 if (cell instanceof Wall && ((Wall) cell).getDirection() == direction) {
@@ -238,12 +377,12 @@ public class Game implements IGame {
     }
 
     @Override
-    public void render() {
+    public void render(int milliSec) {
         // TODO call render if this game belongs to a client, else ignore.
         if (client != null) {
             client.updateBoard(board);
             try {
-                Thread.sleep(50);
+                Thread.sleep(milliSec);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -1,9 +1,11 @@
 package sky7.board;
 
 import com.badlogic.gdx.math.Vector2;
+import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.robots.RobotTile;
 
+import java.util.List;
 import java.util.TreeSet;
 
 public interface IBoard {
@@ -51,6 +53,8 @@ public interface IBoard {
 
     void moveRobot(Integer id, DIRECTION direction);
 
+    void removeCell(ICell cell, Vector2 pos);
+
     /**
      * Rotate a robot
      * 
@@ -76,4 +80,11 @@ public interface IBoard {
     Vector2 getDestination(Vector2 from, DIRECTION direction, int i);
 
     void hideRobot(int player);
+
+    List<Laser> getLasers();
+
+    List<Vector2> getLaserPos();
+
+    void addCell(ICell cell, Vector2 pos);
+
 }

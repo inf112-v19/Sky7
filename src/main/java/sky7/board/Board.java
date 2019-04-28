@@ -22,6 +22,8 @@ public class Board implements IBoard {
     private int width, height, nPlayers, maxMove;
     private Vector2[] robotPos;
     private RobotTile[] robots;
+    private Vector2[] deadRobotPos;
+    private RobotTile[] deadRobots;
     private List<CogWheel> cogs;
     private List<Vector2> cogPos;
     private List<IConveyorBelt> convs;
@@ -64,6 +66,8 @@ public class Board implements IBoard {
         this.nPlayers = 0;
         this.robotPos = new Vector2[8];
         this.robots = new RobotTile[8];
+        this.deadRobotPos = new Vector2[8];
+        this.deadRobots = new RobotTile[8];
         this.cogs = new ArrayList<>();
         this.cogPos = new ArrayList<>();
         this.convs = new ArrayList<>();
@@ -249,7 +253,7 @@ public class Board implements IBoard {
      * @return the target vector (coordinates)
      */
     public Vector2 getDestination(Vector2 pos, DIRECTION dir, int distance) {
-        return new Vector2(pos.x + dir.getX()*distance,pos.y + dir.getY()*distance);
+        return new Vector2(pos.x + dir.getX() * distance, pos.y + dir.getY() * distance);
         /*Vector2 target;
         switch (dir) {
             case NORTH:
@@ -273,6 +277,11 @@ public class Board implements IBoard {
     @Override
     public void hideRobot(int player) {
         Vector2 pos = robotPos[player];
+        deadRobots[player] = robots[player];
+        robots[player] = null;
+        deadRobotPos[player] = robotPos[player];
+        robotPos[player] = null;
+
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
                 grid[(int) pos.x][(int) pos.y].remove(item);
@@ -281,6 +290,27 @@ public class Board implements IBoard {
         }
     }
 
+    @Override
+    public List<Laser> getLasers() {
+        return lasers;
+    }
+
+    @Override
+    public List<Vector2> getLaserPos() {
+        return laserPos;
+    }
+
+    @Override
+    public void addCell(ICell cell, Vector2 pos) {
+        grid[(int) pos.x][(int) pos.y].add(cell);
+    }
+
+    @Override
+    public void removeCell(ICell cell, Vector2 pos) {
+        if (grid[(int) pos.x][(int) pos.y].contains(cell)) {
+            grid[(int) pos.x][(int) pos.y].remove(cell);
+        }
+    }
 
 
     /**

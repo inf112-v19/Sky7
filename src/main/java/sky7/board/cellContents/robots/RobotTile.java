@@ -32,7 +32,12 @@ public class RobotTile implements IMoving {
     public int drawPriority() {
         return PRIORITY;
     }
-    
+
+    @Override
+    public boolean isVisible() {
+        return true;
+    }
+
     @Override
     public int compareTo(ICell other) {
         return Integer.compare(this.drawPriority(), other.drawPriority());

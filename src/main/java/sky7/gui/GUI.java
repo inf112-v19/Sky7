@@ -147,7 +147,7 @@ public class GUI implements ApplicationListener {
 			if (isClicked(host)) {
 				mainMenu = false;
 				startHost();
-			} 
+			}
 
 			if (isClicked(join)) {
 				// take input from user
@@ -171,9 +171,9 @@ public class GUI implements ApplicationListener {
 			}
 
 		} else if (clientLobby) {
-		    batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
-		    font.draw(batch, game.getNPlayers() + " Connected Players", 7*scaler, 6*scaler);
-		    if (game.readyToRender()) clientLobby = false;
+			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth*scaler, windowHeight*scaler);
+			font.draw(batch, game.getNPlayers() + " Connected Players", 7*scaler, 6*scaler);
+			if (game.readyToRender()) clientLobby = false;
 		} else {
 			background.showDock(); //Render background and registry slots
 			boardprinter.showBoard(game);
@@ -270,7 +270,7 @@ public class GUI implements ApplicationListener {
 	}
 
 	/*
-	 * Add sprites to a textureAtlas as in create() method 
+	 * Add sprites to a textureAtlas as in create() method
 	 */
 	public void addSprites() {
 		Array<AtlasRegion> regions = textureAtlas.getRegions();
@@ -383,7 +383,7 @@ public class GUI implements ApplicationListener {
 		for (ICard card : cards) {
 			card.setX(0);
 			card.setY(0);
-		}	
+		}
 	}
 
 	// set the x position for the cards to spread them accross the map
@@ -392,6 +392,6 @@ public class GUI implements ApplicationListener {
 			card.setX((3*scaler+64)+cardXpos);
 			card.setY(0);
 			cardXpos+=scaler;
-		}	
+		}
 	}
 }
