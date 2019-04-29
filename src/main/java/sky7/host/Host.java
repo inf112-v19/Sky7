@@ -10,8 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
+import com.badlogic.gdx.math.Vector2;
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
+import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.card.ICard;
 import sky7.card.IDeck;
 import sky7.card.ProgramDeck;
@@ -27,6 +29,7 @@ public class Host implements IHost {
 
     // FIELD VARIABLES --------------
     private String boardName = "assets/Boards/mvp1Board.json";
+    private IClient localClient;
     private IClient[] players;
     private int nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0;
     private IDeck pDeck;
@@ -35,7 +38,7 @@ public class Host implements IHost {
     private boolean[] remotePlayers;
     private int[] dockPos; // number in pos x is player x's dock position
     private Queue<Integer> availableDockPos;
-    
+
     private BoardGenerator bg;
     private boolean terminated = false;
     private HOST_STATE nextState = HOST_STATE.BEGIN;
@@ -58,43 +61,30 @@ public class Host implements IHost {
      */
     public Host(IClient cli) {
         this();
-        players[0] = cli;
+        localClient = cli;
+        localClient.connect(this, nPlayers++, boardName);
+    }
+
+    public Host() {
+        initializeFieldVariables();
+        shuffleDockPositions(MAX_N_PLAYERS); // TODO argument should be same as number of dock positions on chosen board
         new Thread() {
             public void run() {
                 try {
-                    netHandler = new HostNetHandler((IHost)Host.this);
+                    netHandler = new HostNetHandler((IHost) Host.this);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
         }.start();
-        
-        nPlayers++;
-        cli.connect(this, 0, boardName);
-    }
-
-    public Host() {
-
-        shuffleDockPositions(MAX_N_PLAYERS); // TODO argument should be same as number of dock positions on chosen board
-        //pQueue = new LinkedList<>();
-        initializeFieldVariables();
         pDeck = new ProgramDeck();
         bg = new BoardGenerator();
-//        queue = new TreeSet<>();
         try {
             board = bg.getBoardFromFile(boardName);
             game = new Game(this, board);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * @param players an array of players
-     */
-    public Host(Client[] players) {
-        this();
-        this.players = players;
     }
 
 
@@ -108,7 +98,7 @@ public class Host implements IHost {
         robotDamage = new int[8];
         dockPos = new int[8];
     }
-    
+
     /**
      * Begin the game.
      */
@@ -123,28 +113,24 @@ public class Host implements IHost {
 
     private void placeRobots() {
         // TODO implement placing of robots at random starting positions when we have boards with starting positions
-        
-        // temporary scheme to place robots on a line at y=5
-        board.placeRobot(0, 1, 5);
-        players[0].placeRobot(0, 1, 5);
-        netHandler.placeRobot(0, 1, 5);
-        int x = 2;
-        
-        for (int i=0; i<remotePlayers.length; i++) {
-            if (remotePlayers[i]) {
-                board.placeRobot(i, x, 5);
-                players[0].placeRobot(i, x, 5);
-                netHandler.placeRobot(i, x++, 5);
+
+        List<StartPosition> startCells = board.getStartCells();
+        List<Vector2> startPositions = board.getStartPositions();
+
+        for (int i = 0; i < nPlayers; i++) {
+            for (int j = 0; j < startCells.size(); j++) {
+                if (startCells.get(j).getNumber() == i + 1) {
+                    // add to hosts board.
+                    board.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+                    // add to localClient
+                    localClient.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+                    // add to remote clients.
+                    netHandler.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+                    break;
+                }
             }
         }
-    }
 
-    @Override
-    public boolean addPlayer(Client player) {
-        players[nPlayers++] = player;
-        player.connect(this, 0, boardName);
-        //TODO add a new player if the board allows it. There is a limit on how many players can play on a board.
-        return false;
     }
 
 
@@ -237,22 +223,22 @@ public class Host implements IHost {
         // return registry cards to deck - need to implement locked cards later
         if (!playerRegs.isEmpty())
             returnCardsNotLocked(0);
-            for (int i = 1; i < 8; i++) {
-                if(remotePlayers[i]) returnCardsNotLocked(i);
-            }
+        for (int i = 1; i < 8; i++) {
+            if (remotePlayers[i]) returnCardsNotLocked(i);
+        }
     }
 
     private void returnCardsNotLocked(int playerID) {
         if (lockedRegSlots[playerID] == 0) pDeck.returnCards(playerRegs.remove(playerID));
         else {
             ArrayList<ICard> reg = playerRegs.remove(playerID);
-            for (int i=4; i>=lockedRegSlots[playerID]; i--) {
+            for (int i = 4; i >= lockedRegSlots[playerID]; i--) {
                 reg.remove(i);
             }
             pDeck.returnCards(reg);
         }
     }
-    
+
     /**
      * waits for players to be ready.
      */
@@ -273,13 +259,13 @@ public class Host implements IHost {
     private void giveOutCards() {
         // give 9 cards to each player
         // TODO: handle situation where host should hand out less than 9 cards to damaged robots
-        System.out.println("Handing out " + (9-robotDamage[0]) + " cards to player " + 0);
-        players[0].chooseCards(pDeck.draw(9-robotDamage[0]));
-        
-        for (int i=1; i<remotePlayers.length ; i++) {
+        System.out.println("Handing out " + (9 - robotDamage[0]) + " cards to player " + 0);
+        localClient.chooseCards(pDeck.draw(9 - robotDamage[0]));
+
+        for (int i = 1; i < remotePlayers.length; i++) {
             if (remotePlayers[i]) {
-                netHandler.dealCards(i, pDeck.draw(9-robotDamage[i]));
-                System.out.println("Handing out " + (9-robotDamage[i]) + " cards to player " + i);
+                netHandler.dealCards(i, pDeck.draw(9 - robotDamage[i]));
+                System.out.println("Handing out " + (9 - robotDamage[i]) + " cards to player " + i);
             }
         }
     }
@@ -308,16 +294,16 @@ public class Host implements IHost {
         this.winner = winner;
         notify();
     }
-    
+
     /**
      * Create a queue of all possible dock positions in a random order.
-     * 
+     *
      * @param numberOfDockPositions
      */
     private void shuffleDockPositions(int numberOfDockPositions) {
         availableDockPos = new ArrayDeque<>();
         List<Integer> temp = new ArrayList<>();
-        for (int i=0; i<numberOfDockPositions ; i++) {
+        for (int i = 0; i < numberOfDockPositions; i++) {
             temp.add(i);
         }
         Collections.shuffle(temp);
@@ -325,10 +311,10 @@ public class Host implements IHost {
     }
 
     // NET ------------------------
-    
+
     @Override
     public int remotePlayerConnected() {
-        for (int i=1; i<MAX_N_PLAYERS  ; i++) {
+        for (int i = 1; i < MAX_N_PLAYERS; i++) {
             if (!remotePlayers[i]) {
                 remotePlayers[i] = true;
                 nRemotePlayers++;
@@ -338,7 +324,7 @@ public class Host implements IHost {
         }
         throw new IllegalStateException("Could not find legal playerID for newly connected player");
     }
-    
+
     @Override
     public void remotePlayerDisconnected(int playerID) {
         remotePlayers[playerID] = false;
@@ -395,6 +381,6 @@ public class Host implements IHost {
     public void applyDamage(int playerID, int damage) {
         robotDamage[playerID] += damage;
         if (robotDamage[playerID] >= 10) // TODO respawn or lose game
-        if (robotDamage[playerID] > 4) lockedRegSlots[playerID] = robotDamage[playerID]-4;
+            if (robotDamage[playerID] > 4) lockedRegSlots[playerID] = robotDamage[playerID] - 4;
     }
 }
