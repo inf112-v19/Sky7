@@ -6,7 +6,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
@@ -17,40 +16,33 @@ import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.card.ICard;
 import sky7.card.IDeck;
 import sky7.card.ProgramDeck;
-import sky7.Client.Client;
 import sky7.Client.IClient;
 import sky7.game.Game;
 
 /**
- * A Class that
+ * A Class that hosts a roboRally game.
  */
 public class Host implements IHost {
 
 
     // FIELD VARIABLES --------------
     private String boardName = "assets/Boards/mvp1Board.json";
-    private IClient localClient;
-    private IClient[] players;
-    private int nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0;
-    private IDeck pDeck;
-    private IBoard board;
-    private HashMap<Integer, ArrayList<ICard>> playerRegs; // player registries
-    private boolean[] remotePlayers;
-    private int[] dockPos; // number in pos x is player x's dock position
-    private Queue<Integer> availableDockPos;
-
-    private BoardGenerator bg;
-    private boolean terminated = false;
+    // TODO MAX_N_PLAYERS should be set based on board.
+    private int MAX_N_PLAYERS = 8, nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0, winner = -1;
+    private boolean terminated = false, processingFinished = false;
     private HOST_STATE nextState = HOST_STATE.BEGIN;
     private HOST_STATE currentState = HOST_STATE.BEGIN;
-    private int roundNr = 0;
-    private Game game;
-    private boolean processingFinished = false;
-    private int winner = -1;
+
+    private HashMap<Integer, ArrayList<ICard>> playersRegistries; // player registries
+    private Queue<Integer> availableDockPos;
+    private boolean[] remotePlayers;
+    private int[] lockedRegSlots, robotDamage;
     private HostNetHandler netHandler;
-    private int MAX_N_PLAYERS = 8; // TODO: set according to board size
-    private int[] lockedRegSlots;
-    private int[] robotDamage;
+    private BoardGenerator bg;
+    private IClient localClient;
+    private IBoard board;
+    private IDeck pDeck;
+    private Game game;
 
     // TODO host must know where each player can respawn.(?) Or should that be handled locally in game engine?
 
@@ -67,7 +59,7 @@ public class Host implements IHost {
 
     public Host() {
         initializeFieldVariables();
-        shuffleDockPositions(MAX_N_PLAYERS); // TODO argument should be same as number of dock positions on chosen board
+        shuffleDockPositions(MAX_N_PLAYERS);
         new Thread() {
             public void run() {
                 try {
@@ -77,8 +69,6 @@ public class Host implements IHost {
                 }
             }
         }.start();
-        pDeck = new ProgramDeck();
-        bg = new BoardGenerator();
         try {
             board = bg.getBoardFromFile(boardName);
             game = new Game(this, board);
@@ -88,32 +78,70 @@ public class Host implements IHost {
     }
 
 
-    // USEFUL METHODS -----------------
+    // PUBLIC METHODS ------------------
 
-    private void initializeFieldVariables() {
-        players = new Client[1];
-        playerRegs = new HashMap<>();
-        remotePlayers = new boolean[8];
-        lockedRegSlots = new int[8];
-        robotDamage = new int[8];
-        dockPos = new int[8];
-    }
-
-    /**
-     * Begin the game.
-     */
+    @Override
     public void Begin() {
         //TODO check if ready to begin.
         // Check if clients are ready.
         // Check other conditions if necessary
         netHandler.distributeBoard(boardName);
         placeRobots();
-        run3();
+        run();
     }
 
-    private void placeRobots() {
-        // TODO implement placing of robots at random starting positions when we have boards with starting positions
+    @Override
+    public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
+        if (registry.size() < 5)
+            throw new IllegalArgumentException("Player " + pN + " attempting to play fewer than 5 cards.");
+        playersRegistries.put(pN, registry);
+        pDeck.returnCards(discard);
+        readyPlayers++;
+        notify();
+    }
 
+    @Override
+    public synchronized void terminate() {
+        terminated = true;
+        currentState = HOST_STATE.TERMINATED;
+        nextState = HOST_STATE.BEGIN;
+        notify();
+    }
+
+    @Override
+    public synchronized void setWinner(int winner) {
+        processingFinished = true;
+        this.winner = winner;
+        notify();
+    }
+
+    @Override
+    public void applyDamage(int playerID, int damage) {
+        robotDamage[playerID] += damage;
+        if (robotDamage[playerID] >= 10) // TODO respawn or lose game
+            if (robotDamage[playerID] > 4) lockedRegSlots[playerID] = robotDamage[playerID] - 4;
+    }
+
+
+
+    // PRIVATE METHODS -----------------
+
+    /**
+     *
+     */
+    private void initializeFieldVariables() {
+        pDeck = new ProgramDeck();
+        bg = new BoardGenerator();
+        playersRegistries = new HashMap<>();
+        remotePlayers = new boolean[8];
+        lockedRegSlots = new int[8];
+        robotDamage = new int[8];
+    }
+
+    /**
+     *
+     */
+    private void placeRobots() {
         List<StartPosition> startCells = board.getStartCells();
         List<Vector2> startPositions = board.getStartPositions();
 
@@ -133,8 +161,10 @@ public class Host implements IHost {
 
     }
 
-
-    private synchronized void run3() {
+    /**
+     * run the game state by state.
+     */
+    private synchronized void run() {
         while (!terminated) {
             System.out.println(nextState);
             switch (nextState) {
@@ -163,11 +193,18 @@ public class Host implements IHost {
         }
     }
 
+
+    /**
+     *
+     */
     private void runBEGIN() {
         currentState = HOST_STATE.BEGIN;
         nextState = HOST_STATE.DEAL_CARDS;
     }
 
+    /**
+     *
+     */
     private void runDEAL_CARDS() {
         currentState = HOST_STATE.DEAL_CARDS;
         System.out.println("Start of round");
@@ -176,6 +213,9 @@ public class Host implements IHost {
         nextState = HOST_STATE.WAIT_FOR_PLAYERS;
     }
 
+    /**
+     *
+     */
     private void runWAIT_FOR_PLAYERS() {
         currentState = HOST_STATE.WAIT_FOR_PLAYERS;
         if (readyPlayers < nPlayers) {
@@ -183,24 +223,32 @@ public class Host implements IHost {
         } else nextState = HOST_STATE.DISTRIBUTE_REGISTRY;
     }
 
-
+    /**
+     *
+     */
     private void runDISTRIBUTE_REGISTRY() {
         currentState = HOST_STATE.DISTRIBUTE_REGISTRY;
-        netHandler.distributeRegistries(playerRegs);
-        players[0].render(playerRegs);
+        netHandler.distributeRegistries(playersRegistries);
+        localClient.render(playersRegistries);
         nextState = HOST_STATE.BEGIN_PROCESSING;
     }
 
+    /**
+     *
+     */
     private void runBEGIN_PROCESSING() {
         if (currentState == HOST_STATE.DISTRIBUTE_REGISTRY) {
             processingFinished = false;
-            game.process(playerRegs);
+            game.process(playersRegistries);
         }
         currentState = HOST_STATE.BEGIN_PROCESSING;
         nextState = processingFinished ? (winner != -1 ? HOST_STATE.FINISHED : HOST_STATE.DEAL_CARDS) : HOST_STATE.BEGIN_PROCESSING;
         returnCardsToDeck();
     }
 
+    /**
+     *
+     */
     private void runWAIT_FOR_PROCESSING() {
         try {
             System.out.println("Host is waiting for gameProcessing to finish");
@@ -210,6 +258,9 @@ public class Host implements IHost {
         }
     }
 
+    /**
+     *
+     */
     private void runFINISHED() {
         // TODO if there is something to do when game is finished
         terminated = true;
@@ -221,17 +272,21 @@ public class Host implements IHost {
      */
     private void returnCardsToDeck() {
         // return registry cards to deck - need to implement locked cards later
-        if (!playerRegs.isEmpty())
+        if (!playersRegistries.isEmpty())
             returnCardsNotLocked(0);
         for (int i = 1; i < 8; i++) {
             if (remotePlayers[i]) returnCardsNotLocked(i);
         }
     }
 
+    /**
+     *
+     * @param playerID
+     */
     private void returnCardsNotLocked(int playerID) {
-        if (lockedRegSlots[playerID] == 0) pDeck.returnCards(playerRegs.remove(playerID));
+        if (lockedRegSlots[playerID] == 0) pDeck.returnCards(playersRegistries.remove(playerID));
         else {
-            ArrayList<ICard> reg = playerRegs.remove(playerID);
+            ArrayList<ICard> reg = playersRegistries.remove(playerID);
             for (int i = 4; i >= lockedRegSlots[playerID]; i--) {
                 reg.remove(i);
             }
@@ -270,30 +325,7 @@ public class Host implements IHost {
         }
     }
 
-    @Override
-    public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
-        if (registry.size() < 5)
-            throw new IllegalArgumentException("Player " + pN + " attempting to play fewer than 5 cards.");
-        playerRegs.put(pN, registry);
-        pDeck.returnCards(discard);
-        readyPlayers++;
-        notify();
-    }
 
-    @Override
-    public synchronized void terminate() {
-        terminated = true;
-        currentState = HOST_STATE.TERMINATED;
-        nextState = HOST_STATE.BEGIN;
-        notify();
-    }
-
-    @Override
-    public synchronized void setWinner(int winner) {
-        processingFinished = true;
-        this.winner = winner;
-        notify();
-    }
 
     /**
      * Create a queue of all possible dock positions in a random order.
@@ -309,6 +341,7 @@ public class Host implements IHost {
         Collections.shuffle(temp);
         availableDockPos.addAll(temp);
     }
+
 
     // NET ------------------------
 
@@ -334,25 +367,19 @@ public class Host implements IHost {
 
     // GETTERS ---------------------
 
+    @Override
     public HOST_STATE getCurrentState() {
         return currentState;
     }
 
     @Override
-    public int getRoundNr() {
-        return roundNr;
-    }
-
     public IDeck getpDeck() {
         return pDeck;
     }
 
+    @Override
     public IBoard getBoard() {
         return board;
-    }
-
-    public IClient[] getPlayers() {
-        return players;
     }
 
     @Override
@@ -377,10 +404,4 @@ public class Host implements IHost {
         notify();
     }
 
-    @Override
-    public void applyDamage(int playerID, int damage) {
-        robotDamage[playerID] += damage;
-        if (robotDamage[playerID] >= 10) // TODO respawn or lose game
-            if (robotDamage[playerID] > 4) lockedRegSlots[playerID] = robotDamage[playerID] - 4;
-    }
 }
