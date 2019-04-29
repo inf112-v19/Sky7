@@ -13,12 +13,9 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.*;
-import sky7.board.ICell;
-import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
 import sky7.host.Host;
 import sky7.Client.IClient;
@@ -42,7 +39,8 @@ public class GUI implements ApplicationListener {
 
 	private boolean cardsChoosen, hostLobby = false, clientLobby = false, mainMenu = true;
 
-	private int pointer, cardXpos = 0;
+	private int cardXpos = 0;
+	private int pointer;
 	private int yPos = 64;
 	private int scaler = 128;
 
@@ -361,10 +359,12 @@ public class GUI implements ApplicationListener {
 	public void reset() {
 		System.out.println("\n----------- Resetting Cards -----------");
 		cardsChoosen = false;
-		pointer = 0;
+//		pointer = 0;
+		pointer = game.getPlayer().getNLocked();
 		yPos = 64;
 		cardXpos = 0;
-		registry.clear();
+//		registry.clear();
+		registry = game.getPlayer().getRegistry();
 		hand = game.getHand();
 
 		for (ICard card : hand) {
