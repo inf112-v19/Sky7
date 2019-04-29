@@ -7,8 +7,10 @@ import sky7.board.IBoard;
 import sky7.board.ICell;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Inactive.Flag;
 import sky7.board.cellContents.Inactive.Hole;
 import sky7.board.cellContents.Inactive.Wall;
+import sky7.board.cellContents.Inactive.Wrench;
 import sky7.board.cellContents.robots.RobotTile;
 import sky7.card.ICard;
 import sky7.card.ProgramCard;
@@ -100,8 +102,16 @@ public class Game implements IGame {
     }
 
     private void placeBackup() {
-        render(50);
-        //REPAIR SITES: A robot on a repair site places their Archive marker (where they respawn) there. (They do NOT repair.)
+        RobotTile[] robots = board.getRobots();
+        for (int i = 0; i < robots.length; i++) {
+            if (robots[i] != null)
+                for (ICell cell : board.getCell(board.getRobotPos()[i])) {
+                    if (cell instanceof Wrench || cell instanceof Flag) {
+                        robots[i].setArchiveMarker(board.getRobotPos()[i]);
+                        break;
+                    }
+                }
+        }
     }
 
     private void repairRobotsOnRepairSite() {
@@ -250,11 +260,11 @@ public class Game implements IGame {
         // TODO check if this robot is on a conveyor belt and there is another robot in front that is also on the convoyer belt
         render(50);
     }
-    
+
     private void applyDamage(int playerID, int damage) {
         if (hosting) {
             host.applyDamage(playerID, damage);
-            
+
         } else if (client.getPlayer().getPlayerNumber() == playerID) client.applyDamage(playerID, damage);
     }
 
@@ -273,7 +283,7 @@ public class Game implements IGame {
                 if (canGo(action.player, dir)) {
                     dead = movePlayer(action.player, dir);
                     steps--;
-                }else steps = 0;
+                } else steps = 0;
             }
         } else {
             rotatePlayer(action);
@@ -346,17 +356,15 @@ public class Game implements IGame {
         Vector2 ahead = board.getDestination(from, direction, 1);
 
         // if we are facing a wall, then we cannot move a robot.
-        if (!facingWall(ahead, direction.reverse()))
-
+        if (!facingWall(ahead, direction.reverse())) {
             // check if there is an immovable robot in front
-            if (board.containsPosition(ahead))
-                for (ICell cell : board.getCell(ahead)) {
-                    if (cell instanceof RobotTile) {
-                        return occupiedNextCell(ahead, direction);
-                    }
-
+            for (ICell cell : board.getCell(ahead)) {
+                if (cell instanceof RobotTile) {
+                    return occupiedNextCell(ahead, direction);
                 }
-        return true;
+            }
+            return false;
+        } else return true;
     }
 
     /**
