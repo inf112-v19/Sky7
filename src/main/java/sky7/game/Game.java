@@ -5,6 +5,7 @@ import sky7.Client.Client;
 import sky7.Client.IClient;
 import sky7.board.IBoard;
 import sky7.board.ICell;
+import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Inactive.Flag;
@@ -120,9 +121,20 @@ public class Game implements IGame {
         render(50);
     }
 
+    /**
+     * rotate all robots standing on a cogwheel.
+     */
     private void activateCogwheels() {
-        //TODO
-        board.rotateCogs();
+        RobotTile[] robots = board.getRobots();
+        for (int i = 0; i < robots.length; i++) {
+            if (robots[i] != null)
+                for (ICell cell : board.getCell(board.getRobotPos()[i])) {
+                    if (cell instanceof CogWheel) {
+                        board.rotateRobot(i, ((CogWheel) cell).getRotation());
+                        break;
+                    }
+                }
+        }
         render(50);
     }
 
