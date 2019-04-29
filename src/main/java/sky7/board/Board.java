@@ -405,16 +405,6 @@ public class Board implements IBoard {
         System.out.println("Robot " + currentPlayer + " is headed " + robots[currentPlayer].getOrientation());
     }
 
-    @Override
-    public void rotateCogs() {
-        for (int i = 0; i < cogPos.size(); i++) {
-            for (int j = 0; j < nPlayers; j++) {
-                if (cogPos.get(i).equals(robotPos[j])) {
-                    rotateRobot(j, cogs.get(i).getRotation());
-                }
-            }
-        }
-    }
 
     @Override
     public void moveConveyors() {

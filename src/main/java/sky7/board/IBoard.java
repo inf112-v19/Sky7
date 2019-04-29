@@ -66,8 +66,6 @@ public interface IBoard {
      */
     void rotateRobot(int currentPlayer, int rotate);
 
-    void rotateCogs();
-
     void moveConveyors();
 
     TreeSet<ICell> getCell(Vector2 a);
