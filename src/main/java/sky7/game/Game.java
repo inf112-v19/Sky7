@@ -2,6 +2,7 @@ package sky7.game;
 
 import com.badlogic.gdx.math.Vector2;
 import sky7.Client.Client;
+import sky7.Client.IClient;
 import sky7.board.IBoard;
 import sky7.board.ICell;
 import sky7.board.cellContents.Active.Laser;
@@ -18,7 +19,7 @@ import java.util.*;
 public class Game implements IGame {
 
     private Host host;
-    private Client client;
+    private IClient client;
     private static final int NR_OF_PHASES = 5;
     private IBoard board;
     private List<Integer> destroyedRobots = new ArrayList<>();
@@ -37,12 +38,12 @@ public class Game implements IGame {
     }
 
     /**
-     * The constructor for a game engine on client.
+     * The constructor for a game engine on client or host
      *
      * @param client
      * @param board
      */
-    public Game(Client client, IBoard board) {
+    public Game(IClient client, IBoard board) {
         this.client = client;
         this.board = board;
     }
