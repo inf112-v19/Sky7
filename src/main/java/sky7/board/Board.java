@@ -14,6 +14,7 @@ import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.Inactive.Hole;
+import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
 
@@ -34,6 +35,8 @@ public class Board implements IBoard {
     private ArrayList<Hole> holes;
     private List<Vector2> pusherPos;
     private List<Pusher> pushers;
+    private List<Vector2> startPositions;
+    private List<StartPosition> startCells;
 
     public Board(int width, int height) {
         this.width = width;
@@ -78,6 +81,8 @@ public class Board implements IBoard {
         this.holePos = new ArrayList<>();
         this.pushers = new ArrayList<>();
         this.pusherPos = new ArrayList<>();
+        this.startPositions = new ArrayList<>();
+        this.startCells = new ArrayList<>();
 
         // find and store locations of cogwheels, conveyor belts
         for (int i = 0; i < grid.length; i++) {
@@ -87,21 +92,25 @@ public class Board implements IBoard {
                         cogPos.add(new Vector2(i, j));
                         cogs.add((CogWheel) item);
                     }
-                    if (item instanceof IConveyorBelt) {
+                    else if (item instanceof IConveyorBelt) {
                         convPos.add(new Vector2(i, j));
                         convs.add((IConveyorBelt) item);
                     }
-                    if (item instanceof Laser) {
+                    else if (item instanceof Laser) {
                         laserPos.add(new Vector2(i, j));
                         lasers.add((Laser) item);
                     }
-                    if (item instanceof Hole) {
+                    else if (item instanceof Hole) {
                         holePos.add(new Vector2(i, j));
                         holes.add((Hole) item);
                     }
-                    if (item instanceof Pusher) {
+                    else if (item instanceof Pusher) {
                         pusherPos.add(new Vector2(i, j));
                         pushers.add((Pusher) item);
+                    }
+                    else if (item instanceof StartPosition) {
+                        startPositions.add(new Vector2(i, j));
+                        startCells.add((StartPosition) item);
                     }
                 }
             }
@@ -303,6 +312,16 @@ public class Board implements IBoard {
     @Override
     public void addCell(ICell cell, Vector2 pos) {
         grid[(int) pos.x][(int) pos.y].add(cell);
+    }
+
+    @Override
+    public List<Vector2> getStartPositions() {
+        return startPositions;
+    }
+
+    @Override
+    public List<StartPosition> getStartCells() {
+        return startCells;
     }
 
     @Override

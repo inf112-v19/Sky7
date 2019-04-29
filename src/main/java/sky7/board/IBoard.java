@@ -3,6 +3,7 @@ package sky7.board;
 import com.badlogic.gdx.math.Vector2;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.board.cellContents.robots.RobotTile;
 
 import java.util.List;
@@ -87,4 +88,7 @@ public interface IBoard {
 
     void addCell(ICell cell, Vector2 pos);
 
+    List<Vector2> getStartPositions();
+
+    List<StartPosition> getStartCells();
 }
