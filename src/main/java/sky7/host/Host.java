@@ -60,15 +60,13 @@ public class Host implements IHost {
     public Host() {
         initializeFieldVariables();
         shuffleDockPositions(MAX_N_PLAYERS);
-        new Thread() {
-            public void run() {
-                try {
-                    netHandler = new HostNetHandler((IHost) Host.this);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+        new Thread(() -> {
+            try {
+                netHandler = new HostNetHandler((IHost) Host.this);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }.start();
+        }).start();
         try {
             board = bg.getBoardFromFile(boardName);
             game = new Game(this, board);

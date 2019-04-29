@@ -9,9 +9,6 @@ import sky7.card.IDeck;
 
 public interface IHost {
 
-
-
-
     // GETTERS -------------------
 
     /**
@@ -51,6 +48,7 @@ public interface IHost {
      * Terminate the game served by the host.
      */
     void terminate();
+
     /**
      * Begin the game.
      */
