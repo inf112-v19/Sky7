@@ -186,7 +186,9 @@ public class GUI implements ApplicationListener {
 		 * when the player has not pressed the "ready" button
 		 */
 
-		if(!cardsChoosen && pointer != 0) {
+//		if(!cardsChoosen && pointer != 0) {
+		if(!cardsChoosen && pointer != game.getPlayer().getNLocked()) {
+
 			reset.draw(batch);
 			if (isClicked(reset)) {
 				reset();
@@ -205,7 +207,8 @@ public class GUI implements ApplicationListener {
 			// if confirm is clicked:
 			if (isClicked(confirm)) {
 				setRegistry();
-				pointer = 0;
+//				pointer = 0;
+				pointer = game.getPlayer().getNLocked();
 			}
 		}
 		batch.end();
