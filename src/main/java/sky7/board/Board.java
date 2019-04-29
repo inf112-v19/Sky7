@@ -10,11 +10,9 @@ import com.badlogic.gdx.math.Vector2;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Active.IConveyorBelt;
-import sky7.board.cellContents.Inactive.FloorTile;
+import sky7.board.cellContents.Inactive.*;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Active.Pusher;
-import sky7.board.cellContents.Inactive.Hole;
-import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
 
 public class Board implements IBoard {
@@ -34,6 +32,12 @@ public class Board implements IBoard {
     private ArrayList<Hole> holes;
     private List<Vector2> pusherPos;
     private List<Pusher> pushers;
+    private List<Vector2> startPositions;
+    private List<StartPosition> startCells;
+    private List<Flag> flags;
+    private List<Vector2> flagPositions;
+    private List<Wrench> wrenches;
+    private List<Vector2> wrenchPositions;
 
     public Board(int width, int height) {
         this.width = width;
@@ -78,6 +82,12 @@ public class Board implements IBoard {
         this.holePos = new ArrayList<>();
         this.pushers = new ArrayList<>();
         this.pusherPos = new ArrayList<>();
+        this.startPositions = new ArrayList<>();
+        this.startCells = new ArrayList<>();
+        this.flagPositions = new ArrayList<>();
+        this.flags = new ArrayList<>();
+        this.wrenchPositions = new ArrayList<>();
+        this.wrenches = new ArrayList<>();
 
         // find and store locations of cogwheels, conveyor belts
         for (int i = 0; i < grid.length; i++) {
@@ -87,21 +97,33 @@ public class Board implements IBoard {
                         cogPos.add(new Vector2(i, j));
                         cogs.add((CogWheel) item);
                     }
-                    if (item instanceof IConveyorBelt) {
+                    else if (item instanceof IConveyorBelt) {
                         convPos.add(new Vector2(i, j));
                         convs.add((IConveyorBelt) item);
                     }
-                    if (item instanceof Laser) {
+                    else if (item instanceof Laser) {
                         laserPos.add(new Vector2(i, j));
                         lasers.add((Laser) item);
                     }
-                    if (item instanceof Hole) {
+                    else if (item instanceof Hole) {
                         holePos.add(new Vector2(i, j));
                         holes.add((Hole) item);
                     }
-                    if (item instanceof Pusher) {
+                    else if (item instanceof Pusher) {
                         pusherPos.add(new Vector2(i, j));
                         pushers.add((Pusher) item);
+                    }
+                    else if (item instanceof StartPosition) {
+                        startPositions.add(new Vector2(i, j));
+                        startCells.add((StartPosition) item);
+                    }
+                    else if (item instanceof Flag) {
+                        flagPositions.add(new Vector2(i, j));
+                        flags.add((Flag) item);
+                    }
+                    else if (item instanceof Wrench) {
+                        wrenchPositions.add(new Vector2(i, j));
+                        wrenches.add((Wrench) item);
                     }
                 }
             }
@@ -303,6 +325,36 @@ public class Board implements IBoard {
     @Override
     public void addCell(ICell cell, Vector2 pos) {
         grid[(int) pos.x][(int) pos.y].add(cell);
+    }
+
+    @Override
+    public List<Vector2> getStartPositions() {
+        return startPositions;
+    }
+
+    @Override
+    public List<StartPosition> getStartCells() {
+        return startCells;
+    }
+
+    @Override
+    public List<Flag> getFlags() {
+        return flags;
+    }
+
+    @Override
+    public List<Vector2> getFlagPositions() {
+        return flagPositions;
+    }
+
+    @Override
+    public List<Wrench> getWrenches() {
+        return wrenches;
+    }
+
+    @Override
+    public List<Vector2> getWrenchPositions() {
+        return wrenchPositions;
     }
 
     @Override

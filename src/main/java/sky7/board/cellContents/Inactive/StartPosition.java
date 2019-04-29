@@ -54,4 +54,8 @@ public class StartPosition implements IInactive {
         }
         return suppliers;
     }
+
+    public int getNumber() {
+        return startNumber;
+    }
 }
