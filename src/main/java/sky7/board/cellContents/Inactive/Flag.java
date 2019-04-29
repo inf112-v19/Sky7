@@ -60,7 +60,7 @@ public class Flag implements IInactive {
         List<AbstractMap.SimpleEntry<String, Supplier<ICell>>> suppliers = new ArrayList<>();
         int maxNrOfFlags = 4;
         for (int i = 0; i < maxNrOfFlags; i++) {
-            final int a = i;
+            final int a = i+1;
             suppliers.add(new AbstractMap.SimpleEntry<>("g" + i, () -> new Flag(a)));
         }
         return suppliers;

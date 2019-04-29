@@ -15,12 +15,8 @@ import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.Active.Belt;
 import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.DIRECTION;
-import sky7.board.cellContents.Inactive.Flag;
-import sky7.board.cellContents.Inactive.FloorTile;
-import sky7.board.cellContents.Inactive.Hole;
+import sky7.board.cellContents.Inactive.*;
 import sky7.board.cellContents.Active.Laser;
-import sky7.board.cellContents.Inactive.StartPosition;
-import sky7.board.cellContents.Inactive.Wall;
 
 /**
  * A Class for generating a board object parsed from a json file.
@@ -87,6 +83,9 @@ public class BoardGenerator implements IBoardGenerator {
         for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : Pusher.getSuppliers()) {
             ICellFactory.put(pair.getKey(), pair.getValue());
         }
+        for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : Wrench.getSuppliers()) {
+            ICellFactory.put(pair.getKey(), pair.getValue());
+        }
 
     }
 
@@ -99,9 +98,9 @@ public class BoardGenerator implements IBoardGenerator {
         HashMap<String, String> mainBoard = getJson(jsonFilePath);
         TreeSet<ICell>[][] mainGrid = fillGrid(mainBoard);
 
-        mainGrid = rotate(mainGrid,1);
+        mainGrid = rotate(mainGrid, 1);
         TreeSet<ICell>[][] finalGrid = combineGrids(startGrid, mainGrid, DIRECTION.SOUTH);
-        finalGrid = rotate(finalGrid,3);
+        finalGrid = rotate(finalGrid, 3);
 
         return new Board(finalGrid, finalGrid.length, finalGrid[0].length);
     }
@@ -147,10 +146,10 @@ public class BoardGenerator implements IBoardGenerator {
                 break;
             case EAST:
                 TreeSet<ICell>[][] rotatedAgainstClock = rotate(startGrid, 3);
-                 finalGrid = new TreeSet[grid.length][grid[0].length + rotatedAgainstClock[0].length];
+                finalGrid = new TreeSet[grid.length][grid[0].length + rotatedAgainstClock[0].length];
                 for (int i = 0; i < rotatedAgainstClock.length; i++) {
                     for (int j = 0; j < rotatedAgainstClock[0].length; j++) {
-                        finalGrid[i][j+grid[0].length] = rotatedAgainstClock[i][j];
+                        finalGrid[i][j + grid[0].length] = rotatedAgainstClock[i][j];
                     }
                 }
                 for (int i = 0; i < grid.length; i++) {
@@ -220,6 +219,7 @@ public class BoardGenerator implements IBoardGenerator {
 
     /**
      * Fill the
+     *
      * @param bJson
      */
     private TreeSet<ICell>[][] fillGrid(HashMap<String, String> bJson) {
