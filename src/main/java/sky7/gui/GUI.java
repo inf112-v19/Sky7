@@ -42,7 +42,7 @@ public class GUI implements ApplicationListener {
 	private boolean cardsChoosen, hostLobby = false, clientLobby = false, mainMenu = true;
 
 	private int cardXpos = 0;
-	private int pointer;
+	private int pointer = 0;
 	private int yPos = 64;
 	private int scaler = 128;
 
@@ -115,8 +115,8 @@ public class GUI implements ApplicationListener {
 			addSprites();
 
 			listener = new TextInput(this);
-
 			background = new BackGround(windowWidth, windowHeight, scaler, textures, batch);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -200,21 +200,23 @@ public class GUI implements ApplicationListener {
 				}
 			}
 
-			// Render "GO" button only if 5 cards are choosen
+			// Render "GO" button only if 5 cards are choosen and player has taken less than 9 damage
 			if (pointer == 5) {
 				confirm.draw(batch);
-				powerdown.draw(batch);
-				//if powerdown is clicked:
-				if (isClicked(powerdown)) {
-					System.out.println("Powering down next round");
-					//TODO: some logic for powering down
-				}
+
 				// if confirm is clicked:
 				if (isClicked(confirm)) {
 					setRegistry();
-					pointer = 0;
+					pointer = client.getPlayer().getNLocked();
 				}
 			}
+
+			powerdown.draw(batch);
+			if (isClicked(powerdown)) {
+				System.out.println("Powering down next round");
+				//TODO: some logic for powering down
+			}
+
 		}
 		batch.end();
 	}
@@ -228,9 +230,6 @@ public class GUI implements ApplicationListener {
 		h = new Host(client);
 
 		initiateClient();
-		viewport.setMinWorldHeight(height);
-		viewport.setMinWorldWidth(width);
-		//viewport.update(width*scaler, height*scaler, true);
 
 		try {
 			Thread.sleep(500);
@@ -280,7 +279,7 @@ public class GUI implements ApplicationListener {
 	 * Show health and healthtokens
 	 */
 	public void showHealth() {
-		font.draw(batch, "Health: " + client.getPlayer().getDamage() + "\nTokens: " + client.getPlayer().getLifeToken(), 12 * scaler + 72, 2 * scaler - 32);
+		font.draw(batch, "Damage: " + client.getPlayer().getDamage() + "\nTokens: " + client.getPlayer().getLifeToken(), 12 * scaler + 72, 2 * scaler - 32);
 	}
 
 	/**
@@ -289,10 +288,11 @@ public class GUI implements ApplicationListener {
 	 */
 	public void setRegistry() {
 		//check if there actually are 5 chosen cards
-		if (registry.get(4) != null) {
+		if (registry.size() == 5) {
 			cardsChoosen = true;
 			for (int i = 0; i < registry.size(); i++) {
 				client.setCard(registry.get(i), i);
+				System.out.println(registry.size());
 			}
 			client.lockRegistry();
 		}
@@ -408,16 +408,21 @@ public class GUI implements ApplicationListener {
 	public void reset() {
 		System.out.println("\n----------- Resetting Cards -----------");
 		cardsChoosen = false;
-		pointer = client.getPlayer().getNLocked();
 		yPos = 64;
 		cardXpos = 0;
-		//        registry.clear();
-		registry = client.getPlayer().getRegistry();
+		registry.clear();
+		registry = (ArrayList<ICard>) client.getPlayer().getRegistry().clone();
+		pointer = client.getPlayer().getNLocked();
+//		pointer = registry.size();
 		hand = client.getHand();
 
 		for (ICard card : hand) {
 			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t");
 		}
+		for (ICard card : registry) {
+			System.out.println(card.GetSpriteRef() + "\t");
+		}
+		System.out.println("\nPointer:" + pointer + " should be: " + registry.size());
 
 		resetCardPos(hand);
 		resetCardPos(registry);
