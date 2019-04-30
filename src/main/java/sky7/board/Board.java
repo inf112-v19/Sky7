@@ -3,6 +3,7 @@ package sky7.board;
 import com.badlogic.gdx.math.Vector2;
 import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Active.IConveyorBelt;
+import sky7.board.cellContents.Inactive.*;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.DIRECTION;
@@ -19,6 +20,8 @@ public class Board implements IBoard {
     private int width, height, nPlayers, maxMove;
     private Vector2[] robotPos;
     private RobotTile[] robots;
+    private Vector2[] deadRobotPos;
+    private RobotTile[] deadRobots;
     private List<CogWheel> cogs;
     private List<Vector2> cogPos;
     private List<IConveyorBelt> convs;
@@ -29,8 +32,12 @@ public class Board implements IBoard {
     private ArrayList<Hole> holes;
     private List<Vector2> pusherPos;
     private List<Pusher> pushers;
+    private List<Vector2> startPositions;
+    private List<StartPosition> startCells;
     private List<Flag> flags;
-    private ArrayList<Vector2> flagsPos;
+    private List<Vector2> flagPositions;
+    private List<Wrench> wrenches;
+    private List<Vector2> wrenchPositions;
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
@@ -62,6 +69,8 @@ public class Board implements IBoard {
         this.nPlayers = 0;
         this.robotPos = new Vector2[8];
         this.robots = new RobotTile[8];
+        this.deadRobotPos = new Vector2[8];
+        this.deadRobots = new RobotTile[8];
         this.cogs = new ArrayList<>();
         this.cogPos = new ArrayList<>();
         this.convs = new ArrayList<>();
@@ -72,8 +81,12 @@ public class Board implements IBoard {
         this.holePos = new ArrayList<>();
         this.pushers = new ArrayList<>();
         this.pusherPos = new ArrayList<>();
+        this.startPositions = new ArrayList<>();
+        this.startCells = new ArrayList<>();
         this.flags = new ArrayList<>();
-        this.flagsPos = new ArrayList<>();
+        this.flagPositions = new ArrayList<>();
+        this.wrenchPositions = new ArrayList<>();
+        this.wrenches = new ArrayList<>();
 
 
         // find and store locations of cogwheels, conveyor belts
@@ -84,26 +97,33 @@ public class Board implements IBoard {
                         cogPos.add(new Vector2(i, j));
                         cogs.add((CogWheel) item);
                     }
-                    if (item instanceof IConveyorBelt) {
+                    else if (item instanceof IConveyorBelt) {
                         convPos.add(new Vector2(i, j));
                         convs.add((IConveyorBelt) item);
                     }
-                    if (item instanceof Laser) {
+                    else if (item instanceof Laser) {
                         laserPos.add(new Vector2(i, j));
                         lasers.add((Laser) item);
                     }
-                    if (item instanceof Hole) {
+                    else if (item instanceof Hole) {
                         holePos.add(new Vector2(i, j));
                         holes.add((Hole) item);
                     }
-                    if (item instanceof Pusher) {
+                    else if (item instanceof Pusher) {
                         pusherPos.add(new Vector2(i, j));
                         pushers.add((Pusher) item);
                     }
-                    if (item instanceof Flag){
-                        flagsPos.add(new Vector2(i,j));
+                    else if (item instanceof StartPosition) {
+                        startPositions.add(new Vector2(i, j));
+                        startCells.add((StartPosition) item);
+                    }
+                    else if (item instanceof Flag) {
+                        flagPositions.add(new Vector2(i, j));
                         flags.add((Flag) item);
-
+                    }
+                    else if (item instanceof Wrench) {
+                        wrenchPositions.add(new Vector2(i, j));
+                        wrenches.add((Wrench) item);
                     }
                 }
             }
@@ -255,7 +275,7 @@ public class Board implements IBoard {
      * @return the target vector (coordinates)
      */
     public Vector2 getDestination(Vector2 pos, DIRECTION dir, int distance) {
-        return new Vector2(pos.x + dir.getX()*distance,pos.y + dir.getY()*distance);
+        return new Vector2(pos.x + dir.getX() * distance, pos.y + dir.getY() * distance);
         /*Vector2 target;
         switch (dir) {
             case NORTH:
@@ -279,6 +299,11 @@ public class Board implements IBoard {
     @Override
     public void hideRobot(int player) {
         Vector2 pos = robotPos[player];
+        deadRobots[player] = robots[player];
+        robots[player] = null;
+        deadRobotPos[player] = robotPos[player];
+        robotPos[player] = null;
+
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
                 grid[(int) pos.x][(int) pos.y].remove(item);
@@ -287,6 +312,57 @@ public class Board implements IBoard {
         }
     }
 
+    @Override
+    public List<Laser> getLasers() {
+        return lasers;
+    }
+
+    @Override
+    public List<Vector2> getLaserPos() {
+        return laserPos;
+    }
+
+    @Override
+    public void addCell(ICell cell, Vector2 pos) {
+        grid[(int) pos.x][(int) pos.y].add(cell);
+    }
+
+    @Override
+    public List<Vector2> getStartPositions() {
+        return startPositions;
+    }
+
+    @Override
+    public List<StartPosition> getStartCells() {
+        return startCells;
+    }
+
+    @Override
+    public List<Flag> getFlags() {
+        return flags;
+    }
+
+    @Override
+    public List<Vector2> getFlagPositions() {
+        return flagPositions;
+    }
+
+    @Override
+    public List<Wrench> getWrenches() {
+        return wrenches;
+    }
+
+    @Override
+    public List<Vector2> getWrenchPositions() {
+        return wrenchPositions;
+    }
+
+    @Override
+    public void removeCell(ICell cell, Vector2 pos) {
+        if (grid[(int) pos.x][(int) pos.y].contains(cell)) {
+            grid[(int) pos.x][(int) pos.y].remove(cell);
+        }
+    }
 
 
     /**
@@ -329,16 +405,6 @@ public class Board implements IBoard {
         System.out.println("Robot " + currentPlayer + " is headed " + robots[currentPlayer].getOrientation());
     }
 
-    @Override
-    public void rotateCogs() {
-        for (int i = 0; i < cogPos.size(); i++) {
-            for (int j = 0; j < nPlayers; j++) {
-                if (cogPos.get(i).equals(robotPos[j])) {
-                    rotateRobot(j, cogs.get(i).getRotation());
-                }
-            }
-        }
-    }
 
     @Override
     public void moveConveyors() {

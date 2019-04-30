@@ -23,17 +23,7 @@ public class StartPosition implements IInactive {
     @Override
     public Texture getTexture() {
         if (texture == null) {
-            switch (startNumber){
-                case 1: texture = new Texture("assets/startposition/1.png"); break;
-                case 2: texture = new Texture("assets/startposition/2.png"); break;
-                case 3: texture = new Texture("assets/startposition/3.png"); break;
-                case 4: texture = new Texture("assets/startposition/4.png"); break;
-                case 5: texture = new Texture("assets/startposition/5.png"); break;
-                case 6: texture = new Texture("assets/startposition/6.png"); break;
-                case 7: texture = new Texture("assets/startposition/7.png"); break;
-                case 8: texture = new Texture("assets/startposition/8.png"); break;
-
-            }
+            texture = new Texture("assets/startposition/"+startNumber+".png");//TODO add start position pictures
         }
         return texture;
     }
@@ -41,6 +31,11 @@ public class StartPosition implements IInactive {
     @Override
     public int drawPriority() {
         return PRIORITY;
+    }
+
+    @Override
+    public boolean isVisible() {
+        return true;
     }
 
     @Override
@@ -52,9 +47,13 @@ public class StartPosition implements IInactive {
         List<AbstractMap.SimpleEntry<String, Supplier<ICell>>> suppliers = new ArrayList<>();
         int maxNrOfPlayer = 8;
         for (int i = 0; i < maxNrOfPlayer; i++) {
-            final int pos = i;
-            suppliers.add(new AbstractMap.SimpleEntry<>("s" + i + 1, () -> new StartPosition(pos)));
+            final int pos = i+1;
+            suppliers.add(new AbstractMap.SimpleEntry<>("s" + pos, () -> new StartPosition(pos)));
         }
         return suppliers;
+    }
+
+    public int getNumber() {
+        return startNumber;
     }
 }

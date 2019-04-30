@@ -12,100 +12,222 @@ import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 
 import sky7.board.cellContents.Active.Pusher;
-import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Active.Belt;
 import sky7.board.cellContents.Active.CogWheel;
-import sky7.board.cellContents.Inactive.Flag;
-import sky7.board.cellContents.Inactive.FloorTile;
-import sky7.board.cellContents.Inactive.Hole;
+import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Inactive.*;
 import sky7.board.cellContents.Active.Laser;
-import sky7.board.cellContents.Inactive.StartPosition;
-import sky7.board.cellContents.Inactive.Wall;
-import sky7.board.cellContents.Inactive.Wrench;
 
+/**
+ * A Class for generating a board object parsed from a json file.
+ */
 public class BoardGenerator implements IBoardGenerator {
-    private static HashMap<String, String> json = new HashMap<>();
-    private static HashMap<Character, Object> codes = new HashMap<>();
     private static HashMap<String, Supplier<ICell>> ICellFactory = new HashMap<>();
-    private static Board board;
-
 
     public BoardGenerator() {
         fillSuppliers();
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        BoardGenerator bg = new BoardGenerator();
-        board = bg.getBoardFromFile("assets/Boards/emptyBoard.json");
-        System.out.println(board);
-
-    }
-
-    private void addToFactory(String syntaks, Supplier<ICell> supplier) {
-        ICellFactory.put(syntaks, supplier);
-        AbstractMap.SimpleEntry<Integer,String> entry = new AbstractMap.SimpleEntry<>(1,"df");
-    }
-
-    private static ICell createCell(String syntaks) {
-        // alternative/advanced method
-        Supplier<ICell> factory = ICellFactory.get(syntaks);
+    /**
+     * @param syntax the string read from the json file.
+     * @return a object with the specified values in the syntax
+     */
+    private static ICell createCell(String syntax) {
+        Supplier<ICell> factory = ICellFactory.get(syntax);
         if (factory != null) {
             return factory.get();
         } else {
-            System.err.println("createItem: Don't know how to create a '" + syntaks + "'");
+            System.err.println("createItem: Don't know how to create a '" + syntax + "'");
             return null;
         }
     }
 
+    /**
+     * Fills a Factory with supplier of all type of ICells.
+     * A supplier returns a list of all the different permutation of an object.
+     */
     private void fillSuppliers() {
 
         for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : Flag.getSuppliers()) {
-            addToFactory(pair.getKey(), pair.getValue());
+            ICellFactory.put(pair.getKey(), pair.getValue());
         }
 
         for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : FloorTile.getSuppliers()) {
-            addToFactory(pair.getKey(), pair.getValue());
+            ICellFactory.put(pair.getKey(), pair.getValue());
         }
 
         for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : Hole.getSuppliers()) {
-            addToFactory(pair.getKey(), pair.getValue());
+            ICellFactory.put(pair.getKey(), pair.getValue());
         }
 
         for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : CogWheel.getSuppliers()) {
-            addToFactory(pair.getKey(), pair.getValue());
+            ICellFactory.put(pair.getKey(), pair.getValue());
         }
 
         for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : Wall.getSuppliers()) {
-            addToFactory(pair.getKey(), pair.getValue());
+            ICellFactory.put(pair.getKey(), pair.getValue());
         }
 
         for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : Belt.getSuppliers()) {
-            addToFactory(pair.getKey(), pair.getValue());
+            ICellFactory.put(pair.getKey(), pair.getValue());
         }
 
         for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : Laser.getSuppliers()) {
-            addToFactory(pair.getKey(), pair.getValue());
+            ICellFactory.put(pair.getKey(), pair.getValue());
         }
 
         for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : StartPosition.getSuppliers()) {
-            addToFactory(pair.getKey(), pair.getValue());
+            ICellFactory.put(pair.getKey(), pair.getValue());
         }
 
         for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : Pusher.getSuppliers()) {
-            addToFactory(pair.getKey(), pair.getValue());
+            ICellFactory.put(pair.getKey(), pair.getValue());
+        }
+        for (AbstractMap.SimpleEntry<String, Supplier<ICell>> pair : Wrench.getSuppliers()) {
+            ICellFactory.put(pair.getKey(), pair.getValue());
         }
 
     }
 
     @Override
-    public Board getBoardFromFile(String filePath) throws FileNotFoundException {
-        getJson(filePath);
+    public Board getBoardFromFile(String jsonFilePath) throws FileNotFoundException {
 
-        int height = Integer.parseInt(json.get("height"));
-        int width = Integer.parseInt(json.get("width"));
+        HashMap<String, String> startBoard = getJson("assets/Boards/startBoard2.json");
+        TreeSet<ICell>[][] startGrid = fillGrid(startBoard);
+
+        HashMap<String, String> mainBoard = getJson(jsonFilePath);
+        TreeSet<ICell>[][] mainGrid = fillGrid(mainBoard);
+
+        mainGrid = rotate(mainGrid, 1);
+        TreeSet<ICell>[][] finalGrid = combineGrids(startGrid, mainGrid, DIRECTION.SOUTH);
+        finalGrid = rotate(finalGrid, 3);
+
+        return new Board(finalGrid, finalGrid.length, finalGrid[0].length);
+    }
+
+
+    /**
+     * Appends the start grid to the {@param dir} of the grid.
+     *
+     * @param startGrid
+     * @param grid
+     * @param dir
+     * @return
+     */
+    private TreeSet<ICell>[][] combineGrids(TreeSet<ICell>[][] startGrid, TreeSet<ICell>[][] grid, DIRECTION dir) {
+        TreeSet<ICell>[][] finalGrid;
+        switch (dir) {
+            case WEST:
+                TreeSet<ICell>[][] rotatedWithClock = rotate(startGrid, 1);
+                finalGrid = new TreeSet[grid.length][grid[0].length + rotatedWithClock[0].length];
+                for (int i = 0; i < rotatedWithClock.length; i++) {
+                    for (int j = 0; j < rotatedWithClock[0].length; j++) {
+                        finalGrid[i][j] = rotatedWithClock[i][j];
+                    }
+                }
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[0].length; j++) {
+                        finalGrid[i][j + rotatedWithClock[0].length] = grid[i][j];
+                    }
+                }
+                break;
+            case NORTH:
+                finalGrid = new TreeSet[grid.length + startGrid.length][grid[0].length];
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[0].length; j++) {
+                        finalGrid[i][j] = grid[i][j];
+                    }
+                }
+                for (int i = 0; i < startGrid.length; i++) {
+                    for (int j = 0; j < startGrid[0].length; j++) {
+                        finalGrid[i + grid.length][j] = startGrid[i][j];
+                    }
+                }
+                break;
+            case EAST:
+                TreeSet<ICell>[][] rotatedAgainstClock = rotate(startGrid, 3);
+                finalGrid = new TreeSet[grid.length][grid[0].length + rotatedAgainstClock[0].length];
+                for (int i = 0; i < rotatedAgainstClock.length; i++) {
+                    for (int j = 0; j < rotatedAgainstClock[0].length; j++) {
+                        finalGrid[i][j + grid[0].length] = rotatedAgainstClock[i][j];
+                    }
+                }
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[0].length; j++) {
+                        finalGrid[i][j] = grid[i][j];
+                    }
+                }
+                break;
+            default:
+                TreeSet<ICell>[][] flipped = rotate(startGrid, 2);
+                finalGrid = new TreeSet[grid.length + flipped.length][grid[0].length];
+                for (int i = 0; i < flipped.length; i++) {
+                    for (int j = 0; j < flipped[0].length; j++) {
+                        finalGrid[i][j] = flipped[i][j];
+                    }
+                }
+                for (int i = 0; i < grid.length; i++) {
+                    for (int j = 0; j < grid[0].length; j++) {
+                        finalGrid[i + flipped.length][j] = grid[i][j];
+                    }
+                }
+                break;
+        }
+
+        return finalGrid;
+    }
+
+    /**
+     * Rotate a grid 90,180 or 270 degrees clockwise
+     *
+     * @param grid                       an array of arrays.
+     * @param numberOfRotationsClockWise 1 for 90 deg with clock, 2 for 180 deg, 3 for 270 deg
+     * @return
+     */
+    private TreeSet<ICell>[][] rotate(TreeSet<ICell>[][] grid, int numberOfRotationsClockWise) {
+        TreeSet<ICell>[][] rotated;
+        switch (numberOfRotationsClockWise) {
+            case 1:
+                rotated = new TreeSet[grid[0].length][grid.length];
+                for (int width = 0; width < grid[0].length; width++) {
+                    for (int height = 0; height < grid.length; height++) {
+                        rotated[width][height] = grid[grid.length - height - 1][width];
+                    }
+                }
+                return rotated;
+            case 2:
+                rotated = new TreeSet[grid.length][grid[0].length];
+                for (int height = 0; height < grid.length; height++) {
+                    for (int width = 0; width < grid[0].length; width++) {
+                        rotated[height][width] = grid[grid.length - 1 - height][grid[0].length - 1 - width];
+                    }
+                }
+                return rotated;
+            case 3:
+                rotated = new TreeSet[grid[0].length][grid.length];
+                for (int width = 0; width < grid[0].length; width++) {
+                    for (int height = 0; height < grid.length; height++) {
+                        rotated[width][height] = grid[height][grid[0].length - 1 - width];
+                    }
+
+                }
+                return rotated;
+            default:
+                return grid;
+        }
+    }
+
+    /**
+     * Fill the
+     *
+     * @param bJson
+     */
+    private TreeSet<ICell>[][] fillGrid(HashMap<String, String> bJson) {
+        int height = Integer.parseInt(bJson.get("height"));
+        int width = Integer.parseInt(bJson.get("width"));
 
         TreeSet<ICell>[][] grid = new TreeSet[height][width];
-        String[] treeSet = json.get("grid").split(" ");
+        String[] treeSet = bJson.get("grid").split(" ");
 
         int pos = 0;
         for (String layer : treeSet) {
@@ -115,29 +237,26 @@ public class BoardGenerator implements IBoardGenerator {
             for (String cell : cells) {
                 ICell createdCell = createCell(cell);
                 if (createdCell == null) {
-                    throw new IllegalArgumentException("There is a mistake in the format of the file: " + cell );
+                    throw new IllegalArgumentException("There is a mistake in the format of the file: " + cell);
                 } else {
                     tree.add(createdCell);
                 }
             }
-            grid[pos/width][pos%width] = tree;
+            grid[pos / width][pos % width] = tree;
             pos++;
         }
-
-        return new Board(grid, height, width);
+        return grid;
     }
 
-    private static void getJson(String filePath) throws FileNotFoundException {
-
+    /**
+     * Converts the json file to a HashMap data structure.
+     *
+     * @param filePath a relative or absolute path to a json file
+     * @throws FileNotFoundException if the json file is not found.
+     */
+    private static HashMap<String, String> getJson(String filePath) throws FileNotFoundException {
         JsonReader boardReader = new JsonReader(new FileReader(filePath));
-        JsonReader boardFormatReader = new JsonReader(new FileReader("assets/Boards/boardFormat.json"));
         Gson j = new Gson();
-
-        json = j.fromJson(boardReader, HashMap.class);
-        //codes = j.fromJson(boardFormatReader, HashMap.class);
-        
-        //System.out.println(json.get("name"));
-
-
+        return j.fromJson(boardReader, HashMap.class);
     }
 }

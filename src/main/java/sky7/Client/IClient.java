@@ -29,7 +29,7 @@ public interface IClient {
 
     void connect(IHost host, int playerNumber, String boardName);
 
-    void connect(int playerNumber, String boardName);
+    void connect(int playerNumber);
 
     /**
      * A method called by host to give the player program cards
@@ -82,15 +82,6 @@ public interface IClient {
     void placeRobot (int playerNr, int xPos, int yPos);
 
     /**
-     * check if card is of type move or rotate, if move then move robot, else rotate robot
-     * called from host
-     *
-     * @param playerNr id of the current player
-     * @param card the card that should be played
-     */
-    void activateCard (int playerNr, IProgramCard card);
-
-    /**
      * activate the board elements by calling board method
      * called from host
      */
@@ -107,7 +98,17 @@ public interface IClient {
 
     void render(HashMap<Integer,ArrayList<ICard>> cards);
 
-
     void join(String hostName);
 
+    int getNPlayers();
+
+    void updateNPlayers(int nPlayers);
+
+    void setBoardName(String boardName);
+
+    boolean readyToRender();
+
+    void applyDamage(int playerID, int damage);
+
+    void updateBoard(IBoard board);
 }

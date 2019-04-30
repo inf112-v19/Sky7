@@ -40,6 +40,11 @@ public class CogWheel implements IActive {
     }
 
     @Override
+    public boolean isVisible() {
+        return true;
+    }
+
+    @Override
     public int compareTo(ICell other) {
         return Integer.compare(this.drawPriority(), other.drawPriority());
     }
@@ -50,7 +55,7 @@ public class CogWheel implements IActive {
 
     public static List<AbstractMap.SimpleEntry<String, Supplier<ICell>>> getSuppliers() {
         List<AbstractMap.SimpleEntry<String, Supplier<ICell>>> suppliers = new ArrayList<>();
-        suppliers.add(new AbstractMap.SimpleEntry<>("cC", () -> new CogWheel(-1)));
+        suppliers.add(new AbstractMap.SimpleEntry<>("cC", () -> new CogWheel(1)));
         suppliers.add(new AbstractMap.SimpleEntry<>("cA", () -> new CogWheel(-1)));
         return suppliers;
     }
