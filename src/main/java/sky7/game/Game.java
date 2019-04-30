@@ -6,7 +6,6 @@ import sky7.board.IBoard;
 import sky7.board.ICell;
 import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Active.Laser;
-import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Inactive.Flag;
 import sky7.board.cellContents.Inactive.Hole;
@@ -260,19 +259,7 @@ public class Game implements IGame {
     }
 
     private void activatePushers(int phaseNr) {
-        for (int i = 0; i < board.getRobots().length; i++) {
-            for (ICell cell : board.getCell(board.getRobotPos()[i])) {
-                if (cell instanceof Pusher) {
-                    if (((Pusher) cell).doActivate(phaseNr)) {
-                        if (robotCanGo(board.getRobots()[i].getId(), board.getPushers().get(i).getDirection())) {
-                            movePlayer(board.getRobots()[i].getId(), board.getPushers().get(i).getDirection());
-                        }
-                    }
-                }
-            }
-        }
-
-        /*for(int i=0; i<board.getPushers().size(); i++){
+        for(int i=0; i<board.getPushers().size(); i++){
             for(int j=0; j<board.getRobots().length; j++){
                 if(board.getPusherPos().get(i).equals(board.getRobotPos()[j])){
                     if(board.getPushers().get(i).doActivate(phaseNr)){
@@ -282,7 +269,7 @@ public class Game implements IGame {
                     }
                 }
             }
-        }*/
+        }
         render(50);
     }
 
