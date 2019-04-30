@@ -79,6 +79,7 @@ public class HostNetHandler {
             NumberOfPlayers nop = new NumberOfPlayers();
             nop.nPlayers = server.getConnections().length+1;
             server.sendToAllTCP(nop);
+            connection.setKeepAliveTCP(5000);
         }
 
         public void disconnected (Connection connection) {

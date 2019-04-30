@@ -175,8 +175,9 @@ public class Client implements IClient {
 
     @Override
     public void render(HashMap<Integer, ArrayList<ICard>> cards) {
-        game.process(cards);
-        
+        new Thread(() -> {
+            game.process(cards);
+        }).start();
     }
 
     /**

@@ -26,6 +26,7 @@ public class Game implements IGame {
     private IBoard board;
     private List<Integer> destroyedRobots = new ArrayList<>();
     private boolean hosting;
+    private boolean disableDamage = true;
 
     /**
      * The construct for a game engine on host.
@@ -284,6 +285,7 @@ public class Game implements IGame {
     }
 
     private void applyDamage(int playerID, int damage) {
+        if (disableDamage) return;
         if (hosting) {
             host.applyDamage(playerID, damage);
         } else if (client.getPlayer().getPlayerNumber() == playerID) client.applyDamage(playerID, damage);
