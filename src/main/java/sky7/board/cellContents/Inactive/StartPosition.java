@@ -25,7 +25,7 @@ public class StartPosition implements IInactive {
     @Override
     public Texture getTexture() {
         if (texture == null) {
-            texture = new Texture("startposition/"+startNumber+".png");//TODO add start position pictures
+            texture = new Texture("assets/startposition/"+startNumber+".png");//TODO add start position pictures
         }
         return texture;
     }
@@ -53,5 +53,9 @@ public class StartPosition implements IInactive {
             suppliers.add(new AbstractMap.SimpleEntry<>("s" + pos, () -> new StartPosition(pos)));
         }
         return suppliers;
+    }
+
+    public int getNumber() {
+        return startNumber;
     }
 }

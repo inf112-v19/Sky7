@@ -1,0 +1,9 @@
+{
+  "name": "Dizzy Dash",
+  "length": "short",
+  "players": "5-8",
+  "width": "12",
+  "height": "12",
+  "grid": "f f f_wN f f_wN f f f_wN f f_wN f f f bSE0 bWE0 bWE0 bWS0 f f bSE0 bWE0 bWE0 bWS0 f f_wW bSN0 cC f_wS bNS0 cA f bSN0 cC f bNS0 f_wE f bSN0 t1 cC bNS0 f_wW f_lTW1 bSN0 t2 cC bNS0 f f_wW bEN0 bEW0 bEW0 bNW0 f_g1 cA bEN0 bEW0 bEW0 bNW0 f_wE f f f f cA f f f f_lTS1 cA f f f f_g3 cA f_lTN1 f f f cA f f f f f_wW bSE0 bWE0 bWE0 bWS0 cA f bSE0 bWE0 bWE0 bWS0 f_wE f bSN0 cC t2 bNS0 f_lTE1 f_wE bSN0 cC t1 bNS0 f f_wW bSN0 f cC bNS0 f cA bSN0 f_wN cC bNS0 f_wE f bEN0 bEW0 bEW0 bNW0 f f bEN0 bEW0 bEW0 bNW0 f f f f_wS f f_wS f f f_wS f f_wS f_g2 f"
+
+}

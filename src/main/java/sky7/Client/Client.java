@@ -136,7 +136,7 @@ public class Client implements IClient {
     @Override
     public void activateBoardElements() {
         //board.moveConveyors();
-        board.rotateCogs();
+        //board.rotateCogs();
 
     }
 

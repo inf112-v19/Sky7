@@ -3,6 +3,9 @@ package sky7.board;
 import com.badlogic.gdx.math.Vector2;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Inactive.Flag;
+import sky7.board.cellContents.Inactive.StartPosition;
+import sky7.board.cellContents.Inactive.Wrench;
 import sky7.board.cellContents.robots.RobotTile;
 
 import java.util.List;
@@ -63,8 +66,6 @@ public interface IBoard {
      */
     void rotateRobot(int currentPlayer, int rotate);
 
-    void rotateCogs();
-
     void moveConveyors();
 
     TreeSet<ICell> getCell(Vector2 a);
@@ -87,4 +88,15 @@ public interface IBoard {
 
     void addCell(ICell cell, Vector2 pos);
 
+    List<Vector2> getStartPositions();
+
+    List<StartPosition> getStartCells();
+
+    List<Flag> getFlags();
+
+    List<Vector2> getFlagPositions();
+
+    List<Wrench> getWrenches();
+
+    List<Vector2> getWrenchPositions();
 }
