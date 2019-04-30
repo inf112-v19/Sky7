@@ -85,4 +85,6 @@ public interface IPlayer {
     CharSequence getLifeToken();
 
     int getNLocked();
+
+	void resetRegistry();
 }

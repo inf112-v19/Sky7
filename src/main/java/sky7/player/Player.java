@@ -77,6 +77,10 @@ public class Player implements IPlayer {
             }
         }
     }
+    @Override
+    public void resetRegistry() {
+        registry.clear();
+    }
 
     @Override
     public ArrayList<ICard> getHand() {
