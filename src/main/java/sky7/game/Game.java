@@ -26,7 +26,7 @@ public class Game implements IGame {
     private IBoard board;
     private List<Integer> destroyedRobots = new ArrayList<>();
     private boolean hosting;
-    private boolean disableDamage = true;
+    private boolean disableDamage = false;
 
     /**
      * The construct for a game engine on host.
