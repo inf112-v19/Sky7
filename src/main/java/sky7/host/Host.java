@@ -1,101 +1,167 @@
 package sky7.host;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
+import com.badlogic.gdx.math.Vector2;
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
+import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.card.ICard;
 import sky7.card.IDeck;
-import sky7.card.ProgramCard;
 import sky7.card.ProgramDeck;
-import sky7.game.Client;
-import sky7.game.IClient;
+import sky7.Client.IClient;
+import sky7.game.Game;
 
 /**
- * A Class that
+ * A Class that hosts a roboRally game.
  */
 public class Host implements IHost {
 
+
     // FIELD VARIABLES --------------
-    private static final int FAZES_PER_ROUND = 5;
-    private static int MAX_NR_OF_PLAYERS = 8;
-    private String boardName = "assets/Boards/mvp1Board.json";
-    private IClient[] players;
-    private int nPlayers = 0, readyPlayers = 0;
-    private IDeck pDeck;
-    private IBoard board;
-    private HashMap<Integer, ArrayList<ICard>> playerRegs; // player registries
-    //TreeSet<PlayerCard> queue;
-    private List<Integer> pQueue;
-    private BoardGenerator bg;
-    private boolean terminated = false;
+    private String boardName = "assets/Boards/DizzyDash.json";
+
+    // TODO MAX_N_PLAYERS should be set based on board.
+    private int MAX_N_PLAYERS = 8, nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0, winner = -1;
+    private boolean terminated = false, processingFinished = false;
     private HOST_STATE nextState = HOST_STATE.BEGIN;
     private HOST_STATE currentState = HOST_STATE.BEGIN;
-    private int phaseNr = 0;
-    private int roundNr = 0;
 
+    private HashMap<Integer, ArrayList<ICard>> playersRegistries; // player registries
+    private Queue<Integer> availableDockPos;
+    private boolean[] remotePlayers;
+    private int[] lockedRegSlots, robotDamage;
+    private HostNetHandler netHandler;
+    private BoardGenerator bg;
+    private IClient localClient;
+    private IBoard board;
+    private IDeck pDeck;
+    private Game game;
+
+    // TODO host must know where each player can respawn.(?) Or should that be handled locally in game engine?
 
     // CONSTRUCTORS -------------
+
     /**
      * @param cli a Client i.e. player
      */
     public Host(IClient cli) {
         this();
-        players[0] = cli;
-        nPlayers++;
-        cli.connect(this, 0, boardName);
-        board.placeRobot(0, 5, 5);
+        localClient = cli;
+        localClient.connect(this, nPlayers++, boardName);
     }
 
     public Host() {
-        players = new Client[MAX_NR_OF_PLAYERS];
-        playerRegs = new HashMap<>();
-        pQueue = new LinkedList<>();
-        pDeck = new ProgramDeck();
-        bg = new BoardGenerator();
-//        queue = new TreeSet<>();
+        initializeFieldVariables();
+        shuffleDockPositions(MAX_N_PLAYERS);
+//        new Thread(() -> {
+            try {
+                netHandler = new HostNetHandler((IHost) Host.this);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//        }).start();
         try {
             board = bg.getBoardFromFile(boardName);
+            game = new Game(this, board);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+
+    // PUBLIC METHODS ------------------
+
+    @Override
+    public void Begin() {
+        //TODO check if ready to begin.
+        // Check if clients are ready.
+        // Check other conditions if necessary
+        netHandler.distributeBoard(boardName);
+        placeRobots();
+        run();
+    }
+
+    @Override
+    public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
+        if (registry.size() < 5)
+            throw new IllegalArgumentException("Player " + pN + " attempting to play fewer than 5 cards.");
+        playersRegistries.put(pN, registry);
+        pDeck.returnCards(discard);
+        readyPlayers++;
+        notify();
+    }
+
+    @Override
+    public synchronized void terminate() {
+        terminated = true;
+        currentState = HOST_STATE.TERMINATED;
+        nextState = HOST_STATE.BEGIN;
+        notify();
+    }
+
+    @Override
+    public synchronized void setWinner(int winner) {
+        processingFinished = true;
+        this.winner = winner;
+        notify();
+    }
+
+    @Override
+    public void applyDamage(int playerID, int damage) {
+        robotDamage[playerID] += damage;
+        if (robotDamage[playerID] >= 10) // TODO respawn or lose game
+            if (robotDamage[playerID] > 4) lockedRegSlots[playerID] = robotDamage[playerID] - 4;
+    }
+
+
+
+    // PRIVATE METHODS -----------------
+
+    /**
+     *
+     */
+    private void initializeFieldVariables() {
+        pDeck = new ProgramDeck();
+        bg = new BoardGenerator();
+        playersRegistries = new HashMap<>();
+        remotePlayers = new boolean[8];
+        lockedRegSlots = new int[8];
+        robotDamage = new int[8];
+    }
+
+    /**
+     *
+     */
+    private void placeRobots() {
+        List<StartPosition> startCells = board.getStartCells();
+        List<Vector2> startPositions = board.getStartPositions();
+
+        for (int i = 0; i < nPlayers; i++) {
+            for (int j = 0; j < startCells.size(); j++) {
+                if (startCells.get(j).getNumber() == i + 1) {
+                    // add to hosts board.
+                    board.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+                    // add to localClient
+                    localClient.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+                    // add to remote clients.
+                    netHandler.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+                    break;
+                }
+            }
         }
 
     }
 
     /**
-     * @param players an array of players
-     */
-    public Host(Client[] players) {
-        this();
-        this.players = players;
-    }
-
-
-    // USEFUL METHODS -----------------
-    /**
-     * Begin the game.
-     */
-    public void Begin() {
-        //TODO check if ready to begin.
-        // Check if clients are ready.
-        // Check other conditions if necessary
-        run();
-    }
-
-    @Override
-    public boolean addPlayer(Client player) {
-        players[nPlayers++] = player;
-        player.connect(this, 0, boardName);
-        //TODO add a new player if the board allows it. There is a limit on how many players can play on a board.
-        return false;
-    }
-
-    /**
-     * Runs the game until someone has won, or the game is terminated.
+     * run the game state by state.
      */
     private synchronized void run() {
         while (!terminated) {
@@ -110,44 +176,34 @@ public class Host implements IHost {
                 case WAIT_FOR_PLAYERS:
                     runWAIT_FOR_PLAYERS();
                     break;
-                case PLAY_NEXT_ROUND:
-                    runPLAY_NEXT_ROUND();
+                case DISTRIBUTE_REGISTRY:
+                    runDISTRIBUTE_REGISTRY();
                     break;
-                case PLAY_NEXT_PHASE:
-                    runPLAY_NEXT_PHASE();
+                case BEGIN_PROCESSING:
+                    runBEGIN_PROCESSING();
+                    break;
+                case WAITING_FOR_PROCESSING:
+                    runWAIT_FOR_PROCESSING();
+                    break;
+                case FINISHED:
+                    runFINISHED();
                     break;
             }
         }
     }
 
-    private void runPLAY_NEXT_PHASE() {
-        currentState = HOST_STATE.PLAY_NEXT_PHASE;
-        if (phaseNr < 5) {
-            simulateFaze();
-            nextState = HOST_STATE.PLAY_NEXT_PHASE;
-        } else {
-            phaseNr = 0;
-            nextState = HOST_STATE.PLAY_NEXT_ROUND;
-        }
+
+    /**
+     *
+     */
+    private void runBEGIN() {
+        currentState = HOST_STATE.BEGIN;
+        nextState = HOST_STATE.DEAL_CARDS;
     }
 
-    private void runPLAY_NEXT_ROUND() {
-        if (currentState == HOST_STATE.WAIT_FOR_PLAYERS) {
-            nextState = HOST_STATE.PLAY_NEXT_PHASE;
-        } else if (currentState == HOST_STATE.PLAY_NEXT_PHASE) {
-            nextState = HOST_STATE.DEAL_CARDS;
-        }
-        roundNr++;
-        currentState = HOST_STATE.PLAY_NEXT_ROUND;
-    }
-
-    private void runWAIT_FOR_PLAYERS() {
-        currentState = HOST_STATE.WAIT_FOR_PLAYERS;
-        if (readyPlayers < nPlayers) {
-            waitForPlayersToBeReady();
-        } else nextState = HOST_STATE.PLAY_NEXT_ROUND;
-    }
-
+    /**
+     *
+     */
     private void runDEAL_CARDS() {
         currentState = HOST_STATE.DEAL_CARDS;
         System.out.println("Start of round");
@@ -156,85 +212,84 @@ public class Host implements IHost {
         nextState = HOST_STATE.WAIT_FOR_PLAYERS;
     }
 
-    private void runBEGIN() {
-        currentState = HOST_STATE.BEGIN;
-        // can add beginning menu here
-        nextState = HOST_STATE.DEAL_CARDS;
-    }
-
-    // an older certainly stable run
-    private synchronized void run2() {
-        int currentPlayer = 0;
-
-        while (!terminated) {
-
-            System.out.println("Start of round");
-
-            giveOutCards();
-
+    /**
+     *
+     */
+    private void runWAIT_FOR_PLAYERS() {
+        currentState = HOST_STATE.WAIT_FOR_PLAYERS;
+        if (readyPlayers < nPlayers) {
             waitForPlayersToBeReady();
+        } else nextState = HOST_STATE.DISTRIBUTE_REGISTRY;
+    }
 
-            // 5 phases
-            for (int faze = 0; faze < FAZES_PER_ROUND; faze++) {
-                System.out.println("phase " + faze);
+    /**
+     *
+     */
+    private void runDISTRIBUTE_REGISTRY() {
+        currentState = HOST_STATE.DISTRIBUTE_REGISTRY;
+        netHandler.distributeRegistries(playersRegistries);
+        localClient.render(playersRegistries);
+        nextState = HOST_STATE.BEGIN_PROCESSING;
+    }
 
-                //findPlayerSequence(faze);
+    /**
+     *
+     */
+    private void runBEGIN_PROCESSING() {
+        if (currentState == HOST_STATE.DISTRIBUTE_REGISTRY) {
+            processingFinished = false;
+            game.process(playersRegistries);
+        }
+        currentState = HOST_STATE.BEGIN_PROCESSING;
+        nextState = processingFinished ? (winner != -1 ? HOST_STATE.FINISHED : HOST_STATE.DEAL_CARDS) : HOST_STATE.BEGIN_PROCESSING;
+        returnCardsToDeck();
+    }
 
-                //runPhase(faze);
-
-                pQueue.clear();
-
-                activateBoardElements();
-                activateLasers();
-
-            }
-
-            returnCardsToDeck();
-
-            readyPlayers = 0;
+    /**
+     *
+     */
+    private void runWAIT_FOR_PROCESSING() {
+        try {
+            System.out.println("Host is waiting for gameProcessing to finish");
+            this.wait();
+        } catch (InterruptedException e) {
+            System.out.println("host was interrupted");
         }
     }
 
     /**
-     * Simulates a phase in the game.
+     *
      */
-    private void simulateFaze() {
-        System.out.println("phase " + phaseNr);
-        findPlayerSequence();
-        runPhase();
-        pQueue.clear();
-        activateBoardElements();
-        activateLasers();
-        phaseNr++;
+    private void runFINISHED() {
+        // TODO if there is something to do when game is finished
+        terminated = true;
     }
 
-    /**
-     * Play a single card, meaning simulate moves, from each player.
-     */
-    private void runPhase() {
-        // execute 1 card from each player in order of descending card priority number
-        int currentPlayer;
-        for (int j = 0; j < nPlayers; j++) {
-            currentPlayer = pQueue.get(j);
-            activateCard(currentPlayer, (ProgramCard) playerRegs.get(currentPlayer).get(phaseNr));
-
-            // wait after each step so that players can see what is going on
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
 
     /**
      * returns the cards both chosen and not chosen by a player.
      */
     private void returnCardsToDeck() {
         // return registry cards to deck - need to implement locked cards later
-        for (int j = 0; j < nPlayers; j++) {
-            pDeck.returnCards(playerRegs.remove(j));
+        if (!playersRegistries.isEmpty())
+            returnCardsNotLocked(0);
+        for (int i = 1; i < 8; i++) {
+            if (remotePlayers[i]) returnCardsNotLocked(i);
+        }
+    }
+
+    /**
+     *
+     * @param playerID
+     */
+    private void returnCardsNotLocked(int playerID) {
+        if (lockedRegSlots[playerID] == 0) pDeck.returnCards(playersRegistries.remove(playerID));
+        else {
+            ArrayList<ICard> reg = playersRegistries.remove(playerID);
+            for (int i = 4; i >= lockedRegSlots[playerID]; i--) {
+                reg.remove(i);
+            }
+            pDeck.returnCards(reg);
         }
     }
 
@@ -257,120 +312,78 @@ public class Host implements IHost {
      */
     private void giveOutCards() {
         // give 9 cards to each player
-        for (int i = 0; i < nPlayers; i++) {
-            players[i].chooseCards(pDeck.draw(9));
-            System.out.println("Cards given to player " + i);
-        }
-    }
+        // TODO: handle situation where host should hand out less than 9 cards to damaged robots
+        System.out.println("Handing out " + (9 - robotDamage[0]) + " cards to player " + 0);
+        localClient.chooseCards(pDeck.draw(9 - robotDamage[0]));
 
-    /**
-     * @param currentPlayer
-     * @param card
-     */
-    private void activateCard(int currentPlayer, ProgramCard card) {
-
-        System.out.println("Activating card " + card.GetSpriteRef() + " for player " + currentPlayer);
-
-        // TODO This is not implemented in the clients as of yet.
-        // call all clients to perform the same action on their board
-        for (int i = 0; i < nPlayers; i++) {
-            players[i].activateCard(currentPlayer, card);
-        }
-
-        if (card.moveType()) {
-            board.moveRobot(currentPlayer, card.move());
-        } else {
-            board.rotateRobot(currentPlayer, card.rotate());
-        }
-    }
-
-    /**
-     * For a single phase, queues the players in sequence by the priority of the cards they chose.
-     */
-    private void findPlayerSequence() {
-        //need to compare the leftmost card of each registry and store which order the players will move in (queue)
-        // then pop one from each reg, and repeat
-        for (int i = 0; i < nPlayers; i++) {
-            //TODO
-            ProgramCard thisPlayersCard = (ProgramCard) playerRegs.get(i).get(phaseNr);
-            for (int j = 0; j < pQueue.size(); j++) {
-                ProgramCard thatPlayersCard = (ProgramCard) playerRegs.get(pQueue.get(j)).get(phaseNr);
-                if (thisPlayersCard.priorityN() > thatPlayersCard.priorityN())
-                    pQueue.add(j, i);
+        for (int i = 1; i < remotePlayers.length; i++) {
+            if (remotePlayers[i]) {
+                netHandler.dealCards(i, pDeck.draw(Math.max(0, 9 - robotDamage[i])));
+                System.out.println("Handing out " + (Math.max(0, 9 - robotDamage[i])) + " cards to player " + i);
             }
-            pQueue.add(i);
         }
     }
 
-    /**
-     * Activates elements that belong to the board, like laser, cogwheels.
-     */
-    private void activateBoardElements() {
-        board.moveConveyors();
-        board.rotateCogs();
 
-        for (int i = 0; i < nPlayers; i++) {
-            players[i].activateBoardElements();
+
+    /**
+     * Create a queue of all possible dock positions in a random order.
+     *
+     * @param numberOfDockPositions
+     */
+    private void shuffleDockPositions(int numberOfDockPositions) {
+        availableDockPos = new ArrayDeque<>();
+        List<Integer> temp = new ArrayList<>();
+        for (int i = 0; i < numberOfDockPositions; i++) {
+            temp.add(i);
         }
-        
-        // wait after each step so that players can see what is going on
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Collections.shuffle(temp);
+        availableDockPos.addAll(temp);
     }
 
-    /**
-     * Activates the lasers on the board, not the robot-lasers.
-     */
-    private void activateLasers() {
-        // TODO
+
+    // NET ------------------------
+
+    @Override
+    public int remotePlayerConnected() {
+        for (int i = 1; i < MAX_N_PLAYERS; i++) {
+            if (!remotePlayers[i]) {
+                remotePlayers[i] = true;
+                nRemotePlayers++;
+                nPlayers++;
+                return i;
+            }
+        }
+        throw new IllegalStateException("Could not find legal playerID for newly connected player");
     }
 
     @Override
-    public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
-        if (registry.size() < 5)
-            throw new IllegalArgumentException("Player " + pN + " attempting to play fewer than 5 cards.");
-        playerRegs.put(pN, registry);
-        pDeck.returnCards(discard);
-        readyPlayers++;
-        notify();
+    public void remotePlayerDisconnected(int playerID) {
+        remotePlayers[playerID] = false;
+        nRemotePlayers--;
+        nPlayers--;
     }
+
+    // GETTERS ---------------------
 
     @Override
-    public synchronized void terminate() {
-        terminated = true;
-        currentState = HOST_STATE.TERMINATED;
-        nextState = HOST_STATE.BEGIN;
-        notify();
-    }
-
     public HOST_STATE getCurrentState() {
         return currentState;
     }
 
-    // GETTERS ---------------------
     @Override
-    public int getRoundNr() {
-        return roundNr;
-    }
-
     public IDeck getpDeck() {
         return pDeck;
     }
 
+    @Override
     public IBoard getBoard() {
         return board;
     }
 
-    public IClient[] getPlayers() {
-        return players;
-    }
-
     @Override
     public int getnPlayers() {
-        return nPlayers;
+        return nRemotePlayers;
     }
 
     @Override
@@ -382,4 +395,12 @@ public class Host implements IHost {
     public String getBoardName() {
         return boardName;
     }
+
+    @Override
+    public synchronized void finishedProcessing(IBoard board) {
+        processingFinished = true;
+        this.board = board;
+        notify();
+    }
+
 }

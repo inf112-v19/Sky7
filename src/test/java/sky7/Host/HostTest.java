@@ -4,7 +4,7 @@ package sky7.Host;
 import org.junit.Before;
 import org.junit.Test;
 import sky7.card.ICard;
-import sky7.game.Client;
+import sky7.Client.Client;
 import sky7.host.HOST_STATE;
 import sky7.host.Host;
 
@@ -78,7 +78,7 @@ public class HostTest {
     public void hostShouldDeal9Cards() {
         for (int i = 0; i < 10; i++) {
             host = new Host();
-            host.addPlayer(clients[0]);
+            //host.addPlayer(clients[0]);
             int originalSizeOfDeck = host.getpDeck().nRemainingCards();
 
             runHost();
@@ -94,7 +94,7 @@ public class HostTest {
     // STATE : WAIT_FOR_CLIENTS
     @Test
     public void hostShouldWaitFor1Client() {
-        host.addPlayer(clients[0]);
+        //host.addPlayer(clients[0]);
         runHost();
         assert (host.getCurrentState() == HOST_STATE.WAIT_FOR_PLAYERS);
         host.terminate();
@@ -105,8 +105,8 @@ public class HostTest {
     public void hostShouldWaitFor2Clients() {
         for (int i = 0; i < 10; i++) {
             host = new Host();
-            host.addPlayer(clients[0]);
-            host.addPlayer(clients[1]);
+            //host.addPlayer(clients[0]);
+           // host.addPlayer(clients[1]);
 
             runHost();
 
@@ -128,7 +128,7 @@ public class HostTest {
         for (int i = 1; i < NR_OF_CLIENTS; i++) {
             host = new Host();
             for (int j = 0; j < i; j++) {
-                host.addPlayer(clients[j]);
+                //host.addPlayer(clients[j]);
             }
 
             runHost();
