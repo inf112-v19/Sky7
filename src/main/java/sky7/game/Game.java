@@ -221,9 +221,7 @@ public class Game implements IGame {
             for (ICell aheadCell : board.getCell(ahead)) {
                 if (aheadCell instanceof Wall) return true;
                 if (aheadCell instanceof RobotTile) {
-                    if (client != null) {
-                        client.getPlayer().applyDamage(1);
-                    }
+                    applyDamage(((RobotTile)aheadCell).getId(), 1); // apply 1 damage
                     return true;
                 }
             }
@@ -254,7 +252,6 @@ public class Game implements IGame {
                     board.addCell(laser, pos);
                 }
             }
-
         }
     }
 
@@ -276,7 +273,6 @@ public class Game implements IGame {
     private void applyDamage(int playerID, int damage) {
         if (hosting) {
             host.applyDamage(playerID, damage);
-
         } else if (client.getPlayer().getPlayerNumber() == playerID) client.applyDamage(playerID, damage);
     }
 

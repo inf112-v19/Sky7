@@ -23,16 +23,16 @@ public class Flag implements IInactive {
         if (texture == null) {
             switch (flagNumber) {
                 case 1:
-                    texture = new Texture("flags/Flag1.png");
+                    texture = new Texture("assets/flags/Flag1.png");
                     break;
                 case 2:
-                    texture = new Texture("flags/Flag2.png");
+                    texture = new Texture("assets/flags/Flag2.png");
                     break;
                 case 3:
-                    texture = new Texture("flags/Flag3.png");
+                    texture = new Texture("assets/flags/Flag3.png");
                     break;
                 case 4:
-                    texture = new Texture("flags/Flag4.png");
+                    texture = new Texture("assets/flags/Flag4.png");
                     break;
                 default:
                     throw new IllegalArgumentException("unknown flag number");

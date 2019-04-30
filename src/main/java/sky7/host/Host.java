@@ -27,6 +27,7 @@ public class Host implements IHost {
 
     // FIELD VARIABLES --------------
     private String boardName = "assets/Boards/DizzyDash.json";
+
     // TODO MAX_N_PLAYERS should be set based on board.
     private int MAX_N_PLAYERS = 8, nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0, winner = -1;
     private boolean terminated = false, processingFinished = false;
@@ -60,13 +61,13 @@ public class Host implements IHost {
     public Host() {
         initializeFieldVariables();
         shuffleDockPositions(MAX_N_PLAYERS);
-        new Thread(() -> {
+//        new Thread(() -> {
             try {
                 netHandler = new HostNetHandler((IHost) Host.this);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }).start();
+//        }).start();
         try {
             board = bg.getBoardFromFile(boardName);
             game = new Game(this, board);

@@ -23,8 +23,8 @@ public class Wrench implements IInactive {
     public Texture getTexture() {
         if(texture == null){
             switch (type){
-                case 1: texture = new Texture("wrench/repair1.png"); break;
-                case 2: texture = new Texture("wrench/repair2.png"); break;
+                case 1: texture = new Texture("assets/wrench/repair1.png"); break;
+                case 2: texture = new Texture("assets/wrench/repair2.png"); break;
                 default: throw new IllegalStateException("unknown wrench type");
             }
         }
