@@ -7,6 +7,7 @@ import sky7.board.IBoard;
 import sky7.board.ICell;
 import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Active.Laser;
+import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Inactive.Flag;
 import sky7.board.cellContents.Inactive.Hole;
@@ -57,6 +58,7 @@ public class Game implements IGame {
         destroyedRobots = new ArrayList<>();
         Queue<Queue<Event>> allPhases = findPlayerSequence(playerRegistrys);
         int count = 0;
+        int phaseNr =1;
         for (Queue<Event> phase : allPhases) {
             System.out.println("phase: " + count++);
             for (Event action : phase) {
@@ -64,13 +66,14 @@ public class Game implements IGame {
                     tryToMove(action);
                 expressConveyor();
                 normalAndExpressConveyor();
-                activatePushers();
+                activatePushers(phaseNr);
                 activateCogwheels();
                 activateLasers();
                 placeBackup();
                 flags();
                 if (foundWinner()) break;
             }
+            phaseNr++;
         }
         //after 5th phaze
         repairRobotsOnRepairSite();
@@ -165,7 +168,6 @@ public class Game implements IGame {
         render(20);
 
         List<List<?>> next = moveLaserHeads(heads, positions);
-
         fireLasers(next.get(0), next.get(1));
 
         hide(heads, positions);
@@ -189,12 +191,12 @@ public class Game implements IGame {
                     Laser laser = (Laser) cell;
                     nextHeads.add(new Laser(false, laser.getDirection(), laser.nrOfLasers()));
                     nextHeadPositions.add(board.getDestination(position, laser.getDirection(), 1));
-                } else if (cell instanceof RobotTile) {
                     RobotTile robot = (RobotTile) cell;
+                } else if (cell instanceof RobotTile) {
                     // TODO modifity the number of lasers for a robot when implemented.
                     nextHeads.add(new Laser(false, robot.getOrientation(), 1));
-                    nextHeadPositions.add(board.getDestination(position, robot.getOrientation(), 1));
                 }
+                    nextHeadPositions.add(board.getDestination(position, robot.getOrientation(), 1));
 
             }
         }
@@ -217,8 +219,8 @@ public class Game implements IGame {
         }
         if (ahead == null || !board.containsPosition(ahead)) {
             return true;
-        } else {
             for (ICell aheadCell : board.getCell(ahead)) {
+        } else {
                 if (aheadCell instanceof Wall) return true;
                 if (aheadCell instanceof RobotTile) {
                     applyDamage(((RobotTile)aheadCell).getId(), 1); // apply 1 damage
@@ -228,8 +230,8 @@ public class Game implements IGame {
         }
         return false;
     }
-
     private void hide(List<?> lasers, List<?> laserPos) {
+
         // hide all lasers in the list.
         for (int i = 0; i < laserPos.size(); i++) {
             Vector2 pos = (Vector2) laserPos.get(i);
@@ -238,15 +240,15 @@ public class Game implements IGame {
                 board.removeCell(cell, pos);
             }
         }
-    }
 
+    }
     private void show(List<?> lasers, List<?> laserPos) {
         // show all lasers in the list.
         for (int i = 0; i < lasers.size(); i++) {
             Object cell = lasers.get(i);
             if (cell instanceof Laser) {
-                Laser laser = (Laser) cell;
 
+                Laser laser = (Laser) cell;
                 if (!laser.isStartPosition()) {
                     Vector2 pos = (Vector2) laserPos.get(i);
                     board.addCell(laser, pos);
@@ -255,9 +257,31 @@ public class Game implements IGame {
         }
     }
 
-    private void activatePushers() {
-        //TODO
-        render(50);
+    private void activatePushers(int phaseNr) {
+        for (int i = 0; i < board.getRobots().length; i++) {
+            for (ICell cell : board.getCell(board.getRobotPos()[i])) {
+                if(cell instanceof Pusher){
+                    if(((Pusher) cell).doActivate(phaseNr)){
+                        if(robotCanGo(board.getRobots()[i].getId(), board.getPushers().get(i).getDirection())){
+                            movePlayer(board.getRobots()[i].getId(), board.getPushers().get(i).getDirection());
+                        }
+                    }
+                }
+            }
+        }
+        /*
+        for(int i=0; i<board.getPushers().size(); i++){
+            for(int j=0; j<board.getRobots().length; j++){
+                if(board.getPusherPos().get(i).equals(board.getRobotPos()[j])){
+                    if(board.getPushers().get(i).doActivate(phaseNr)){
+                        if(robotCanGo(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection())){
+                            movePlayer(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection());
+                        }
+                    }
+                }
+            }
+        }*/
+        render();
     }
 
     private void normalAndExpressConveyor() {
@@ -342,9 +366,10 @@ public class Game implements IGame {
         board.rotateRobot(action.player, action.card.rotate());
     }
 
-    private boolean canGo(Integer id, DIRECTION dir) {
 
-        Vector2 here = board.getRobotPos()[id];
+    private boolean robotCanGo(Integer playerId, DIRECTION dir) {
+
+        Vector2 here = board.getRobotPos()[playerId];
 
         if (facingWall(here, dir)) return false;
 
@@ -390,6 +415,7 @@ public class Game implements IGame {
                     return true;
                 }
             }
+        }
         return false;
     }
 

@@ -1,19 +1,19 @@
 package sky7.board;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TreeSet;
-
 import com.badlogic.gdx.math.Vector2;
-
-import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Active.IConveyorBelt;
 import sky7.board.cellContents.Inactive.*;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Active.Pusher;
+import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Inactive.Flag;
+import sky7.board.cellContents.Inactive.FloorTile;
+import sky7.board.cellContents.Inactive.Hole;
+import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
+
+import java.util.*;
 
 public class Board implements IBoard {
     private TreeSet<ICell>[][] grid;
@@ -38,7 +38,6 @@ public class Board implements IBoard {
     private List<Vector2> flagPositions;
     private List<Wrench> wrenches;
     private List<Vector2> wrenchPositions;
-
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
@@ -84,10 +83,11 @@ public class Board implements IBoard {
         this.pusherPos = new ArrayList<>();
         this.startPositions = new ArrayList<>();
         this.startCells = new ArrayList<>();
-        this.flagPositions = new ArrayList<>();
         this.flags = new ArrayList<>();
+        this.flagPositions = new ArrayList<>();
         this.wrenchPositions = new ArrayList<>();
         this.wrenches = new ArrayList<>();
+
 
         // find and store locations of cogwheels, conveyor belts
         for (int i = 0; i < grid.length; i++) {
@@ -410,6 +410,49 @@ public class Board implements IBoard {
     public void moveConveyors() {
         // TODO Auto-generated method stub
     }
+    @Override
+    public List<Vector2> getPusherPos(){
+        return pusherPos;
+    }
+    @Override
+    public List<Pusher> getPushers(){
+        return pushers;
+    }
+
+
+
+/*
+    private boolean canPusherPush(Vector2 pos, DIRECTION dirToPush) {
+        if(wallInCurrentTile(pos,dirToPush)){
+            return false;
+        }
+        Vector2 newPos = getDestination(pos, dirToPush, 1);
+
+        if(!containsPosition(newPos)){//if the pusher push to outside of the board
+            return true;
+        }
+        if(wallInCurrentTileMadeByMaren(pos,dirToPush)){
+            return false;
+        }
+
+        return true;
+   //TODO hva om to roboter vil til samme felt samtidig?
+
+    }
+
+   /* @Override
+    public Map<Integer, Flag> robotVisitFlag(){
+        Map<Integer,Flag> robotWhoVisitedFlag = new HashMap<>();
+        for(int i=0; i<flags.size(); i++){
+            for(int j=0; j<robots.length; j++){
+                if(flagsPos.get(i).equals(robotPos[j])){
+                    int idOfRobot = robots[j].getId();
+                    robotWhoVisitedFlag.put(idOfRobot,flags.get(i));
+                }
+            }
+        }
+        return robotWhoVisitedFlag;
+    }*/
 
     @Override
     public TreeSet<ICell> getCell(Vector2 a) {
@@ -420,4 +463,14 @@ public class Board implements IBoard {
     public RobotTile[] getRobots() {
         return robots;
     }
+  /*  private boolean wallInCurrentTileMadeByMaren(Vector2 robotPos, DIRECTION dir) {
+        for (ICell item : grid[(int) robotPos.x][(int) robotPos.y]) {
+            if (item instanceof Wall) {
+                return (((Wall) item).getDirection() == dir.reverse());
+            }
+        }
+        return false;
+    }*/
+
+
 }

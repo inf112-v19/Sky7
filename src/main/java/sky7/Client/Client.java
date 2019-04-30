@@ -3,11 +3,13 @@ package sky7.Client;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.HashMap;
 
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
+import sky7.board.cellContents.Inactive.Flag;
 import sky7.card.ICard;
 import sky7.card.IProgramCard;
 import sky7.game.Game;
@@ -22,6 +24,7 @@ public class Client implements IClient {
     private IPlayer player;
     private STATE state;
     private String boardName;
+    private HashSet<Integer> flagVisited;
     private Game game;
     private boolean localClient, readyToRender = false; // True if this user is also running Host, false if remotely connected to Host.
     private ClientNetHandler netHandler;
@@ -32,6 +35,7 @@ public class Client implements IClient {
         //board = new Board(10,8);
         this.player = new Player();
         state = STATE.LOADING;
+        this.flagVisited = new HashSet<>();
         localClient = true;
     }
 
@@ -144,6 +148,24 @@ public class Client implements IClient {
     public void activateLasers() {
         //TODO should call board.activateLasers
 
+
+    }
+    public void setFlagVisited(Flag visitedFlag){
+        int flagNumber = visitedFlag.getFlagNumber();
+        boolean canVisit= true;
+        //check if the player has visited every previous flag
+        for(int i=1; i<flagNumber; i++){
+            if(!hasVisitedFlag(i)){
+                canVisit = false;
+            }
+        }
+        if(canVisit){//if the player has visited every previous
+            this.flagVisited.add(flagNumber);
+        }
+    }
+
+    public boolean hasVisitedFlag(int flag){
+        return this.flagVisited.contains(flag);
     }
 
     @Override

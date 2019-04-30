@@ -14,11 +14,9 @@ public class StartPosition implements IInactive {
     private int startNumber;
     private static final int PRIORITY = 3;
     private Texture texture;
-    private DIRECTION direction;
 
     public StartPosition(int startNumber) {
         this.startNumber = startNumber;
-
     }
 
 
