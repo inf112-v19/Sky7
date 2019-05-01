@@ -79,7 +79,7 @@ public class Game implements IGame {
             
             // E. Touch Checkpoints
             placeBackup();
-            flags();
+            if (hosting) flags();
             phaseNr++;
         }
         //after 5th phase
@@ -106,8 +106,18 @@ public class Game implements IGame {
     }
 
     private void flags() {
-        // check winning condition.
-        //TODO
+        
+        RobotTile[] robots = board.getRobots();
+        for (int i = 0; i < robots.length; i++) {
+            if (robots[i] != null)
+                for (ICell cell : board.getCell(board.getRobotPos()[i])) {
+                    if (cell instanceof Flag) {
+                        System.out.println("Robot " + robots[i].getId() + " visited flag " + ((Flag)cell).getFlagNumber());
+                        host.robotVisitedFlag(robots[i].getId(), ((Flag)cell).getFlagNumber());
+                        break;
+                    }
+                }
+        }
 
         render(50);
     }

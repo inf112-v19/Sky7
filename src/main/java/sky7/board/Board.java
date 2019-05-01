@@ -89,7 +89,7 @@ public class Board implements IBoard {
         this.wrenches = new ArrayList<>();
 
 
-        // find and store locations of cogwheels, conveyor belts
+        // find and store locations of interactive tiles
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 for (ICell item : grid[i][j]) {

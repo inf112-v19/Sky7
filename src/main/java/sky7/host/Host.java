@@ -30,6 +30,7 @@ public class Host implements IHost {
 
     // TODO MAX_N_PLAYERS should be set based on board.
     private int MAX_N_PLAYERS = 8, nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0, winner = -1;
+    private int nFlagsOnBoard = 4; // TODO should be set based on loaded board
     private boolean terminated = false, processingFinished = false;
     private HOST_STATE nextState = HOST_STATE.BEGIN;
     private HOST_STATE currentState = HOST_STATE.BEGIN;
@@ -38,6 +39,7 @@ public class Host implements IHost {
     private Queue<Integer> availableDockPos;
     private boolean[] remotePlayers;
     private int[] lockedRegSlots, robotDamage;
+    private int[] visitedFlags = new int[8];
     private HostNetHandler netHandler;
     private BoardGenerator bg;
     private IClient localClient;
@@ -74,6 +76,8 @@ public class Host implements IHost {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        
+        nFlagsOnBoard = board.getFlags().size();
     }
 
 
@@ -403,4 +407,13 @@ public class Host implements IHost {
         notify();
     }
 
+    @Override
+    public void robotVisitedFlag(int playerID, int flagNumber) {
+        if (visitedFlags[playerID] == flagNumber-1) visitedFlags[playerID]++;
+        
+        if (visitedFlags[playerID] == nFlagsOnBoard) {
+            System.out.println("Player " + playerID + " has won the game!");
+            // TODO victory stuff(?)
+        }
+    }
 }

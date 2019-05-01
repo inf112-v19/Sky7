@@ -90,4 +90,12 @@ public interface IHost {
      * @param damage
      */
     void applyDamage(int playerID, int damage);
+
+    /**
+     * Informs Host that a robot has visited a flag
+     * 
+     * @param playerID
+     * @param flagNumber
+     */
+    void robotVisitedFlag(int playerID, int flagNumber);
 }
