@@ -60,21 +60,29 @@ public class Game implements IGame {
         int phaseNr = 1;
         for (Queue<Event> phase : allPhases) {
             System.out.println("phase: " + count++);
+            
+            // B. Robots Move
             for (Event action : phase) {
                 if (!destroyedRobots.contains(action.player))
                     tryToMove(action);
-                expressConveyor();
-                normalAndExpressConveyor();
-                activatePushers(phaseNr);
-                activateCogwheels();
-                activateLasers();
-                placeBackup();
-                flags();
                 if (foundWinner()) break;
             }
+            
+            // C. Board Elements Move
+            expressConveyor();
+            normalAndExpressConveyor();
+            activatePushers(phaseNr);
+            activateCogwheels();
+            
+            // D. Lasers Fire
+            activateLasers();
+            
+            // E. Touch Checkpoints
+            placeBackup();
+            flags();
             phaseNr++;
         }
-        //after 5th phaze
+        //after 5th phase
         repairRobotsOnRepairSite();
         cleanUp();
 
