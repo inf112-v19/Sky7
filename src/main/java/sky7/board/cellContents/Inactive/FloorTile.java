@@ -13,7 +13,7 @@ public class FloorTile implements IInactive {
 
     String textureRef = "floor";
     private Texture texture;
-    private static final int PRIORITY = 1;
+    private final int PRIORITY = 1;
 
     public FloorTile(){
         

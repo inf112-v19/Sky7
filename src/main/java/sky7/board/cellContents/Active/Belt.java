@@ -1,15 +1,15 @@
 package sky7.board.cellContents.Active;
 
-import com.badlogic.gdx.files.FileHandle;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Supplier;
+
 import com.badlogic.gdx.graphics.Texture;
+
 import sky7.board.ICell;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.IActive;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
-import java.util.function.Supplier;
 
 public class Belt implements IActive {
     private DIRECTION directionFromAlt = null;
