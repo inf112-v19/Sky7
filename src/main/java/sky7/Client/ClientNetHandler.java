@@ -28,10 +28,11 @@ public class ClientNetHandler {
         
     }
     
-    public void ready(ArrayList<ICard> registry, ArrayList<ICard> discard) {
+    public void ready(ArrayList<ICard> registry, ArrayList<ICard> discard, boolean powerDown) {
         RegistryDiscard rd = new RegistryDiscard();
         rd.registry = registry;
         rd.discard = discard;
+        rd.powerDown = powerDown;
         netClient.sendTCP(rd);
     }
 

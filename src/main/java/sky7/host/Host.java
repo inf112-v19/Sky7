@@ -2,21 +2,19 @@ package sky7.host;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Queue;
 
 import com.badlogic.gdx.math.Vector2;
+
+import sky7.Client.IClient;
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.cellContents.Inactive.StartPosition;
 import sky7.card.ICard;
 import sky7.card.IDeck;
 import sky7.card.ProgramDeck;
-import sky7.Client.IClient;
 import sky7.game.Game;
 
 /**
@@ -36,10 +34,10 @@ public class Host implements IHost {
     private HOST_STATE currentState = HOST_STATE.BEGIN;
 
     private HashMap<Integer, ArrayList<ICard>> playersRegistries; // player registries
-    private Queue<Integer> availableDockPos;
     private boolean[] remotePlayers;
     private int[] lockedRegSlots, robotDamage;
     private int[] visitedFlags = new int[8];
+    private boolean[] powerDown =  new boolean[8];
     private HostNetHandler netHandler;
     private BoardGenerator bg;
     private IClient localClient;
@@ -62,7 +60,6 @@ public class Host implements IHost {
 
     public Host() {
         initializeFieldVariables();
-        shuffleDockPositions(MAX_N_PLAYERS);
         
         try {
             netHandler = new HostNetHandler((IHost) Host.this);
@@ -92,11 +89,12 @@ public class Host implements IHost {
     }
 
     @Override
-    public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard) {
+    public synchronized void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard, boolean powerDown) {
         if (registry.size() < 5)
             throw new IllegalArgumentException("Player " + pN + " attempting to play fewer than 5 cards.");
         playersRegistries.put(pN, registry);
         pDeck.returnCards(discard);
+        if (powerDown) this.powerDown[pN] = true;
         readyPlayers++;
         notify();
     }
@@ -287,6 +285,7 @@ public class Host implements IHost {
      * @param playerID
      */
     private void returnCardsNotLocked(int playerID) {
+        if (!playersRegistries.containsKey(playerID)) return;
         if (lockedRegSlots[playerID] == 0) pDeck.returnCards(playersRegistries.remove(playerID));
         else {
             ArrayList<ICard> reg = playersRegistries.remove(playerID);
@@ -317,34 +316,31 @@ public class Host implements IHost {
     private void giveOutCards() {
         // give 9 cards to each player
         // TODO: handle situation where host should hand out less than 9 cards to damaged robots
-        System.out.println("Handing out " + (9 - robotDamage[0]) + " cards to player " + 0);
-        localClient.chooseCards(pDeck.draw(9 - robotDamage[0]));
+        if (!powerDown[0]) {
+            System.out.println("Handing out " + (9 - robotDamage[0]) + " cards to player " + 0);
+            localClient.chooseCards(pDeck.draw(9 - robotDamage[0]));
+        } else {
+            localClient.chooseCards(new ArrayList<ICard>());
+            readyPlayers++;
+        }
 
         for (int i = 1; i < remotePlayers.length; i++) {
             if (remotePlayers[i]) {
-                netHandler.dealCards(i, pDeck.draw(Math.max(0, 9 - robotDamage[i])));
-                System.out.println("Handing out " + (Math.max(0, 9 - robotDamage[i])) + " cards to player " + i);
+                if (!powerDown[i]) {
+                    netHandler.dealCards(i, pDeck.draw(Math.max(0, 9 - robotDamage[i])));
+                    System.out.println("Handing out " + (Math.max(0, 9 - robotDamage[i])) + " cards to player " + i);
+                } else {
+                    netHandler.dealCards(i, new ArrayList<ICard>());
+                    readyPlayers++;
+                }
             }
         }
-    }
-
-
-
-    /**
-     * Create a queue of all possible dock positions in a random order.
-     *
-     * @param numberOfDockPositions
-     */
-    private void shuffleDockPositions(int numberOfDockPositions) {
-        availableDockPos = new ArrayDeque<>();
-        List<Integer> temp = new ArrayList<>();
-        for (int i = 0; i < numberOfDockPositions; i++) {
-            temp.add(i);
+        
+        for (int i=0; i<8; i++) {
+            if (powerDown[i]) powerDown[i] = false;
         }
-        Collections.shuffle(temp);
-        availableDockPos.addAll(temp);
     }
-
+    
 
     // NET ------------------------
 

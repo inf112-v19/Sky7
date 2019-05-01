@@ -111,4 +111,6 @@ public interface IClient {
     void applyDamage(int playerID, int damage);
 
     void updateBoard(IBoard board);
+
+    void powerDown();
 }

@@ -89,9 +89,11 @@ public class HostNetHandler {
 
         public void received (Connection connection, Object object) {
             if (object instanceof RegistryDiscard) {
+                RegistryDiscard rd = (RegistryDiscard)object;
                 host.ready(connectionToPlayer.get(connection.getID()), 
-                        ((RegistryDiscard)object).registry, 
-                        ((RegistryDiscard)object).discard);
+                        rd.registry, 
+                        rd.discard,
+                        rd.powerDown);
             }
         }
     }

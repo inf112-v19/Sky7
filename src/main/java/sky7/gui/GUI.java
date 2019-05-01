@@ -207,7 +207,7 @@ public class GUI implements ApplicationListener {
             //if powerdown is clicked:
             if (isClicked(powerdown)) {
                 System.out.println("Powering down next round");
-                //TODO: some logic for powering down
+                client.powerDown();
             }
             // if confirm is clicked:
             if (isClicked(confirm)) {
