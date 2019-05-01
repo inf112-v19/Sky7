@@ -48,6 +48,7 @@ public class GUI2 implements ApplicationListener {
 
 	private ArrayList<ICard> hand;
 	private ArrayList<ICard> localregistry = new ArrayList<>();
+	private ArrayList<ICard> registry = new ArrayList<>();
 	TextInput2 listener;
 	BackGround background;
 	BoardPrinter boardprinter;
@@ -210,13 +211,13 @@ public class GUI2 implements ApplicationListener {
 
 	public void showRegistry() {
 		for (ICard currentCards : localregistry) {
-			drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
-			font.draw(batch, currentCards.getPriority(), currentCards.getX() + 42, currentCards.getY() + 93);
-
 			if (currentCards.getY() != scaler) {
 				currentCards.setY(scaler);
 				currentCards.setX((scaler * 5) + yPos);
 				yPos += scaler;
+
+				drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
+				font.draw(batch, currentCards.getPriority(), currentCards.getX() + 42, currentCards.getY() + 93);
 			}
 		}
 	}
@@ -270,11 +271,13 @@ public class GUI2 implements ApplicationListener {
 
 	public void setRegistry() {
 		//check if there actually are 5 chosen cards
+		if (localregistry.size() == 5) {
 			cardsChoosen = true;
 			for (int i = 0; i < localregistry.size(); i++) {
 				client.setCard(localregistry.get(i), i);
 			}
 			client.lockRegistry();
+		}
 	}
 
 	public void reset() {
@@ -285,34 +288,23 @@ public class GUI2 implements ApplicationListener {
 		pointer = client.getPlayer().getNLocked();
 
 		System.out.print("-- Clearing registry\t\t");
-		if (pointer == 5) {
-			client.getPlayer().clearRegistry();
-		} else {
-//			localregistry.clear();
-			localregistry = (ArrayList<ICard>) client.getPlayer().getRegistry().clone();
-		}
+		client.getPlayer().resetRegistry();
 		System.out.println("Cleared registry OK --\nCards given to player:");
-		
+
+		registry = client.getPlayer().getRegistry();
 		hand = client.getHand();
-		
+
+		localregistry.clear();
+
 		for (ICard card : hand) {
 			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t");
 		}
-
-		System.out.println("\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + localregistry.size());
 		
-		leftshift(localregistry);
+		System.out.println("\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + registry.size());
+
 		setHandPos(hand);
 		chooseCards();
 		cardXpos = 0;
-	}
-
-	private void leftshift(ArrayList<ICard> arr) {
-		for (int i = 0; i < arr.size(); i++) {
-			ICard temp = arr.get(i);
-			temp.setX((scaler * 5) + yPos);
-			yPos += scaler;
-		}
 	}
 
 	/**
