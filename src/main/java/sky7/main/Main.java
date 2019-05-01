@@ -8,8 +8,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import sky7.Client.Client;
 import sky7.Client.IClient;
 import sky7.gui.GUI;
-import sky7.gui.GUI2;
-import sky7.host.Host;
+
 
 public class Main {
 
@@ -54,7 +53,7 @@ public class Main {
             cfg.foregroundFPS = 30;
             cfg.backgroundFPS = 30;
 
-            new LwjglApplication(new GUI2(), cfg);
+            new LwjglApplication(new GUI(), cfg);
         }
     }
 }
