@@ -61,13 +61,13 @@ public class Host implements IHost {
     public Host() {
         initializeFieldVariables();
         shuffleDockPositions(MAX_N_PLAYERS);
-//        new Thread(() -> {
-            try {
-                netHandler = new HostNetHandler((IHost) Host.this);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-//        }).start();
+        
+        try {
+            netHandler = new HostNetHandler((IHost) Host.this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
         try {
             board = bg.getBoardFromFile(boardName);
             game = new Game(this, board);
@@ -81,9 +81,7 @@ public class Host implements IHost {
 
     @Override
     public void Begin() {
-        //TODO check if ready to begin.
-        // Check if clients are ready.
-        // Check other conditions if necessary
+        // TODO Check other conditions if necessary
         netHandler.distributeBoard(boardName);
         placeRobots();
         run();
@@ -188,6 +186,8 @@ public class Host implements IHost {
                 case FINISHED:
                     runFINISHED();
                     break;
+                default:
+                    throw new IllegalStateException("Host could not find next state.");
             }
         }
     }
