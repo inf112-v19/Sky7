@@ -53,12 +53,13 @@ public class Game implements IGame {
 
 
     @Override
-    public void process(HashMap<Integer, ArrayList<ICard>> playerRegistrys) {
+    public void process(HashMap<Integer, ArrayList<ICard>> playerRegistrys, boolean[] powerDown) {
         destroyedRobots = new ArrayList<>();
         Queue<Queue<Event>> allPhases = findPlayerSequence(playerRegistrys);
         int count = 0;
         int phaseNr = 1;
         for (Queue<Event> phase : allPhases) {
+            
             System.out.println("phase: " + count++);
             
             // B. Robots Move
@@ -84,15 +85,19 @@ public class Game implements IGame {
         }
         //after 5th phase
         repairRobotsOnRepairSite();
-        cleanUp();
+        System.out.println("Robots in Power Down state are repairing.");
+        powerDownRepair(powerDown);
 
         if (hosting) {
             host.finishedProcessing(board);
         } else client.finishedProcessing(board);
     }
 
-    private void cleanUp() {
-        // TODO this should be done differently
+    private void powerDownRepair(boolean[] powerDown) {
+        if (hosting) 
+            host.powerDownRepair(powerDown);
+        else 
+            client.powerDownRepair(powerDown);
     }
 
     private boolean foundWinner() {
@@ -304,9 +309,8 @@ public class Game implements IGame {
 
     private void applyDamage(int playerID, int damage) {
         if (disableDamage) return;
-        if (hosting) {
-            host.applyDamage(playerID, damage);
-        } else if (client.getPlayer().getPlayerNumber() == playerID) client.applyDamage(playerID, damage);
+        if (hosting) host.applyDamage(playerID, damage);
+        else client.applyDamage(playerID, damage);
     }
 
     /**

@@ -7,7 +7,7 @@ import java.util.HashMap;
 
 public interface IGame {
 
-    void process(HashMap<Integer,ArrayList<ICard>> cards);
+    void process(HashMap<Integer,ArrayList<ICard>> cards, boolean[] powerDown);
 
     void render(int milliSec);
 

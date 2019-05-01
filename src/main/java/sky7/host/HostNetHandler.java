@@ -45,9 +45,10 @@ public class HostNetHandler {
         server.sendToTCP(playerToConnection.get(playerID), h);
     }
     
-    public void distributeRegistries(HashMap<Integer, ArrayList<ICard>> registries) {
+    public void distributeRegistries(HashMap<Integer, ArrayList<ICard>> registries, boolean[] powerDown) {
         ProcessRound pr = new ProcessRound();
         pr.registries = registries;
+        pr.powerDown = powerDown;
         server.sendToAllTCP(pr);
     }
     

@@ -50,6 +50,9 @@ public class Player implements IPlayer {
     @Override
     public void updateDamage(int totalDamage) {
         damage = Math.max(0, totalDamage);
+        if (damage > 4) {
+            nLocked = damage-4;
+        } else nLocked = 0;
     }
 
     @Override

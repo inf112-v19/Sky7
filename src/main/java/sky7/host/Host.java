@@ -111,7 +111,7 @@ public class Host implements IHost {
     public synchronized void setWinner(int winner) {
         processingFinished = true;
         this.winner = winner;
-        notify();
+        notifyAll();
     }
 
     @Override
@@ -120,7 +120,6 @@ public class Host implements IHost {
         if (robotDamage[playerID] >= 10) // TODO respawn or lose game
             if (robotDamage[playerID] > 4) lockedRegSlots[playerID] = robotDamage[playerID] - 4;
     }
-
 
 
     // PRIVATE METHODS -----------------
@@ -229,8 +228,8 @@ public class Host implements IHost {
      */
     private void runDISTRIBUTE_REGISTRY() {
         currentState = HOST_STATE.DISTRIBUTE_REGISTRY;
-        netHandler.distributeRegistries(playersRegistries);
-        localClient.render(playersRegistries);
+        netHandler.distributeRegistries(playersRegistries, powerDown);
+        localClient.render(playersRegistries, powerDown);
         nextState = HOST_STATE.BEGIN_PROCESSING;
     }
 
@@ -240,7 +239,7 @@ public class Host implements IHost {
     private void runBEGIN_PROCESSING() {
         if (currentState == HOST_STATE.DISTRIBUTE_REGISTRY) {
             processingFinished = false;
-            game.process(playersRegistries);
+            game.process(playersRegistries, powerDown);
         }
         currentState = HOST_STATE.BEGIN_PROCESSING;
         nextState = processingFinished ? (winner != -1 ? HOST_STATE.FINISHED : HOST_STATE.DEAL_CARDS) : HOST_STATE.BEGIN_PROCESSING;
@@ -410,6 +409,16 @@ public class Host implements IHost {
         if (visitedFlags[playerID] == nFlagsOnBoard) {
             System.out.println("Player " + playerID + " has won the game!");
             // TODO victory stuff(?)
+        }
+    }
+
+    @Override
+    public void powerDownRepair(boolean[] currentPD) {
+        for (int i=0; i<MAX_N_PLAYERS; i++) {
+            if (currentPD[i]) {
+                robotDamage[i] = 0;
+                lockedRegSlots[i] = 0;
+            }
         }
     }
 }

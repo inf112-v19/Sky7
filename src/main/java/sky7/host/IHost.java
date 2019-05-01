@@ -99,4 +99,9 @@ public interface IHost {
      * @param flagNumber
      */
     void robotVisitedFlag(int playerID, int flagNumber);
+
+    /**
+     *  Call the Host to repair the robots in power down state
+     */
+    void powerDownRepair(boolean [] currentPD);
 }

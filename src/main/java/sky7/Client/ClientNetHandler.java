@@ -45,7 +45,8 @@ public class ClientNetHandler {
                 client.connect(((ClientConnectionAccepted)object).playerID);
                 
             } else if (object instanceof ProcessRound) {
-                client.render(((ProcessRound)object).registries);
+                client.render(((ProcessRound)object).registries,
+                        ((ProcessRound)object).powerDown);
                 
             } else if (object instanceof PlaceRobot) {
                 PlaceRobot pr = (PlaceRobot)object;
@@ -59,7 +60,6 @@ public class ClientNetHandler {
                 try {
                     client.generateBoard();
                 } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
