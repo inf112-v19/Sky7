@@ -14,7 +14,7 @@ public class Pusher implements IActive {
     private final DIRECTION direction;
     private final boolean oddPhased;
     private Texture texture;
-    private final int PRIORITY = 6;
+    private final int PRIORITY = 3;
 
     public Pusher(DIRECTION direction, boolean oddPhased) {
         this.direction = direction;

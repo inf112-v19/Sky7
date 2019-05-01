@@ -13,34 +13,55 @@ import java.util.function.Supplier;
 public class Wall implements IInactive {
     private DIRECTION direction;
     private Texture texture;
-    private final int PRIORITY = 7;
+    private int PRIORITY;
 
     public Wall(DIRECTION direction) {
         this.direction = direction;
+        
+        switch (direction) {
+            case NORTH:
+                PRIORITY = 6;
+                break;
+                
+            case EAST:
+                PRIORITY = 7;
+                break;
+    
+            case SOUTH:
+                PRIORITY = 8;
+                break;
+                
+            case WEST:
+                PRIORITY = 9;
+                break;
+    
+            default:
+                throw new IllegalStateException("The direction arguement of the wall is not in a valid state");
+        }
     }
 
     @Override
     public Texture getTexture() {
         if (texture == null) {
             switch (direction) {
-                case EAST:
-                    texture = new Texture("assets/wall/WallE.png");
-                    break;
-
                 case NORTH:
                     texture = new Texture("assets/wall/WallN.png");
                     break;
-
-                case WEST:
-                    texture = new Texture("assets/wall/WallW.png");
+                    
+                case EAST:
+                    texture = new Texture("assets/wall/WallE.png");
                     break;
 
                 case SOUTH:
                     texture = new Texture("assets/wall/WallS.png");
                     break;
+                    
+                case WEST:
+                    texture = new Texture("assets/wall/WallW.png");
+                    break;
 
                 default:
-                    throw new IllegalStateException("The directoion arguement of the wall is not in a valid state");
+                    throw new IllegalStateException("The direction arguement of the wall is not in a valid state");
             }
         }
         return texture;

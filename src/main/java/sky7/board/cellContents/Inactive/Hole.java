@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class Hole implements IInactive{
-    private static final int PRIORITY = 1;
+    private static final int PRIORITY = 2;
     private Texture texture;
 
     public Hole(){

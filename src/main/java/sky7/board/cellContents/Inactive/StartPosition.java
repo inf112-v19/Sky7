@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 
 public class StartPosition implements IInactive {
     private int startNumber;
-    private static final int PRIORITY = 3;
+    private static final int PRIORITY = 2;
     private Texture texture;
 
     public StartPosition(int startNumber) {

@@ -17,7 +17,7 @@ public class Belt implements IActive {
     private DIRECTION directionFrom = null;
     private int type;//1(blue belt) is double(two steps), 0(yellow belt) is simple(one step)
     private Texture texture;
-    private static final int PRIORITY = 4;
+    private static final int PRIORITY = 3;
 
     public Belt(DIRECTION directionFrom, DIRECTION directionTo, int type) {
         this.directionFrom = directionFrom;
