@@ -294,12 +294,20 @@ public class GUI2 implements ApplicationListener {
 
 		System.out.println("\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + localregistry.size());
 		
+		resetcardpos(localregistry);
 		if (localregistry.size() != 5) {
 			leftshift(localregistry);
 		}
 		setHandPos(hand);
 		chooseCards();
 		cardXpos = 0;
+	}
+
+	private void resetcardpos(ArrayList<ICard> localregistry) {
+		for (ICard card : localregistry) {
+			card.setX(0);
+			card.setY(0);
+		}
 	}
 
 	private void leftshift(ArrayList<ICard> arr) {
