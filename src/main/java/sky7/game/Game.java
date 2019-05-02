@@ -72,6 +72,7 @@ public class Game implements IGame {
                 if (foundWinner()) break;
             }
             phaseNr++;
+
         }
         //after 5th phaze
         repairRobotsOnRepairSite();
@@ -293,6 +294,7 @@ public class Game implements IGame {
         if (hosting) {
             host.applyDamage(playerID, damage);
         } else if (client.getPlayer().getPlayerNumber() == playerID) client.applyDamage(playerID, damage);
+
 
     }
 

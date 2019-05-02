@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import sky7.board.cellContents.Active.Belt;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Active.CogWheel;
-import sky7.board.cellContents.Active.IConveyorBelt;
 import sky7.board.cellContents.Inactive.*;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Active.Laser;
@@ -102,7 +101,6 @@ public class Board implements IBoard {
                         cogPos.add(new Vector2(i, j));
                         cogs.add((CogWheel) item);
                     }
-
                     if (item instanceof Belt) {
                         System.out.println("CONVO ADDED WITH TYPE: " + ((Belt) item).getType());
                         convPos.add(new Vector2(i, j));
@@ -364,6 +362,7 @@ public class Board implements IBoard {
         Vector2 pos = robotPos[player];
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
+
                 // Checking that the nr is correct
 
                 RobotTile robo = (RobotTile) item;
@@ -578,29 +577,7 @@ public class Board implements IBoard {
         return nrOfRobosGoingToCurrentTile > 1;
     }
 
-    private boolean roboEntriningFromMultipalDir(Vector2 coords, DIRECTION dir, boolean onlyExpress) {
-        if(!containsPosition(coords)){
-            return false;
-        }
-        TreeSet<ICell> cells = getCell(coords);
-        boolean foundBeltLeavingInDir = false;
-        boolean foundRobo = false;
-        for(ICell cell : cells){
-            if(cell instanceof Belt){
-                Belt belt = (Belt) cell;
-                if(onlyExpress && belt.getType() != 0){
-                    continue;
-                }
-                if(belt.getDirectionTo() == dir){
-                    foundBeltLeavingInDir = true;
-                }
-            } else if(cell instanceof RobotTile){
-                foundRobo = true;
-            }
-        }
 
-        return foundBeltLeavingInDir && foundRobo;
-    }
 
 
     /**
@@ -636,6 +613,9 @@ public class Board implements IBoard {
     @Override
     public List<Vector2> getPusherPos(){
         return pusherPos;
+
+
+
     }
     @Override
     public List<Pusher> getPushers(){
@@ -658,6 +638,33 @@ public class Board implements IBoard {
         }
         return robotWhoVisitedFlag;
     }*/
+
+    private boolean roboEntriningFromMultipalDir(Vector2 coords, DIRECTION dir, boolean onlyExpress) {
+        if(!containsPosition(coords)){
+            return false;
+        }
+        TreeSet<ICell> cells = getCell(coords);
+        boolean foundBeltLeavingInDir = false;
+        boolean foundRobo = false;
+        for(ICell cell : cells){
+            if(cell instanceof Belt){
+                Belt belt = (Belt) cell;
+                if(onlyExpress && belt.getType() != 0){
+                    continue;
+                }
+                if(belt.getDirectionTo() == dir){
+                    foundBeltLeavingInDir = true;
+                }
+            } else if(cell instanceof RobotTile){
+                foundRobo = true;
+            }
+        }
+
+        return foundBeltLeavingInDir && foundRobo;
+    }
+
+
+
 
     @Override
     public TreeSet<ICell> getCell(Vector2 a) {

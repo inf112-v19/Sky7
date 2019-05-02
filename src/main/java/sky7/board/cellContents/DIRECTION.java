@@ -1,5 +1,7 @@
 package sky7.board.cellContents;
 
+import com.badlogic.gdx.math.Vector2;
+
 public enum DIRECTION {
     NORTH(0,1),
     SOUTH(0,-1),
@@ -48,8 +50,8 @@ public enum DIRECTION {
                 return 'E';
             default:
                 throw new IllegalArgumentException("The direction you are trying to get symbol from are not one of the standard four");
-        }
 
+        }
     }
 
     /**

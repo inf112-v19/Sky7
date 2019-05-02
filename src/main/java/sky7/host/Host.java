@@ -58,6 +58,7 @@ public class Host implements IHost {
         localClient.connect(this, nPlayers++, boardName);
 
 
+
     }
 
     public Host() {
