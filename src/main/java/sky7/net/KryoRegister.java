@@ -3,6 +3,7 @@ package sky7.net;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryo.Kryo;
 
 import sky7.card.ICard;
@@ -21,6 +22,7 @@ public class KryoRegister {
         kryo.register(PlaceRobot.class);
         kryo.register(NumberOfPlayers.class);
         kryo.register(Begin.class);
+        kryo.register(PlaceRobotAtStart.class);
         
         //other necessary resources
         kryo.register(ICard.class);
@@ -28,5 +30,6 @@ public class KryoRegister {
         kryo.register(ArrayList.class);
         kryo.register(HashMap.class);
         kryo.register(boolean[].class);
+        kryo.register(Vector2.class);
     }
 }

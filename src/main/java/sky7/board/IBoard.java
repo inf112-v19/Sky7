@@ -38,6 +38,8 @@ public interface IBoard {
      */
     int getHeight();
 
+    void placeRobotAtStart(int playerNr, Vector2 startPosition);
+
     /**
      * Place a robot on the board
      * 
@@ -71,7 +73,8 @@ public interface IBoard {
      */
     void rotateRobot(int currentPlayer, int rotate);
 
-    void moveConveyors();
+
+    void moveConveyors(boolean b);
 
     /**
      * return a list of the position of all pushers in this board

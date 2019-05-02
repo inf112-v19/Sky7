@@ -58,45 +58,60 @@ public class Game implements IGame {
         Queue<Queue<Event>> allPhases = findPlayerSequence(playerRegistrys);
         int count = 0;
         int phaseNr = 1;
+
         for (Queue<Event> phase : allPhases) {
-            
+
             System.out.println("phase: " + count++);
-            
+
             // B. Robots Move
             for (Event action : phase) {
                 if (!destroyedRobots.contains(action.player))
                     tryToMove(action);
                 if (foundWinner()) break;
             }
-            
+
             // C. Board Elements Move
             expressConveyor();
             normalAndExpressConveyor();
             activatePushers(phaseNr);
             activateCogwheels();
-            
+
             // D. Lasers Fire
             activateLasers();
-            
+
             // E. Touch Checkpoints
             placeBackup();
             if (hosting) flags();
             phaseNr++;
+
         }
         //after 5th phase
+        respownRobots();
         repairRobotsOnRepairSite();
         System.out.println("Robots in Power Down state are repairing.");
         powerDownRepair(powerDown);
+
+
 
         if (hosting) {
             host.finishedProcessing(board);
         } else client.finishedProcessing(board);
     }
 
+    private void respownRobots() {
+        for (Integer id : destroyedRobots) {
+            RobotTile robot = board.getRobots()[id];
+            robot.setOrientation(DIRECTION.NORTH);
+            board.addCell(robot, robot.getArchiveMarker());
+            board.getRobotPos()[id] = robot.getArchiveMarker();
+        }
+        destroyedRobots.clear();
+    }
+
     private void powerDownRepair(boolean[] powerDown) {
-        if (hosting) 
+        if (hosting)
             host.powerDownRepair(powerDown);
-        else 
+        else
             client.powerDownRepair(powerDown);
     }
 
@@ -111,14 +126,14 @@ public class Game implements IGame {
     }
 
     private void flags() {
-        
+
         RobotTile[] robots = board.getRobots();
         for (int i = 0; i < robots.length; i++) {
             if (robots[i] != null)
                 for (ICell cell : board.getCell(board.getRobotPos()[i])) {
                     if (cell instanceof Flag) {
-                        System.out.println("Robot " + robots[i].getId() + " visited flag " + ((Flag)cell).getFlagNumber());
-                        host.robotVisitedFlag(robots[i].getId(), ((Flag)cell).getFlagNumber());
+                        System.out.println("Robot " + robots[i].getId() + " visited flag " + ((Flag) cell).getFlagNumber());
+                        host.robotVisitedFlag(robots[i].getId(), ((Flag) cell).getFlagNumber());
                         break;
                     }
                 }
@@ -142,12 +157,12 @@ public class Game implements IGame {
 
     private void repairRobotsOnRepairSite() {
         // REPAIR SITES: A robot on a repair site repairs 1 point of damage. A robot on a double tool repair site also draws 1 Option card.
-        for(int i =0; i<board.getWrenches().size(); i++){
-            for(int j=0; j<board.getRobots().length; j++){
-                if(board.getWrenchPositions().get(i).equals(board.getRobotPos()[j])){
-                    if(board.getWrenches().get(i).getType()==1){
+        for (int i = 0; i < board.getWrenches().size(); i++) {
+            for (int j = 0; j < board.getRobots().length; j++) {
+                if (board.getWrenchPositions().get(i).equals(board.getRobotPos()[j])) {
+                    if (board.getWrenches().get(i).getType() == 1) {
                         repairDamage(board.getRobots()[j].getId(), 1);
-                    }else if(board.getWrenches().get(i).getType()==2){
+                    } else if (board.getWrenches().get(i).getType() == 2) {
                         repairDamage(board.getRobots()[j].getId(), 1);
                         //TODO should this draw 1 option card?
                     }
@@ -197,8 +212,8 @@ public class Game implements IGame {
     private void fireLasers(List<?> heads, List<?> positions) {
         //presume that lasers and laserPos are the head positions of the lasers and robots.
         if (heads.isEmpty()) return;
-        show(heads, positions);
 
+        show(heads, positions);
         render(20);
 
         List<List<?>> next = moveLaserHeads(heads, positions);
@@ -243,24 +258,45 @@ public class Game implements IGame {
     private boolean laserStopped(ICell cell, Vector2 pos) {
         // if there is a wall it is edge of the board, then return true;
         // if the is a robot infront, then add damage to the robots health.
+
+
         Vector2 ahead = null;
+        boolean stopped = false;
         if (cell instanceof RobotTile) {
             RobotTile robot = (RobotTile) cell;
             ahead = board.getDestination(pos, robot.getOrientation(), 1);
+
+            if (facingWall(pos, robot.getOrientation())
+                    || facingWall(ahead, robot.getOrientation().reverse())
+                    || !board.containsPosition(ahead)
+                    || isRobotAhead(ahead))
+                stopped = true;
+
         } else if (cell instanceof Laser) {
             Laser laser = (Laser) cell;
             ahead = board.getDestination(pos, laser.getDirection(), 1);
+            // if the current position contains a wall in the direction of the laser then stop laser.
+            // if there is a robot, then do damage on the robot and stop laser
+
+            if (facingWall(pos, laser.getDirection())
+                    || facingWall(ahead, laser.getDirection().reverse())
+                    || !board.containsPosition(ahead)
+                    || isRobotAhead(ahead))
+                stopped = true;
+
         }
         if (ahead == null || !board.containsPosition(ahead)) {
-            return true;
+            stopped = true;
 
-        } else {
-            for (ICell aheadCell : board.getCell(ahead)) {
-                if (aheadCell instanceof Wall) return true;
-                if (aheadCell instanceof RobotTile) {
-                    applyDamage(((RobotTile) aheadCell).getId(), 1); // apply 1 damage
-                    return true;
-                }
+        }
+        return stopped;
+    }
+
+    private boolean isRobotAhead(Vector2 ahead) {
+        for (ICell c : board.getCell(ahead)) {
+            if (c instanceof RobotTile) {
+                applyDamage(((RobotTile) c).getId(), 1); // apply 1 damage
+                return true;
             }
         }
         return false;
@@ -271,10 +307,20 @@ public class Game implements IGame {
         // hide all lasers in the list.
         for (int i = 0; i < laserPos.size(); i++) {
             Vector2 pos = (Vector2) laserPos.get(i);
-            ICell cell = (ICell) lasers.get(i);
-            if (!(cell instanceof RobotTile) && !((Laser) cell).isStartPosition()) {
+            List<ICell> toRemove = new ArrayList<>();
+            for (ICell cell : board.getCell(pos)) {
+                if (cell instanceof Laser && !((Laser) cell).isStartPosition()) {
+                    toRemove.add(cell);
+                }
+            }
+
+            for (ICell cell : toRemove) {
                 board.removeCell(cell, pos);
             }
+            /*ICell cell = (ICell) lasers.get(i);
+            if (!(cell instanceof RobotTile) && !((Laser) cell).isStartPosition()) {
+                board.removeCell(cell, pos);
+            }*/
         }
 
     }
@@ -286,7 +332,10 @@ public class Game implements IGame {
             if (cell instanceof Laser) {
 
                 Laser laser = (Laser) cell;
-                if (!laser.isStartPosition()) {
+                if (laser.isStartPosition()) {
+                    Vector2 pos = (Vector2) laserPos.get(i);
+                    board.addCell(new Laser(false, laser.getDirection(), laser.nrOfLasers()), pos);
+                } else {
                     Vector2 pos = (Vector2) laserPos.get(i);
                     board.addCell(laser, pos);
                 }
@@ -295,11 +344,11 @@ public class Game implements IGame {
     }
 
     private void activatePushers(int phaseNr) {
-        for(int i=0; i<board.getPushers().size(); i++){
-            for(int j=0; j<board.getRobots().length; j++){
-                if(board.getPusherPos().get(i).equals(board.getRobotPos()[j])){
-                    if(board.getPushers().get(i).doActivate(phaseNr)){
-                        if(robotCanGo(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection())){
+        for (int i = 0; i < board.getPushers().size(); i++) {
+            for (int j = 0; j < board.getRobots().length; j++) {
+                if (board.getPusherPos().get(i).equals(board.getRobotPos()[j])) {
+                    if (board.getPushers().get(i).doActivate(phaseNr)) {
+                        if (robotCanGo(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection())) {
                             movePlayer(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection());
                         }
                     }
@@ -310,12 +359,18 @@ public class Game implements IGame {
     }
 
     private void normalAndExpressConveyor() {
-        //TODO
+        System.out.println("Start convos both");
+        board.moveConveyors(false);
+        System.out.println("End convos both");
         render(50);
     }
 
     private void expressConveyor() {
         // TODO check if this robot is on a conveyor belt and there is another robot in front that is also on the convoyer belt
+
+        System.out.println("Start move express convo");
+        board.moveConveyors(true);
+        System.out.println("End move express convo");
         render(50);
     }
 
@@ -327,8 +382,9 @@ public class Game implements IGame {
 
     private void repairDamage(int playerID, int health) {
         if (disableDamage) return;
-        if (hosting) host.repairDamage(playerID,health);
+        if (hosting) host.repairDamage(playerID, health);
         else client.repairDamage(playerID, health);
+
     }
 
     /**
@@ -420,15 +476,18 @@ public class Game implements IGame {
         Vector2 ahead = board.getDestination(from, direction, 1);
 
         // if we are facing a wall, then we cannot move a robot.
-        if (!facingWall(ahead, direction.reverse())) {
-            // check if there is an immovable robot in front
-            for (ICell cell : board.getCell(ahead)) {
-                if (cell instanceof RobotTile) {
-                    return occupiedNextCell(ahead, direction);
+        if (board.containsPosition(ahead)) {
+            if (!facingWall(ahead, direction.reverse())) {
+                // check if there is an immovable robot in front
+
+                for (ICell cell : board.getCell(ahead)) {
+                    if (cell instanceof RobotTile) {
+                        return occupiedNextCell(ahead, direction);
+                    }
                 }
-            }
-            return false;
-        } else return true;
+                return false;
+            } else return true;
+        } else return false;
     }
 
     /**

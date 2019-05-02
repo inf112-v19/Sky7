@@ -97,9 +97,9 @@ public class BoardGenerator implements IBoardGenerator {
         HashMap<String, String> mainBoard = getJson(jsonFilePath);
         TreeSet<ICell>[][] mainGrid = fillGrid(mainBoard);
 
-        mainGrid = rotate(mainGrid, 1);
+        //mainGrid = rotate(mainGrid, 1);
         TreeSet<ICell>[][] finalGrid = combineGrids(startGrid, mainGrid, DIRECTION.SOUTH);
-        finalGrid = rotate(finalGrid, 3);
+        finalGrid = rotate(finalGrid, 1);
 
         return new Board(finalGrid, finalGrid.length, finalGrid[0].length);
     }
@@ -158,16 +158,15 @@ public class BoardGenerator implements IBoardGenerator {
                 }
                 break;
             default:
-                TreeSet<ICell>[][] flipped = rotate(startGrid, 2);
-                finalGrid = new TreeSet[grid.length + flipped.length][grid[0].length];
-                for (int i = 0; i < flipped.length; i++) {
-                    for (int j = 0; j < flipped[0].length; j++) {
-                        finalGrid[i][j] = flipped[i][j];
-                    }
-                }
+                finalGrid = new TreeSet[grid.length + startGrid.length][grid[0].length];
                 for (int i = 0; i < grid.length; i++) {
                     for (int j = 0; j < grid[0].length; j++) {
-                        finalGrid[i + flipped.length][j] = grid[i][j];
+                        finalGrid[i][j] = grid[i][j];
+                    }
+                }
+                for (int i = 0; i < startGrid.length; i++) {
+                    for (int j = 0; j < startGrid[0].length; j++) {
+                        finalGrid[i + grid.length][j] = startGrid[i][j];
                     }
                 }
                 break;

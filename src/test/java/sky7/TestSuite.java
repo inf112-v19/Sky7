@@ -6,6 +6,7 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import sky7.BoardTests.BoardGeneratorTest;
 import sky7.BoardTests.BoardTests;
+import sky7.BoardTests.DrawPriorityTest;
 import sky7.Host.HostTest;
 import sky7.client.ClientTest;
 
@@ -19,7 +20,8 @@ import sky7.client.ClientTest;
     FlagTest.class,
     ICellTest.class,
     ProgramDeckTest.class,
-    HostTest.class
+//    HostTest.class,
+    DrawPriorityTest.class
 })
 
 public class TestSuite {

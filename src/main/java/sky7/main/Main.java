@@ -5,6 +5,7 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 import sky7.gui.GUI;
 
+
 public class Main {
 
     public static void main(String[] args) {
@@ -23,7 +24,8 @@ public class Main {
             cfg.title = "Sky7 Games";
             // TODO Width and Height should adapt to the resolution of a screen.
             cfg.width = 1755;
-            cfg.height = 1536;
+//            cfg.height = 1536;
+            cfg.height = 1200;
             cfg.foregroundFPS = 30;
             cfg.backgroundFPS = 30;
 

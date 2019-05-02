@@ -1,5 +1,6 @@
 package sky7.Client;
 
+import com.badlogic.gdx.math.Vector2;
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
@@ -27,7 +28,7 @@ public class Client implements IClient {
     private HashSet<Integer> flagVisited;
     private Game game;
     private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
-    private boolean readyToRender = false, selfPowerDown = false;
+    private boolean readyToRender = false, selfPowerDown = false, finishedProcessing = true;
     private ClientNetHandler netHandler;
     private int nPlayers;
 
@@ -137,7 +138,6 @@ public class Client implements IClient {
     @Override
     public void placeRobot(int playerNr, int xPos, int yPos) {
         board.placeRobot(playerNr, xPos, yPos);
-
     }
 
     @Override
@@ -173,12 +173,13 @@ public class Client implements IClient {
 
     @Override
     public void finishedProcessing(IBoard board) {
-
+    	finishedProcessing = true;
     }
 
     @Override
     public void render(HashMap<Integer, ArrayList<ICard>> cards, boolean[] powerDown) {
-        new Thread(() -> { game.process(cards, powerDown.clone()); }).start();
+    	finishedProcessing = false;
+    	new Thread(() -> { game.process(cards, powerDown.clone()); }).start();
     }
 
     /**
@@ -244,5 +245,15 @@ public class Client implements IClient {
         for (int i=0; i<8; i++) {
             if (currentPD[i]) robotDamage[i] = 0;
         }
+    }
+    
+    @Override
+    public boolean isFinishedProcessing() {
+    	return finishedProcessing;
+    }
+
+    @Override
+    public void placeRobotAtStart(int playerNr, Vector2 startPosition) {
+        board.placeRobotAtStart(playerNr,startPosition);
     }
 }
