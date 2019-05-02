@@ -237,8 +237,14 @@ public class GUI implements ApplicationListener {
 	public void chooseCards() {
 		// check if the current hand is not the same as the hand in Client
 		if (!hand.equals(client.getHand())) {
-			reset();
+			if (client.finishedProcessing(client.gameBoard()) {
+				reset();
+			}
 		}
+
+
+
+
 		// if GO is not pressed, draw available cards
 		if (!cardsChoosen) {
 			for (ICard card : hand) {
@@ -282,7 +288,7 @@ public class GUI implements ApplicationListener {
 		yPos = 64;
 		cardXpos = 0;
 		pointer = client.getPlayer().getNLocked();
-		
+
 		localregistry = (ArrayList<ICard>) client.getPlayer().getRegistry().clone();
 
 		hand = client.getHand();
@@ -291,7 +297,7 @@ public class GUI implements ApplicationListener {
 		for (ICard card : hand) {
 			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t");
 		}
-		
+
 		//Print out players current registry
 		System.out.println("\n\nCurrent registry: ");
 		for (ICard card : localregistry) {
@@ -299,13 +305,13 @@ public class GUI implements ApplicationListener {
 		}
 
 		System.out.println("\n\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + localregistry.size());
-		
+
 		resetcardpos(localregistry);
-		
+
 		if (localregistry.size() <= 5) {
 			leftshift(localregistry);
 		}
-		
+
 		setHandPos(hand);
 		chooseCards();
 		cardXpos = 0;
