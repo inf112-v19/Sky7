@@ -1,7 +1,6 @@
 package sky7.player;
 
 import sky7.card.ICard;
-import sky7.card.IProgramCard;
 
 import java.util.ArrayList;
 
@@ -15,11 +14,18 @@ public interface IPlayer {
     void applyDamage(int damage);
 
     /**
+     * Add health to players health
+     * @param applyHealth integer representing health
+     */
+    void repairDamage(int applyHealth);
+
+    /*/**
      * Add damage to health with upper MAX_HEALTH. Unlock locked cards as much as health allows.
      *
      * @param damage integer representing damage
      */
-    void repair(int damage);
+    /*void repair(int damage);
+    */
 
     /**
      * update damage with totalDamage

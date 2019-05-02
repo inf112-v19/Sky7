@@ -1,11 +1,10 @@
 package sky7.host;
 
-import java.util.ArrayList;
-
 import sky7.board.IBoard;
 import sky7.card.ICard;
-import sky7.Client.Client;
 import sky7.card.IDeck;
+
+import java.util.ArrayList;
 
 public interface IHost {
 
@@ -76,17 +75,26 @@ public interface IHost {
     void setWinner(int winner);
 
     /**
+     *
+     * @param playerID
+     * @param damage
+     */
+    void repairDamage(int playerID, int damage);
+
+    /**
      * @return playerID nr to be given to the newly connected player
      */
     int remotePlayerConnected();
 
     /**
+     *
      * @param playerID
      */
     void remotePlayerDisconnected(int playerID);
 
 
     /**
+     *
      * @param playerID
      * @param damage
      */
