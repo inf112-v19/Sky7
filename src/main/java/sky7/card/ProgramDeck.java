@@ -34,7 +34,8 @@ public class ProgramDeck implements IDeck {
 
     @Override
     public ArrayList<ICard> draw(int n) {
-        if (n<1) throw new IllegalArgumentException("Cannot draw less than 1 card.");
+    	if(n==1) System.out.println("dead");
+//        if (n<1) throw new IllegalArgumentException("Cannot draw less than 1 card.");
         if (n>72) throw new IllegalArgumentException("Cannot draw more than 72 cards (8 players * 9 cards)");
         if (n>availableCards.size()) throw new IllegalArgumentException("Attempting to draw more cards than available");
         

@@ -21,8 +21,8 @@ public class BoardPrinter {
 
 	// draw the gameboard as a grid of width*height, each square at 128*128 pixels
 	public void showBoard(IClient game) {
-		for (int i = 0; i < width; i++) {
-			for (int j = 0; j < height; j++) {
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
 				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
 					if (cell instanceof RobotTile) {
 						int rotation = findRotation((RobotTile)cell);
