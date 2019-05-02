@@ -4,6 +4,6 @@
   "players": "5-8",
   "width": "12",
   "height": "12",
-  "grid": "f f f f f f f f f f f f f wE f f f f f f f f f f f f f f f f f f f f f f f f f f f f f wE f f f f f f f f f f f f f f f f f f f cA f f f f f f f f f f cC f f f f f f f f f f f f f f f f cA f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f"
+  "grid": "f_g1 f_g2 f_t1 f_g3 f_bNE0 f_g4 f_bNE1 f f_bNW0 f f_bNW1 f f_bSN0 f_bSN1 f f_bSE0 f f_bSE1 f_lTN1 f_bSW0 f f_bSW1 f_bEN0 f f_bEN1 f f_bES0 f f_bES1 f f_bEW0 f f_bEW1 f f_bWN0 f f_bWN1 f f_bWS0 f f_bWS1 f f_bWE0 f_bWE1 f f_bNSE0 f f_bNSE1 f f_bNSW0 f f_bNSW1 f f_bNES0 f f_bNES1 f f_bNEW0 f f_bNEW1 f f_bNWS0 f f_bNWS1 f f_bNWE0 f f_bNWE1 f f_bSEN0 f f_bSEN1 f f_bSEW0 f_bSEW1 f f_bSWN0 f f_bSWN1 f f_bSWE0 f f_bSWE1 f f_bEWN0 f f_bEWN1 f f_bEWS0 f f_bEWS1 f_cA f f f f f f h f f f f f h f f f f h f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f"
 
 }

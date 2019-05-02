@@ -1,21 +1,54 @@
 package sky7.board.cellContents;
 
 public enum DIRECTION {
-    NORTH,
-    SOUTH,
-    EAST,
-    WEST;
+    NORTH(0,1),
+    SOUTH(0,-1),
+    EAST(1,0),
+    WEST(-1,0);
+    private int x;
+    private int y;
 
+    DIRECTION(int x,int y){
+        this.x = x;
+        this.y = y;
+    }
 
-    public DIRECTION inverse(DIRECTION dir){
-        DIRECTION newDir;
-        switch (dir){
-            case NORTH: newDir = SOUTH; break;
-            case WEST: newDir = EAST; break;
-            case SOUTH: newDir = NORTH; break;
-            case EAST: newDir =  WEST; break;
-            default: throw new IllegalArgumentException("The direction you are trying to invers are not one of the standar four");
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public DIRECTION reverse() {
+        switch (this) {
+            case NORTH:
+                return SOUTH;
+            case WEST:
+                return EAST;
+            case SOUTH:
+                return NORTH;
+            case EAST:
+                return WEST;
+            default:
+                throw new IllegalArgumentException("The direction you are trying to invers are not one of the standar four");
         }
-         return newDir;
+    }
+
+    public char symbol() {
+        switch (this) {
+            case NORTH:
+                return 'N';
+            case WEST:
+                return 'W';
+            case SOUTH:
+                return 'S';
+            case EAST:
+                return 'E';
+            default:
+                throw new IllegalArgumentException("The direction you are trying to invers are not one of the standar four");
+        }
+
     }
 }

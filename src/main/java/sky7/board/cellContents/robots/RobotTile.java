@@ -1,8 +1,8 @@
 package sky7.board.cellContents.robots;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import com.badlogic.gdx.math.Vector2;
 import sky7.board.ICell;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.IMoving;
@@ -10,9 +10,10 @@ import sky7.board.cellContents.IMoving;
 public class RobotTile implements IMoving {
     String textureRef = "robot";
     Texture texture;
-    private static final int PRIORITY = 5;
+    private static final int PRIORITY = 11;
     int playerNr;
     DIRECTION dir;
+    private Vector2 archiveMarker;
     
     public RobotTile(int playerNr) {
         this.playerNr = playerNr;
@@ -31,7 +32,12 @@ public class RobotTile implements IMoving {
     public int drawPriority() {
         return PRIORITY;
     }
-    
+
+    @Override
+    public boolean isVisible() {
+        return true;
+    }
+
     @Override
     public int compareTo(ICell other) {
         return Integer.compare(this.drawPriority(), other.drawPriority());
@@ -84,6 +90,18 @@ public class RobotTile implements IMoving {
     
     @Override
     public void rotate180() {
-        dir = dir.inverse(dir);
+        dir = dir.reverse();
+    }
+
+    public int getId() {
+        return playerNr;
+    }
+
+    public Vector2 getArchiveMarker() {
+        return archiveMarker;
+    }
+
+    public void setArchiveMarker(Vector2 archiveMarker) {
+        this.archiveMarker = archiveMarker;
     }
 }

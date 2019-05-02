@@ -10,12 +10,11 @@ public class Player implements IPlayer {
 
     public static final int MAX_CARDS_IN_REGISTRY = 5;
     private static final int MAX_CARDS_IN_DECK = 9;
-    private int health = 10;
+    private int damage = 0;
     private int lifeTokens = 3;
     private ArrayList<ICard> hand;
     private ArrayList<ICard> registry;
     private Set<ICard> discard;
-    private boolean[] locked = new boolean[5];
     private int nLocked = 0;
     private int playerNumber = 1;
 
@@ -27,47 +26,37 @@ public class Player implements IPlayer {
     }
 
     @Override
-    public void applyDamage(int damage) {
-        health -= damage;
-        updateHealth(health);
+    public void applyDamage(int applyDamage) {
+        updateDamage(damage+applyDamage);
 
-        if (health < 6) {
-            lockCards(damage);
+        System.out.println("Robot " + playerNumber + " was dealt " + applyDamage + " damage.");
+        
+        if (damage > 4) {
+            nLocked = damage-4;
         }
 
         // if health reaches 0, consume a life token and respawn
     }
 
     @Override
-    public void repair(int damage) {
-        if (health < 6) {
-            unlockCards(Math.min(damage, 6 - health));
-        }
-        health = Math.min(10, health + damage);
-        updateHealth(health);
+    public void repair(int repairDamage) {
+        updateDamage(damage-repairDamage);
+        
+        if (damage > 4) {
+            nLocked = damage-4;
+        } else nLocked = 0;
     }
 
     @Override
-    public void lockCards(int n) {
-        for (int i = nLocked; i < nLocked + n; i++) {
-            locked[i] = true;
-        }
-        nLocked += n;
+    public void updateDamage(int totalDamage) {
+        damage = Math.max(0, totalDamage);
     }
 
     @Override
-    public void unlockCards(int n) {
-        for (int i = nLocked - 1; i >= nLocked - n; i--) {
-            locked[i] = false;
-        }
-        nLocked -= n;
+    public int getNLocked() {
+        return nLocked;
     }
-
-    @Override
-    public void updateHealth(int x) {
-        health = x;
-    }
-
+    
     @Override
     public ArrayList<ICard> getRegistry() {
         return registry;
@@ -75,14 +64,18 @@ public class Player implements IPlayer {
 
     @Override
     public void setHand(ArrayList<ICard> programCards) {
-
+        
         hand = programCards;
         discard = new LinkedHashSet<>(hand);
     }
 
     @Override
     public void clearRegistry() {
-        registry.clear();
+        if (registry.size() > 0) {
+            for (int i=0; i<5-nLocked; i++) {
+                registry.remove(0); // remove the (5-nLocked) left-most cards
+            }
+        }
     }
 
     @Override
@@ -125,8 +118,8 @@ public class Player implements IPlayer {
     }
 
 	@Override
-	public CharSequence getHealth() {
-		String healthStr = Integer.toString(health);
+	public CharSequence getDamage() {
+		String healthStr = Integer.toString(damage);
 		return healthStr;
 	}
 
@@ -135,6 +128,6 @@ public class Player implements IPlayer {
 		String lifeTokensStr = Integer.toString(lifeTokens);
 		return lifeTokensStr;
 	}
-
+	
 
 }
