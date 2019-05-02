@@ -1,11 +1,10 @@
 package sky7.host;
 
-import java.util.ArrayList;
-
 import sky7.board.IBoard;
 import sky7.card.ICard;
-import sky7.Client.Client;
 import sky7.card.IDeck;
+
+import java.util.ArrayList;
 
 public interface IHost {
 
@@ -60,8 +59,9 @@ public interface IHost {
      * @param pN       player number
      * @param registry the chosen cards to play
      * @param discard  the discarded cards
+     * @param powerDown true if the player will power down next round
      */
-    void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard);
+    void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard, boolean powerDown);
 
 
     /**
@@ -75,19 +75,41 @@ public interface IHost {
     void setWinner(int winner);
 
     /**
+     *
+     * @param playerID
+     * @param damage
+     */
+    void repairDamage(int playerID, int damage);
+
+    /**
      * @return playerID nr to be given to the newly connected player
      */
     int remotePlayerConnected();
 
     /**
+     *
      * @param playerID
      */
     void remotePlayerDisconnected(int playerID);
 
 
     /**
+     *
      * @param playerID
      * @param damage
      */
     void applyDamage(int playerID, int damage);
+
+    /**
+     * Informs Host that a robot has visited a flag
+     * 
+     * @param playerID
+     * @param flagNumber
+     */
+    void robotVisitedFlag(int playerID, int flagNumber);
+
+    /**
+     *  Call the Host to repair the robots in power down state
+     */
+    void powerDownRepair(boolean [] currentPD);
 }

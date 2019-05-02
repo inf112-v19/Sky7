@@ -12,7 +12,7 @@ import java.util.Objects;
 public class RobotTile implements IMoving {
     String textureRef = "robot";
     Texture texture;
-    private static final int PRIORITY = 11;
+    private static final int PRIORITY = 10;
     int playerNr;
     DIRECTION dir;
     private Vector2 archiveMarker;

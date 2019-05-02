@@ -45,9 +45,10 @@ public class HostNetHandler {
         server.sendToTCP(playerToConnection.get(playerID), h);
     }
     
-    public void distributeRegistries(HashMap<Integer, ArrayList<ICard>> registries) {
+    public void distributeRegistries(HashMap<Integer, ArrayList<ICard>> registries, boolean[] powerDown) {
         ProcessRound pr = new ProcessRound();
         pr.registries = registries;
+        pr.powerDown = powerDown;
         server.sendToAllTCP(pr);
     }
     
@@ -79,6 +80,7 @@ public class HostNetHandler {
             NumberOfPlayers nop = new NumberOfPlayers();
             nop.nPlayers = server.getConnections().length+1;
             server.sendToAllTCP(nop);
+            connection.setKeepAliveTCP(5000);
         }
 
         public void disconnected (Connection connection) {
@@ -88,9 +90,11 @@ public class HostNetHandler {
 
         public void received (Connection connection, Object object) {
             if (object instanceof RegistryDiscard) {
+                RegistryDiscard rd = (RegistryDiscard)object;
                 host.ready(connectionToPlayer.get(connection.getID()), 
-                        ((RegistryDiscard)object).registry, 
-                        ((RegistryDiscard)object).discard);
+                        rd.registry, 
+                        rd.discard,
+                        rd.powerDown);
             }
         }
     }

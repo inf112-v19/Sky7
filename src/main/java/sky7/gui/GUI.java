@@ -207,7 +207,7 @@ public class GUI implements ApplicationListener {
             //if powerdown is clicked:
             if (isClicked(powerdown)) {
                 System.out.println("Powering down next round");
-                //TODO: some logic for powering down
+                client.powerDown();
             }
             // if confirm is clicked:
             if (isClicked(confirm)) {
@@ -279,7 +279,7 @@ public class GUI implements ApplicationListener {
      * Show health and healthtokens
      */
     public void showHealth() {
-        font.draw(batch, "Health: " + client.getPlayer().getDamage() + "\nTokens: " + client.getPlayer().getLifeToken(), 12 * scaler + 72, 2 * scaler - 32);
+        font.draw(batch, "Damage: " + client.getPlayer().getDamage() + "\nTokens: " + client.getPlayer().getLifeToken(), 12 * scaler + 72, 2 * scaler - 32);
     }
 
     /**

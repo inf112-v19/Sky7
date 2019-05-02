@@ -1,14 +1,12 @@
 package sky7.Client;
 
-import java.util.ArrayList;
-
 import sky7.board.IBoard;
 import sky7.card.ICard;
 import sky7.host.IHost;
-import sky7.card.IProgramCard;
 import sky7.player.IPlayer;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface IClient {
@@ -96,7 +94,7 @@ public interface IClient {
 
     void finishedProcessing(IBoard board);
 
-    void render(HashMap<Integer,ArrayList<ICard>> cards);
+    void render(HashMap<Integer,ArrayList<ICard>> cards, boolean[] powerDown);
 
     void join(String hostName);
 
@@ -108,7 +106,30 @@ public interface IClient {
 
     boolean readyToRender();
 
+    /**
+     * Check if playerId is this player, if so then subtract damage from players health.
+     * @param playerID the player to apply health to
+     * @param damage integer representing damage
+     */
     void applyDamage(int playerID, int damage);
 
+    /**
+     *
+     * @param board
+     */
     void updateBoard(IBoard board);
+
+    /**
+     * Check if playerId is this player, if so then add health to players health.
+     * @param playerID the player to apply health to
+     * @param health integer representing health
+     */
+    void repairDamage(int playerID, int health);
+
+    void powerDown();
+
+    /**
+     *  Call client to repair robots in power down state
+     */
+    void powerDownRepair(boolean[] currentPD);
 }

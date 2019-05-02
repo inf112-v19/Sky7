@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public class Wrench implements IInactive {
     private int type;
-    private final static int PRIORITY = 9;
+    private final static int PRIORITY = 2;
     private Texture texture;
 
     public Wrench(int type) {
@@ -51,5 +51,13 @@ public class Wrench implements IInactive {
         suppliers.add(new AbstractMap.SimpleEntry<>("t1", () -> new Wrench(1)));
         suppliers.add(new AbstractMap.SimpleEntry<>("t2", () -> new Wrench(2)));
         return suppliers;
+    }
+
+    /**
+     * return the type of this Wrench, either 1 or 2
+     * @return type of this wrench
+     */
+    public int getType(){
+        return type;
     }
 }

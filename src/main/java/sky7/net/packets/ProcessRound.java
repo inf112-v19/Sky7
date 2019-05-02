@@ -7,4 +7,5 @@ import sky7.card.ICard;
 
 public class ProcessRound {
     public HashMap<Integer, ArrayList<ICard>> registries;
+    public boolean[] powerDown;
 }
