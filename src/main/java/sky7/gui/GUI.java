@@ -297,13 +297,14 @@ public class GUI implements ApplicationListener {
 		cardXpos = 0;
 
 		pointer = client.getPlayer().getNLocked();
+		playerRegistry.clear();
 		playerRegistry = (ArrayList<ICard>) client.getPlayer().getRegistry().clone();
 		lockedRegistry = client.getPlayer().getLockedRegistry().clone();
 
 		hand = client.getHand();
 
 		// should add locked cards to registry, but doesnt
-		for (int i=0; i<playerRegistry.size(); i++) {
+		for (int i=6; i<playerRegistry.size()-pointer; i--) {
 			if (lockedRegistry[i] != null) {
 				playerRegistry.set(i, lockedRegistry[i]);
 				System.out.print(lockedRegistry[i].GetSpriteRef() + "\t");
