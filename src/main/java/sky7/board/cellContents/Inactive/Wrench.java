@@ -52,4 +52,8 @@ public class Wrench implements IInactive {
         suppliers.add(new AbstractMap.SimpleEntry<>("t2", () -> new Wrench(2)));
         return suppliers;
     }
+
+    public int getType(){
+        return type;
+    }
 }
