@@ -1,9 +1,13 @@
 package sky7.board;
 
 import com.badlogic.gdx.math.Vector2;
+
+
+import sky7.board.cellContents.Active.Belt;
+import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Active.CogWheel;
-import sky7.board.cellContents.Active.IConveyorBelt;
 import sky7.board.cellContents.Inactive.*;
+import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.DIRECTION;
@@ -24,7 +28,7 @@ public class Board implements IBoard {
     private RobotTile[] deadRobots;
     private List<CogWheel> cogs;
     private List<Vector2> cogPos;
-    private List<IConveyorBelt> convs;
+    private List<Belt> convs;
     private List<Vector2> convPos;
     private List<Laser> lasers;
     private List<Vector2> laserPos;
@@ -97,9 +101,10 @@ public class Board implements IBoard {
                         cogPos.add(new Vector2(i, j));
                         cogs.add((CogWheel) item);
                     }
-                    else if (item instanceof IConveyorBelt) {
+                    if (item instanceof Belt) {
+                        System.out.println("CONVO ADDED WITH TYPE: " + ((Belt) item).getType());
                         convPos.add(new Vector2(i, j));
-                        convs.add((IConveyorBelt) item);
+                        convs.add((Belt) item);
                     }
                     else if (item instanceof Laser) {
                         laserPos.add(new Vector2(i, j));
@@ -151,6 +156,11 @@ public class Board implements IBoard {
         return Arrays.deepToString(grid);
     }
 
+    @Override
+    public void placeRobotAtStart(int playerNr, Vector2 startPosition){
+        placeRobot(playerNr,(int) startPosition.x,(int) startPosition.y);
+        robots[playerNr].setArchiveMarker(startPosition);
+    }
     @Override
     public void placeRobot(int playerNr, int x, int y) {
         System.out.println("Placing robot " + playerNr + " at " + x + ", " + y);
@@ -276,33 +286,16 @@ public class Board implements IBoard {
      */
     public Vector2 getDestination(Vector2 pos, DIRECTION dir, int distance) {
         return new Vector2(pos.x + dir.getX() * distance, pos.y + dir.getY() * distance);
-        /*Vector2 target;
-        switch (dir) {
-            case NORTH:
-                target = new Vector2(pos.x, pos.y + distance);
-                break;
-            case EAST:
-                target = new Vector2(pos.x + distance, pos.y);
-                break;
-            case SOUTH:
-                target = new Vector2(pos.x, pos.y - distance);
-                break;
-            case WEST:
-                target = new Vector2(pos.x - distance, pos.y);
-                break;
-            default:
-                throw new IllegalStateException("Could not calculate target position.");
-        }
-        return target;*/
     }
 
     @Override
     public void hideRobot(int player) {
         Vector2 pos = robotPos[player];
-        deadRobots[player] = robots[player];
-        robots[player] = null;
-        deadRobotPos[player] = robotPos[player];
-        robotPos[player] = null;
+        //deadRobots[player] = robots[player];
+        //robots[player] = null;
+        //deadRobotPos[player] = robotPos[player];
+        //robotPos[player] = null;
+
 
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
@@ -375,10 +368,16 @@ public class Board implements IBoard {
         Vector2 pos = robotPos[player];
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
-                grid[(int) target.x][(int) target.y].add(item);
-                grid[(int) pos.x][(int) pos.y].remove(item);
-                robotPos[player] = target;
-                return;
+
+                // Checking that the nr is correct
+
+                RobotTile robo = (RobotTile) item;
+                if(robo.getId() == player) {
+                    grid[(int) target.x][(int) target.y].add(item);
+                    grid[(int) pos.x][(int) pos.y].remove(item);
+                    robotPos[player] = target;
+                    return;
+                }
             }
         }
     }
@@ -407,12 +406,222 @@ public class Board implements IBoard {
 
 
     @Override
-    public void moveConveyors() {
-        // TODO Auto-generated method stub
+    public void moveConveyors(boolean singelAndDouble) {
+        List<Vector2> positions = new ArrayList<>();
+        List<RobotTile> robosWantsToMove = new ArrayList<>();
+        List<Belt> convsToBeMoved = new ArrayList<>();
+
+        // find all robots on converyor belts, and their position
+        for (int i = 0; i < convs.size(); i++) {
+            for (int j = 0; j < robots.length; j++) {
+                if(convPos.get(i).equals(robotPos[j])){
+                    if(singelAndDouble || convs.get(i).getType() == 0) {
+                        positions.add(convPos.get(i)); // or robotPos[j]
+                        robosWantsToMove.add(robots[j]);
+                        convsToBeMoved.add(convs.get(i));
+                    }
+
+                }
+            }
+        }
+
+        // remove robots (and belts and vectors) if the robot can not be moved
+        for (int i = 0; i < robosWantsToMove.size(); i++) {
+            DIRECTION to = convsToBeMoved.get(i).getDirectionTo();
+
+            System.out.println("------------ Checking if robo nr " +robosWantsToMove.get(i).getId() + " can be moved--------");
+            if(!canConvoPush(positions.get(i), to, !singelAndDouble)){
+                System.out.println("------------ Robo nr" + robosWantsToMove.get(i).getId() + " can't move -----------");
+                robosWantsToMove.remove(i);
+                positions.remove(i);
+                convsToBeMoved.remove(i);
+                i--;
+            } else {
+                System.out.println("------------ Robo nr " + robosWantsToMove.get(i).getId() + " can be moved--------");
+            }
+        }
+
+
+
+        // Moving the robots
+        for (int i = 0; i < robosWantsToMove.size(); i++) {
+            RobotTile robo = robosWantsToMove.get(i);
+            Belt belt = convsToBeMoved.get(i);
+
+            Vector2 coords = positions.get(i);
+            activateBelt(robo,belt,coords);
+
+
+
+        }
+    }
+
+    private void activateBelt(RobotTile robo, Belt belt, Vector2 coords) {
+        int roboNr = robo.getId();
+        System.out.println("----- acualy moving robo nr " + roboNr + "---------");
+
+        Vector2 newCoords = getDestination(coords,belt.getDirectionTo(),1);
+        int rotate = getRotateValue(belt, newCoords);
+        // do the accual move
+        updateRobotPos(roboNr, newCoords);
+        if(rotate != 0) {
+            rotateRobot(roboNr, rotate);
+        }
+
+        System.out.println("------------ Done moving robot nr: " + roboNr + "-----------");
+    }
+
+    private int getRotateValue(Belt belt, Vector2 coords) {
+        TreeSet<ICell> newCells = getCell(coords);
+        // if there is no belt, just keep going in same dir;
+        DIRECTION dir = belt.getDirectionTo();
+
+        // check if we have to rotate robo
+        for (ICell cell: newCells) {
+            if(cell instanceof Belt){
+                Belt newBelt = (Belt) cell;
+                if(newBelt.getDirectionFrom().reverse() == belt.getDirectionTo() ||
+                        (newBelt.getDirectionFromAlt() != null && newBelt.getDirectionFromAlt().reverse() == belt.getDirectionTo())){
+                    dir = newBelt.getDirectionTo();
+                }
+            }
+        }
+
+        return belt.getDirectionTo().directionToRotation(dir);
+    }
+
+    private boolean canConvoPush(Vector2 curCoords, DIRECTION to, boolean onlyExpress) {
+        System.out.println("Recurtion trap");
+
+        //checking if we can leave current location
+        if(wallInCurrentTile(curCoords, to)){
+            return false;
+        }
+
+
+        Vector2 newCoords = getDestination(curCoords, to,1);
+
+        if(!containsPosition(newCoords)){
+            return true; //the robot can be pushed of the map
+        }
+
+        if(moreThanOneRoboEnteringThisTile(newCoords, onlyExpress)){
+            return false; //can't enter if two robots try to enter
+        }
+
+
+
+
+        // checking if we can enter the new place
+
+        TreeSet<ICell> nextCells = getCell(newCoords);
+
+        /*
+         * The two boolean under is used to check if there is  a belt, and a robot in the tile we are trying to move to.
+         * If there is, we have to check if the robot on the convo belt can be moved.
+         * If there is robot, and no belt. Current robot can't move.
+         *
+         * If there is a wall on the way in to the next tile, current Robot can't move.
+         *
+         */
+
+        // todo: might putting this in a method
+        boolean foundBelt = false;
+        Belt belt = null;
+
+        boolean foundRobo = false;
+
+
+        for (ICell cell : nextCells) {
+            if(cell instanceof Wall){
+                Wall wall = (Wall) cell;
+                // we are trying to enter, but a wall is blocking
+                if(wall.getDirection().reverse() == to){
+                    return false;
+                }
+            } else if(cell instanceof Belt){
+                Belt newBelt = (Belt)cell;
+
+                // checking if the other belt is singel typed.
+                if(onlyExpress && newBelt.getType()!=0){
+                    continue;
+                }
+                /* if the belt is leaving somewhere else (then the checking robo is standing)
+                 * then both can move, as long as the next Robo can move (check further down).
+                 */
+                if(newBelt.getDirectionTo().reverse() != to){
+                    belt = newBelt;
+                    foundBelt = true;
+                }
+
+            } else if(cell instanceof RobotTile){
+                foundRobo = true;
+            }
+        }
+
+        if(foundRobo && !foundBelt){
+            return false;
+
+        } else if(foundRobo && foundBelt){
+            DIRECTION newTo = belt.getDirectionTo();
+            return canConvoPush(newCoords, newTo, onlyExpress);
+        }
+        return true;
+
+    }
+
+    private boolean moreThanOneRoboEnteringThisTile(Vector2 coord, boolean onlyExpress) {
+        int nrOfRobosGoingToCurrentTile = 0;
+        for (DIRECTION dir : DIRECTION.values()) {
+
+            Vector2 newCords = getDestination(coord,dir,1);
+            if(roboEntriningFromMultipalDir(newCords, dir.reverse(), onlyExpress)){
+                nrOfRobosGoingToCurrentTile++;
+            }
+        }
+
+        return nrOfRobosGoingToCurrentTile > 1;
+    }
+
+
+
+
+    /**
+     * Check if a given belt has two ingoing paths, and if there are two ingoing paths
+     * if there are coming in two robots in to the new point.
+     *
+     * @param x
+     * @param y
+     * @param from1
+     * @return true if two robos would collide if both moved, false else.
+     */
+    private boolean isThereABeltAndRobotOnEntryOne(int x, int y, DIRECTION from1) {
+        if(!containsPosition(new Vector2(x, y))){
+            return false;
+        }
+        TreeSet<ICell> cells = grid[x][y];
+        boolean foundRobo = false;
+        boolean beltCorrectWay = false;
+        for(ICell cell: cells){
+            if(cell instanceof RobotTile){
+                foundRobo = true;
+            } else if(cell instanceof Belt){
+                Belt newBelt = (Belt) cell;
+                if(newBelt.getDirectionTo() == from1.reverse()){
+                    beltCorrectWay = true;
+                }
+
+            }
+        }
+
+        return foundRobo && beltCorrectWay;
     }
     @Override
     public List<Vector2> getPusherPos(){
         return pusherPos;
+
+
+
     }
     @Override
     public List<Pusher> getPushers(){
@@ -421,24 +630,6 @@ public class Board implements IBoard {
 
 
 
-/*
-    private boolean canPusherPush(Vector2 pos, DIRECTION dirToPush) {
-        if(wallInCurrentTile(pos,dirToPush)){
-            return false;
-        }
-        Vector2 newPos = getDestination(pos, dirToPush, 1);
-
-        if(!containsPosition(newPos)){//if the pusher push to outside of the board
-            return true;
-        }
-        if(wallInCurrentTileMadeByMaren(pos,dirToPush)){
-            return false;
-        }
-
-        return true;
-   //TODO hva om to roboter vil til samme felt samtidig?
-
-    }
 
    /* @Override
     public Map<Integer, Flag> robotVisitFlag(){
@@ -453,6 +644,33 @@ public class Board implements IBoard {
         }
         return robotWhoVisitedFlag;
     }*/
+
+    private boolean roboEntriningFromMultipalDir(Vector2 coords, DIRECTION dir, boolean onlyExpress) {
+        if(!containsPosition(coords)){
+            return false;
+        }
+        TreeSet<ICell> cells = getCell(coords);
+        boolean foundBeltLeavingInDir = false;
+        boolean foundRobo = false;
+        for(ICell cell : cells){
+            if(cell instanceof Belt){
+                Belt belt = (Belt) cell;
+                if(onlyExpress && belt.getType() != 0){
+                    continue;
+                }
+                if(belt.getDirectionTo() == dir){
+                    foundBeltLeavingInDir = true;
+                }
+            } else if(cell instanceof RobotTile){
+                foundRobo = true;
+            }
+        }
+
+        return foundBeltLeavingInDir && foundRobo;
+    }
+
+
+
 
     @Override
     public TreeSet<ICell> getCell(Vector2 a) {
