@@ -1,0 +1,39 @@
+{
+  "Meta": [
+    "Width",
+    "Height",
+    "name",
+    "difficulty",
+    "players",
+    "length"
+  ],
+  "Code": {
+    "b": "conveyor belt <- (snd_direction_from::[N,E,S,W], direction_to::[N,E,S,W], type::[0,1])",
+    "c": "cogwheel <- (direction::[C, A], type::[1,2])",
+    "f": "floor",
+    "g": "flag <- (number::[1,2,3,4] )",
+    "h": "hole",
+    "l": "laser <- (isStartPosition::[T,F], direction::[N,E,S,W], numberOfLasers::[1,2])",
+    "r": "robot",
+    "s": "start cell for a robot  <- (number::[1 ... 8])",
+    "t": "wrench <- (number::[1,2])",
+    "w": "wall <- (direction_to::[N,E,S,W])",
+    "p": "pusher <- (direction::[N,W,S,E], phase::[P,O])"
+  },
+  "posCode": {
+    "N": "north",
+    "E": "east",
+    "W": "west",
+    "S": "south",
+    "C": "with clock direction",
+    "A": "against clock direction",
+    "P": "pair phase:  2 or 4",
+    "O": "odd phase: 1, 3 or 5",
+    "T": "true",
+    "F": "false"
+  },
+  "split": {
+    "_": "between codes in the same cell",
+    " ": "between cells"
+  }
+}
