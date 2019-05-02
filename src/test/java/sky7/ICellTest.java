@@ -1,18 +1,22 @@
 package sky7;
 
-import org.junit.Test;
-import sky7.board.ICell;
-import sky7.board.cellContents.Active.Belt;
-import sky7.board.cellContents.Active.Laser;
-import sky7.board.cellContents.Active.Pusher;
-import sky7.board.cellContents.DIRECTION;
-import sky7.board.cellContents.Inactive.*;
-import sky7.board.cellContents.robots.RobotTile;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
+
+import sky7.board.ICell;
+import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Active.Belt;
+import sky7.board.cellContents.Active.Laser;
+import sky7.board.cellContents.Inactive.Flag;
+import sky7.board.cellContents.Inactive.FloorTile;
+import sky7.board.cellContents.Inactive.Hole;
+import sky7.board.cellContents.Inactive.Wall;
+import sky7.board.cellContents.Inactive.Wrench;
+import sky7.board.cellContents.robots.RobotTile;
 
 public class ICellTest {
 
