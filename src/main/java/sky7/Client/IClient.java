@@ -132,4 +132,7 @@ public interface IClient {
      *  Call client to repair robots in power down state
      */
     void powerDownRepair(boolean[] currentPD);
+
+
+	boolean isFinishedProcessing();
 }
