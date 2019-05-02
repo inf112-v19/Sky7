@@ -38,6 +38,8 @@ public interface IBoard {
      */
     int getHeight();
 
+    void placeRobotAtStart(int playerNr, Vector2 startPosition);
+
     /**
      * Place a robot on the board
      * 

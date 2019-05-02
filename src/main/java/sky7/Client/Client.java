@@ -1,5 +1,6 @@
 package sky7.Client;
 
+import com.badlogic.gdx.math.Vector2;
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
@@ -137,7 +138,6 @@ public class Client implements IClient {
     @Override
     public void placeRobot(int playerNr, int xPos, int yPos) {
         board.placeRobot(playerNr, xPos, yPos);
-
     }
 
     @Override
@@ -250,5 +250,10 @@ public class Client implements IClient {
     @Override
     public boolean isFinishedProcessing() {
     	return finishedProcessing;
+    }
+
+    @Override
+    public void placeRobotAtStart(int playerNr, Vector2 startPosition) {
+        board.placeRobotAtStart(playerNr,startPosition);
     }
 }

@@ -1,17 +1,12 @@
 package sky7.host;
 
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
-import sky7.net.packets.Begin;
-import sky7.net.packets.ClientConnectionAccepted;
-import sky7.net.packets.Hand;
-import sky7.net.packets.NumberOfPlayers;
-import sky7.net.packets.PlaceRobot;
-import sky7.net.packets.ProcessRound;
-import sky7.net.packets.RegistryDiscard;
+import sky7.net.packets.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,7 +60,14 @@ public class HostNetHandler {
         pr.yPos = yPos;
         server.sendToAllTCP(pr);
     }
-    
+
+    public void placeRobotAtStart(int playerID, Vector2 startPosition) {
+        PlaceRobotAtStart pr = new PlaceRobotAtStart();
+        pr.playerID = playerID;
+        pr.startPosition = startPosition;
+        server.sendToAllTCP(pr);
+    }
+
     private class HostListener extends Listener {
         public void connected (Connection connection) {
             int newPlayerID = host.remotePlayerConnected();

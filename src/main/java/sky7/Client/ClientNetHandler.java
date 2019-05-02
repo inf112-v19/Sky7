@@ -9,13 +9,7 @@ import com.esotericsoftware.kryonet.Listener;
 
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
-import sky7.net.packets.Begin;
-import sky7.net.packets.ClientConnectionAccepted;
-import sky7.net.packets.Hand;
-import sky7.net.packets.NumberOfPlayers;
-import sky7.net.packets.PlaceRobot;
-import sky7.net.packets.ProcessRound;
-import sky7.net.packets.RegistryDiscard;
+import sky7.net.packets.*;
 
 public class ClientNetHandler {
 
@@ -57,7 +51,12 @@ public class ClientNetHandler {
                 PlaceRobot pr = (PlaceRobot)object;
                 client.placeRobot(pr.playerID, pr.xPos, pr.yPos);
                 
-            } else if (object instanceof NumberOfPlayers) {
+            } else if (object instanceof PlaceRobotAtStart) {
+                PlaceRobotAtStart pr = (PlaceRobotAtStart)object;
+                client.placeRobotAtStart(pr.playerID, pr.startPosition);
+
+            }
+            else if (object instanceof NumberOfPlayers) {
                 client.updateNPlayers(((NumberOfPlayers)object).nPlayers);
                 
             } else if (object instanceof Begin) {
