@@ -326,7 +326,7 @@ public class Game implements IGame {
     }
 
     private void repairDamage(int playerID, int health) {
-        if (disableDamage) return;//hva er dette?
+        if (disableDamage) return;
         if (hosting) host.repairDamage(playerID,health);
         else client.repairDamage(playerID, health);
     }
