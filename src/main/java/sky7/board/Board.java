@@ -458,7 +458,7 @@ public class Board implements IBoard {
 
     private void activateBelt(RobotTile robo, Belt belt, Vector2 coords) {
         int roboNr = robo.getId();
-        System.out.println("----- acualy moving robo nr " + roboNr + "---------");
+        System.out.println("----- actually moving robo nr " + roboNr + "---------");
 
         Vector2 newCoords = getDestination(coords,belt.getDirectionTo(),1);
         int rotate = getRotateValue(belt, newCoords);

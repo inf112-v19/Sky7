@@ -47,7 +47,7 @@ public class GUI implements ApplicationListener {
 	private int scaler = 128;
 	
 	private ArrayList<ICard> hand;
-	private ArrayList<ICard> localregistry = new ArrayList<>();
+	private ArrayList<ICard> playerRegistry = new ArrayList<>();
 	private ICard[] lockedRegistry;
 	TextInput listener;
 	BackGround background;
@@ -193,7 +193,7 @@ public class GUI implements ApplicationListener {
 			}
 
 			// Render "GO" button only if 5 cards are choosen and player has taken less than 9 damage
-			if (localregistry.size() == 5 && client.getPlayer().getDamage() <= 9) {
+			if (playerRegistry.size() == 5 && client.getPlayer().getDamage() <= 9) {
 				confirm.draw(batch);
 
 				// if confirm is clicked:
@@ -216,7 +216,7 @@ public class GUI implements ApplicationListener {
 	}
 
 	public void showRegistry() {
-		for (ICard currentCards : localregistry) {
+		for (ICard currentCards : playerRegistry) {
 			if (currentCards.getY() != scaler) {
 				currentCards.setY(scaler);
 				currentCards.setX((scaler * 5) + yPos);
@@ -256,7 +256,7 @@ public class GUI implements ApplicationListener {
 				font.draw(batch, card.getPriority(), card.getX() + 42, card.getY() + 93);
 			}
 		}
-		if (!cardsChoosen && localregistry.size() < 5) {
+		if (!cardsChoosen && playerRegistry.size() < 5) {
 
 			//check if card is clicked
 			if (Gdx.input.justTouched()) {
@@ -266,10 +266,9 @@ public class GUI implements ApplicationListener {
 				for (ICard card : hand) {
 					if (clickPos.x <= scaler + card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
 						if (card.getY() != scaler) {
-							
-							System.out.println("Setting");
+
 //							localregistry.set(pointer, card);
-							localregistry.add(card);
+							playerRegistry.add(card);
 							
 							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef() + " \tPriority: \t" + card.getPriority());
 							card.setY(-scaler);
@@ -284,8 +283,8 @@ public class GUI implements ApplicationListener {
 	public void setRegistry() {
 		//check if there actually are 5 chosen cards
 		cardsChoosen = true;
-		for (int i = 0; i < localregistry.size(); i++) {
-			client.setCard(localregistry.get(i), i);
+		for (int i = 0; i < playerRegistry.size(); i++) {
+			client.setCard(playerRegistry.get(i), i);
 		}
 		client.lockRegistry();
 	}
@@ -298,30 +297,28 @@ public class GUI implements ApplicationListener {
 		cardXpos = 0;
 
 		pointer = client.getPlayer().getNLocked();
-
-		localregistry = (ArrayList<ICard>) client.getPlayer().getRegistry().clone();
+		playerRegistry = (ArrayList<ICard>) client.getPlayer().getRegistry().clone();
 		lockedRegistry = client.getPlayer().getLockedRegistry().clone();
 
 		hand = client.getHand();
 
 		// should add locked cards to registry, but doesnt
-		for (int i=0; i<localregistry.size(); i++) {
+		for (int i=0; i<playerRegistry.size(); i++) {
 			if (lockedRegistry[i] != null) {
-				localregistry.set(i, lockedRegistry[i]);
+				playerRegistry.set(i, lockedRegistry[i]);
+				System.out.print(lockedRegistry[i].GetSpriteRef() + "\t");
 			}
 		}
 
-		System.out.println("\n\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + localregistry.size());
-		resetcardpos(localregistry);
-
-		if (localregistry.size() <= 5) {
-			leftshift(localregistry);
+		System.out.println("\n\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + playerRegistry.size());
+		
+		resetcardpos(playerRegistry);
+		if (playerRegistry.size() <= 5) {
+			leftshift(playerRegistry);
 		}
-
 		setHandPos(hand);
 		cardXpos = 0;
-		chooseCards();
-		System.out.println("----------- end reset -----------");
+		System.out.println("----------- end reset -----------\n");
 	}
 
 	private void resetcardpos(ArrayList<ICard> localregistry) {

@@ -25,9 +25,9 @@ public class Player implements IPlayer {
         registry = new ArrayList<ICard>(MAX_CARDS_IN_REGISTRY);
         lockedRegistry = new ICard[5];
         
-        for (int i=0; i<lockedRegistry.length; i++) {
-        	lockedRegistry[i] = null;
-        }
+//        for (int i=0; i<lockedRegistry.length; i++) {
+//        	lockedRegistry[i] = null;
+//        }
     }
 
     @Override
@@ -99,11 +99,14 @@ public class Player implements IPlayer {
     public void clearRegistry() {
         if (registry.size() > 0) {
         	
-        	for (int i=5; i>5-nLocked; i--) {
-        		lockedRegistry[i] = registry.get(i);
-        	}
+//        	if (nLocked > 0) {
+//        		for (int i=5; i>=5-nLocked; i--) {
+//        			lockedRegistry[i] = registry.get(i);
+//        		}
+//        	}
         	
             for (int i=0; i<5-nLocked; i++) {
+            	System.out.println("Player.clearRegistry remove: " + registry.get(0));
                 registry.remove(0); // remove the (5-nLocked) left-most cards
                 lockedRegistry[i] = null;
             }
