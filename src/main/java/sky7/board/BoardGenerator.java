@@ -1,22 +1,21 @@
 package sky7.board;
 
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import sky7.board.cellContents.Active.Belt;
+import sky7.board.cellContents.Active.CogWheel;
+import sky7.board.cellContents.Active.Laser;
+import sky7.board.cellContents.Active.Pusher;
+import sky7.board.cellContents.DIRECTION;
+import sky7.board.cellContents.Inactive.*;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.TreeSet;
 import java.util.function.Supplier;
-
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
-
-import sky7.board.cellContents.Active.Pusher;
-import sky7.board.cellContents.Active.Belt;
-import sky7.board.cellContents.Active.CogWheel;
-import sky7.board.cellContents.DIRECTION;
-import sky7.board.cellContents.Inactive.*;
-import sky7.board.cellContents.Active.Laser;
 
 /**
  * A Class for generating a board object parsed from a json file.
@@ -109,10 +108,10 @@ public class BoardGenerator implements IBoardGenerator {
     /**
      * Appends the start grid to the {@param dir} of the grid.
      *
-     * @param startGrid
-     * @param grid
-     * @param dir
-     * @return
+     * @param startGrid grid with start positions
+     * @param grid play grid
+     * @param dir where to be combined
+     * @return the new grid
      */
     private TreeSet<ICell>[][] combineGrids(TreeSet<ICell>[][] startGrid, TreeSet<ICell>[][] grid, DIRECTION dir) {
         TreeSet<ICell>[][] finalGrid;
@@ -181,7 +180,7 @@ public class BoardGenerator implements IBoardGenerator {
      *
      * @param grid                       an array of arrays.
      * @param numberOfRotationsClockWise 1 for 90 deg with clock, 2 for 180 deg, 3 for 270 deg
-     * @return
+     * @return rotated grid
      */
     private TreeSet<ICell>[][] rotate(TreeSet<ICell>[][] grid, int numberOfRotationsClockWise) {
         TreeSet<ICell>[][] rotated;
@@ -217,9 +216,9 @@ public class BoardGenerator implements IBoardGenerator {
     }
 
     /**
-     * Fill the
+     * Fill the grid
      *
-     * @param bJson
+     * @param bJson board
      */
     private TreeSet<ICell>[][] fillGrid(HashMap<String, String> bJson) {
         int height = Integer.parseInt(bJson.get("height"));

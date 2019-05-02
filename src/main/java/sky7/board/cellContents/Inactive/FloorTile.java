@@ -11,7 +11,6 @@ import java.util.function.Supplier;
 
 public class FloorTile implements IInactive {
 
-    String textureRef = "floor";
     private Texture texture;
     private final int PRIORITY = 1;
 

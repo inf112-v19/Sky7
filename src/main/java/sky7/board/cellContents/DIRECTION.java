@@ -23,6 +23,11 @@ public enum DIRECTION {
         return y;
     }
 
+    /**
+     * reverse the direction.
+     *
+     * @return the reversed direction.
+     */
     public DIRECTION reverse() {
         switch (this) {
             case NORTH:
@@ -34,10 +39,15 @@ public enum DIRECTION {
             case EAST:
                 return WEST;
             default:
-                throw new IllegalArgumentException("The direction you are trying to inters are not one of the standard four");
+                throw new IllegalArgumentException("The direction you are trying to inverse are not one of the standard four");
         }
     }
 
+    /**
+     * the character of this direction.
+     *
+     * @return a character representing this direction
+     */
     public char symbol() {
         switch (this) {
             case NORTH:
@@ -49,8 +59,7 @@ public enum DIRECTION {
             case EAST:
                 return 'E';
             default:
-                throw new IllegalArgumentException("The direction you are trying to get symbol from are not one of the standard four");
-
+                throw new IllegalArgumentException("The direction you are trying to inverse are not one of the standard four");
         }
     }
 

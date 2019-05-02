@@ -248,18 +248,14 @@ public class Board implements IBoard {
         return true;
     }
 
-    /**
-     * @param pos the position to check.
-     * @return true if the position is within board
-     */
     @Override
     public boolean containsPosition(Vector2 pos) {
         return (pos.x >= 0 && pos.y >= 0) && (pos.x < grid.length && pos.y < grid[0].length);
     }
 
     @Override
-    public void moveRobot(Integer id, DIRECTION direction) {
-        updateRobotPos(id, getDestination(robotPos[id], direction, 1));
+    public void moveRobot(Integer playerNumber, DIRECTION direction) {
+        updateRobotPos(playerNumber, getDestination(robotPos[playerNumber], direction, 1));
     }
 
     /**
@@ -281,7 +277,7 @@ public class Board implements IBoard {
      *
      * @param pos      the source from which to find the new coordinates
      * @param dir      the direction of travel
-     * @param distance the number of tiles to traverse
+     * @param steps the number of tiles to traverse
      * @return the target vector (coordinates)
      */
     public Vector2 getDestination(Vector2 pos, DIRECTION dir, int distance) {
@@ -357,7 +353,6 @@ public class Board implements IBoard {
         }
     }
 
-
     /**
      * Move a robot to a target vector
      *
@@ -403,7 +398,6 @@ public class Board implements IBoard {
 
         System.out.println("Robot " + currentPlayer + " is headed " + robots[currentPlayer].getOrientation());
     }
-
 
     @Override
     public void moveConveyors(boolean singelAndDouble) {
@@ -456,6 +450,10 @@ public class Board implements IBoard {
         }
     }
 
+    @Override
+    public List<Vector2> getPusherPos(){
+        return pusherPos;
+
     private void activateBelt(RobotTile robo, Belt belt, Vector2 coords) {
         int roboNr = robo.getId();
         System.out.println("----- acualy moving robo nr " + roboNr + "---------");
@@ -470,6 +468,10 @@ public class Board implements IBoard {
 
         System.out.println("------------ Done moving robot nr: " + roboNr + "-----------");
     }
+
+    @Override
+    public List<Pusher> getPushers(){
+        return pushers;
 
     private int getRotateValue(Belt belt, Vector2 coords) {
         TreeSet<ICell> newCells = getCell(coords);
@@ -673,22 +675,15 @@ public class Board implements IBoard {
 
 
     @Override
-    public TreeSet<ICell> getCell(Vector2 a) {
-        return grid[(int) a.x][(int) a.y];
+    public TreeSet<ICell> getCell(Vector2 positionOfCell) {
+        return grid[(int) positionOfCell.x][(int) positionOfCell.y];
     }
 
     @Override
     public RobotTile[] getRobots() {
         return robots;
     }
-  /*  private boolean wallInCurrentTileMadeByMaren(Vector2 robotPos, DIRECTION dir) {
-        for (ICell item : grid[(int) robotPos.x][(int) robotPos.y]) {
-            if (item instanceof Wall) {
-                return (((Wall) item).getDirection() == dir.reverse());
-            }
-        }
-        return false;
-    }*/
+
 
 
 }

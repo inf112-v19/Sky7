@@ -55,6 +55,7 @@ public class Wrench implements IInactive {
 
     /**
      * return the type of this Wrench, either 1 or 2
+     *
      * @return type of this wrench
      */
     public int getType(){

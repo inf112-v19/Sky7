@@ -1,14 +1,13 @@
 package sky7.board.cellContents.Inactive;
 
+import com.badlogic.gdx.graphics.Texture;
+import sky7.board.ICell;
+import sky7.board.cellContents.IInactive;
+
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
-
-import com.badlogic.gdx.graphics.Texture;
-
-import sky7.board.ICell;
-import sky7.board.cellContents.IInactive;
 
 public class StartPosition implements IInactive {
     private int startNumber;
@@ -23,7 +22,7 @@ public class StartPosition implements IInactive {
     @Override
     public Texture getTexture() {
         if (texture == null) {
-            texture = new Texture("assets/startposition/"+startNumber+".png");//TODO add start position pictures
+            texture = new Texture("assets/startposition/"+startNumber+".png");
         }
         return texture;
     }
@@ -53,6 +52,11 @@ public class StartPosition implements IInactive {
         return suppliers;
     }
 
+    /**
+     * the number of this start position
+     *
+     * @return integer representing number of start position
+     */
     public int getNumber() {
         return startNumber;
     }
