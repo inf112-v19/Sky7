@@ -1,7 +1,0 @@
-{
-  "name": "startBoard2",
-  "players": "8",
-  "width": "12",
-  "height": "4",
-  "grid": "s7 f f_wN f f_wN_wW f f f_wN_wE f f_wN f s8 f wW_s5 f_wW f f f f f f f_wE s6_wE f bWE0 bWE0 bWS0 s3 f f f_wW f s4 bES0 bEW0 bEW0 f f bNE0 bWE0 bWE0 s1 wW_s2 bEW0 bEW0 bNW0 f f"
-}
