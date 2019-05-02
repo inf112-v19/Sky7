@@ -102,7 +102,6 @@ public class Board implements IBoard {
                         cogs.add((CogWheel) item);
                     }
                     if (item instanceof Belt) {
-                        System.out.println("CONVO ADDED WITH TYPE: " + ((Belt) item).getType());
                         convPos.add(new Vector2(i, j));
                         convs.add((Belt) item);
                     }

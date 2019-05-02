@@ -1,6 +1,7 @@
 package sky7.BoardTests;
 
 import org.junit.Test;
+import sky7.Client.Client;
 import sky7.board.Board;
 import sky7.board.BoardGenerator;
 import sky7.board.ICell;
@@ -9,6 +10,7 @@ import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Inactive.FloorTile;
 import sky7.board.cellContents.Inactive.Wall;
 import sky7.board.cellContents.robots.RobotTile;
+import sky7.game.Game;
 
 import java.io.FileNotFoundException;
 import java.util.Random;
@@ -17,25 +19,6 @@ import java.util.TreeSet;
 import static org.junit.Assert.*;
 
 public class BoardTests {
-
-    @Test
-    public void generateBoardTest() {
-        BoardGenerator bg = new BoardGenerator();
-        try {
-            Board board = bg.getBoardFromFile("src/test/assets/heightWithTest.json");
-            for (int y = 0; y < board.getHeight(); y++) {
-                for (int x = 0; x < board.getWidth(); x++) {
-                    TreeSet<ICell> treeSet = board.getTileTexture(x, y);
-                    assertEquals(treeSet.first().getClass(), FloorTile.class);
-                }
-            }
-            TreeSet<ICell> treeSet = board.getTileTexture(1, 1);
-            assertEquals(treeSet.first().getClass(), FloorTile.class);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-    }
 
 
     @Test
@@ -139,37 +122,6 @@ public class BoardTests {
 
     }
 
-    @Test
-    public void cogs() {
-        TreeSet<ICell>[][] set = new TreeSet[10][10];
-        for (int y = 0; y < set.length; y++) {
-            for (int x = 0; x < set[y].length; x++) {
-                set[x][y] = new TreeSet<ICell>();
-                set[x][y].add(new FloorTile());
-            }
-        }
-
-        set[4][4].add(new CogWheel(1));
-        Board board = new Board(set, 10, 10);
-        board.placeRobot(0, 4, 3);
-        //board.rotateCogs();
-        board.moveRobot(0, 1);
-        assertTrue(isRoboHere(board, 4, 4));
-        //board.rotateCogs();
-        board.moveRobot(0, 1);
-        assertTrue(isRoboHere(board, 5, 4));
-        //board.rotateCogs();
-        //board.rotateCogs();
-        board.moveRobot(0, 2);
-        assertTrue(isRoboHere(board, 7, 4));
-
-        board.placeRobot(1, 4, 4);
-        //board.rotateCogs();
-        //board.rotateCogs();
-        //board.rotateCogs();
-        board.moveRobot(1, 2);
-        assertTrue(isRoboHere(board, 2, 4));
-    }
 
     @Test
     public void isMovePossibalTest() {
