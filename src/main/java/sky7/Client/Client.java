@@ -31,6 +31,7 @@ public class Client implements IClient {
     private boolean readyToRender = false, selfPowerDown = false, finishedProcessing = true;
     private ClientNetHandler netHandler;
     private int nPlayers;
+    private boolean gameOver = false;
 
 
     public Client() {
@@ -215,10 +216,11 @@ public class Client implements IClient {
     }
 
     @Override
-    public void applyDamage(int playerID, int damage) {
+    public boolean applyDamage(int playerID, int damage) {
         if (playerID == this.player.getPlayerNumber()) player.applyDamage(damage);
         
         robotDamage[playerID] += damage;
+        return false;
     }
     @Override
     public void repairDamage(int playerID, int health) {
@@ -255,5 +257,20 @@ public class Client implements IClient {
     @Override
     public void placeRobotAtStart(int playerNr, Vector2 startPosition) {
         board.placeRobotAtStart(playerNr,startPosition);
+    }
+
+    @Override
+    public boolean loseLifeToken(int playerID) {
+        if(playerID == player.getPlayerNumber()){
+            if(!gameOver){
+                gameOver = player.loseLifeToken();
+            }
+        }
+        return gameOver;
+    }
+
+    @Override
+    public boolean isGameOver() {
+        return gameOver;
     }
 }

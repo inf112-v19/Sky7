@@ -21,7 +21,7 @@ public interface IClient {
 
 
     /**
-     * @param host the host that this client is playing at.
+     * @param host         the host that this client is playing at.
      * @param playerNumber the number of the player on this client.
      */
     void connect(IHost host, int playerNumber);
@@ -78,13 +78,13 @@ public interface IClient {
      * @param xPos
      * @param yPos
      */
-    void placeRobot (int playerNr, int xPos, int yPos);
+    void placeRobot(int playerNr, int xPos, int yPos);
 
     /**
      * activate the board elements by calling board method
      * called from host
      */
-    void activateBoardElements ();
+    void activateBoardElements();
 
     /**
      * activate the lasers by calling board method.
@@ -95,7 +95,7 @@ public interface IClient {
 
     void finishedProcessing(IBoard board);
 
-    void render(HashMap<Integer,ArrayList<ICard>> cards, boolean[] powerDown);
+    void render(HashMap<Integer, ArrayList<ICard>> cards, boolean[] powerDown);
 
     void join(String hostName);
 
@@ -109,33 +109,39 @@ public interface IClient {
 
     /**
      * Check if playerId is this player, if so then subtract damage from players health.
+     *
      * @param playerID the player to apply health to
-     * @param damage integer representing damage
+     * @param damage   integer representing damage
+     * @return true if the damage killed the robot.
      */
-    void applyDamage(int playerID, int damage);
+    boolean applyDamage(int playerID, int damage);
 
     /**
-     *
      * @param board
      */
     void updateBoard(IBoard board);
 
     /**
      * Check if playerId is this player, if so then add health to players health.
+     *
      * @param playerID the player to apply health to
-     * @param health integer representing health
+     * @param health   integer representing health
      */
     void repairDamage(int playerID, int health);
 
     void powerDown();
 
     /**
-     *  Call client to repair robots in power down state
+     * Call client to repair robots in power down state
      */
     void powerDownRepair(boolean[] currentPD);
 
 
-	boolean isFinishedProcessing();
+    boolean isFinishedProcessing();
 
     void placeRobotAtStart(int playerNr, Vector2 startPosition);
+
+    boolean loseLifeToken(int playerID);
+
+    boolean isGameOver();
 }
