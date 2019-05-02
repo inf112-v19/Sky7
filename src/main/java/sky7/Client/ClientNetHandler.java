@@ -28,10 +28,11 @@ public class ClientNetHandler {
         
     }
     
-    public void ready(ArrayList<ICard> registry, ArrayList<ICard> discard) {
+    public void ready(ArrayList<ICard> registry, ArrayList<ICard> discard, boolean powerDown) {
         RegistryDiscard rd = new RegistryDiscard();
         rd.registry = registry;
         rd.discard = discard;
+        rd.powerDown = powerDown;
         netClient.sendTCP(rd);
     }
 
@@ -44,7 +45,8 @@ public class ClientNetHandler {
                 client.connect(((ClientConnectionAccepted)object).playerID);
                 
             } else if (object instanceof ProcessRound) {
-                client.render(((ProcessRound)object).registries);
+                client.render(((ProcessRound)object).registries,
+                        ((ProcessRound)object).powerDown);
                 
             } else if (object instanceof PlaceRobot) {
                 PlaceRobot pr = (PlaceRobot)object;
@@ -58,7 +60,6 @@ public class ClientNetHandler {
                 try {
                     client.generateBoard();
                 } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }

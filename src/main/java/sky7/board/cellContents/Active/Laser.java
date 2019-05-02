@@ -15,11 +15,12 @@ public class Laser implements IActive {
     private DIRECTION direction;
     private final int numberOfLasers;
     private Texture texture;
-    private final static int PRIORITY = 10;
+    private int PRIORITY = 4;
     private boolean visible = true;
 
     public Laser(boolean start, DIRECTION direction, int numberOfLasers) {
         this.start = start;
+        if (start) PRIORITY = 5;
         this.direction = direction;
         this.numberOfLasers = numberOfLasers;
     }

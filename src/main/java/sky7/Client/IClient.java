@@ -96,7 +96,7 @@ public interface IClient {
 
     void finishedProcessing(IBoard board);
 
-    void render(HashMap<Integer,ArrayList<ICard>> cards);
+    void render(HashMap<Integer,ArrayList<ICard>> cards, boolean[] powerDown);
 
     void join(String hostName);
 
@@ -111,4 +111,11 @@ public interface IClient {
     void applyDamage(int playerID, int damage);
 
     void updateBoard(IBoard board);
+
+    void powerDown();
+
+    /**
+     *  Call client to repair robots in power down state
+     */
+    void powerDownRepair(boolean[] currentPD);
 }

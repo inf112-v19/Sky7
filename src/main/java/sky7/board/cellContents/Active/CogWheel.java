@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class CogWheel implements IActive {
 
     private int rotDirection; // -1 counterclockwise, 1 clockwise
-    private static final int PRIORITY = 5;
+    private final int PRIORITY = 3;
     private Texture texture;
 
     public CogWheel(int rotDirection) {

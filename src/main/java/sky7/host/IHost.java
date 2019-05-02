@@ -60,8 +60,9 @@ public interface IHost {
      * @param pN       player number
      * @param registry the chosen cards to play
      * @param discard  the discarded cards
+     * @param powerDown true if the player will power down next round
      */
-    void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard);
+    void ready(int pN, ArrayList<ICard> registry, ArrayList<ICard> discard, boolean powerDown);
 
 
     /**
@@ -90,4 +91,17 @@ public interface IHost {
      * @param damage
      */
     void applyDamage(int playerID, int damage);
+
+    /**
+     * Informs Host that a robot has visited a flag
+     * 
+     * @param playerID
+     * @param flagNumber
+     */
+    void robotVisitedFlag(int playerID, int flagNumber);
+
+    /**
+     *  Call the Host to repair the robots in power down state
+     */
+    void powerDownRepair(boolean [] currentPD);
 }
