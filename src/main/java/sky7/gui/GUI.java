@@ -244,7 +244,7 @@ public class GUI implements ApplicationListener {
     private void initiateClient() {
         hand = client.getHand();
         setHandPos(hand);
-        boardprinter = new BoardPrinter(client.gameBoard().getHeight(), client.gameBoard().getWidth(), scaler, batch);
+        boardprinter = new BoardPrinter(client.gameBoard().getWidth(), client.gameBoard().getHeight(), scaler, batch);
     }
 
     /**
