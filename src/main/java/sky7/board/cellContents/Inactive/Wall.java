@@ -82,6 +82,10 @@ public class Wall implements IInactive {
         return Integer.compare(this.drawPriority(), other.drawPriority());
     }
 
+    /**
+     * tells where the wall is placed in the cell.
+     * @return in what direction this wall is placed
+     */
     public DIRECTION getDirection() {
         return direction;
     }

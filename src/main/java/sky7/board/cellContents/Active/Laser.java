@@ -119,13 +119,20 @@ public class Laser implements IActive {
         return PRIORITY;
     }
 
+    /**
+     * change visible to false, and hide laser from board
+     */
     public void hide(){
         visible = false;
     }
 
+    /**
+     * change visible to true, and reveal laser from board
+     */
     public void reveal(){
         visible = true;
     }
+
     @Override
     public boolean isVisible() {
         return visible;
@@ -136,6 +143,10 @@ public class Laser implements IActive {
         return Integer.compare(this.drawPriority(), other.drawPriority());
     }
 
+    /**
+     * return this lasers direction
+     * @return direction of this laser
+     */
     public DIRECTION getDirection() {
         return direction;
     }
@@ -160,10 +171,18 @@ public class Laser implements IActive {
         return suppliers;
     }
 
+    /**
+     * return how many lasers. Could either be one or two
+     * @return number of laser
+     */
     public int nrOfLasers() {
         return numberOfLasers;
     }
 
+    /**
+     * return if this laser is a beginning laser or not.
+     * @return true if this laser is a starter, false otherwise
+     */
     public boolean isStartPosition() {
         return start;
     }

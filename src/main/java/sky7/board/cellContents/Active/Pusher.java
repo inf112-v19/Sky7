@@ -96,7 +96,7 @@ public class Pusher implements IActive {
     /**
      * return the direction of where the pusher push into
      *
-     * @return
+     * @return the direction this pusher push
      */
     public DIRECTION getDirection() {
         return direction;
