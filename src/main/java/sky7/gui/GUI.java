@@ -186,7 +186,7 @@ public class GUI implements ApplicationListener {
 			}
 
 			// Render "GO" button only if 5 cards are choosen and player has taken less than 9 damage
-			if (localregistry.size() == 5) {
+			if (localregistry.size() == 5 && Integer.parseInt((String) client.getPlayer().getDamage()) <= 9) {
 				confirm.draw(batch);
 
 				// if confirm is clicked:
@@ -288,11 +288,18 @@ public class GUI implements ApplicationListener {
 
 		hand = client.getHand();
 
+		//Print out new cards
 		for (ICard card : hand) {
 			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t");
 		}
+		
+		//Print out players current registry
+		System.out.println("\n\nCurrent registry: ");
+		for (ICard card : localregistry) {
+			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t");
+		}
 
-		System.out.println("\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + localregistry.size());
+		System.out.println("\n\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + localregistry.size());
 		
 		resetcardpos(localregistry);
 		if (localregistry.size() != 5) {
