@@ -157,11 +157,16 @@ public class Host implements IHost {
             for (int j = 0; j < startCells.size(); j++) {
                 if (startCells.get(j).getNumber() == i + 1) {
                     // add to hosts board.
-                    board.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+                    board.placeRobotAtStart(i,startPositions.get(j));
+                    //board.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+
                     // add to localClient
-                    localClient.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+                    //localClient.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+                    localClient.placeRobotAtStart(i,startPositions.get(j));
+
                     // add to remote clients.
-                    netHandler.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
+                    netHandler.placeRobotAtStart(i,startPositions.get(j));
+                    //netHandler.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
                     break;
                 }
             }

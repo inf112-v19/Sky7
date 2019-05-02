@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 
@@ -52,7 +51,12 @@ public class ClientNetHandler {
                 PlaceRobot pr = (PlaceRobot)object;
                 client.placeRobot(pr.playerID, pr.xPos, pr.yPos);
                 
-            } else if (object instanceof NumberOfPlayers) {
+            } else if (object instanceof PlaceRobotAtStart) {
+                PlaceRobotAtStart pr = (PlaceRobotAtStart)object;
+                client.placeRobotAtStart(pr.playerID, pr.startPosition);
+
+            }
+            else if (object instanceof NumberOfPlayers) {
                 client.updateNPlayers(((NumberOfPlayers)object).nPlayers);
                 
             } else if (object instanceof Begin) {

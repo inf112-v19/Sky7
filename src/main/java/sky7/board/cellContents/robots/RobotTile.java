@@ -16,7 +16,7 @@ public class RobotTile implements IMoving {
     int playerNr;
     DIRECTION dir;
     private Vector2 archiveMarker;
-    
+
     public RobotTile(int playerNr) {
         this.playerNr = playerNr;
         this.dir = DIRECTION.NORTH;
@@ -127,5 +127,9 @@ public class RobotTile implements IMoving {
     @Override
     public int hashCode() {
         return Objects.hash(textureRef, texture, playerNr, dir, archiveMarker);
+    }
+
+    public void setOrientation(DIRECTION dir) {
+        this.dir = dir;
     }
 }

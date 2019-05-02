@@ -1,5 +1,6 @@
 package sky7.Client;
 
+import com.badlogic.gdx.math.Vector2;
 import sky7.board.IBoard;
 import sky7.card.ICard;
 import sky7.host.IHost;
@@ -135,4 +136,6 @@ public interface IClient {
 
 
 	boolean isFinishedProcessing();
+
+    void placeRobotAtStart(int playerNr, Vector2 startPosition);
 }
