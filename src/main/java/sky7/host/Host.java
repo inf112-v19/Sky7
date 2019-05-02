@@ -1,13 +1,6 @@
 package sky7.host;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import com.badlogic.gdx.math.Vector2;
-
 import sky7.Client.IClient;
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
@@ -16,6 +9,12 @@ import sky7.card.ICard;
 import sky7.card.IDeck;
 import sky7.card.ProgramDeck;
 import sky7.game.Game;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * A Class that hosts a roboRally game.
@@ -119,6 +118,14 @@ public class Host implements IHost {
         robotDamage[playerID] += damage;
         if (robotDamage[playerID] >= 10) // TODO respawn or lose game
             if (robotDamage[playerID] > 4) lockedRegSlots[playerID] = robotDamage[playerID] - 4;
+    }
+
+    @Override
+    public void repairDamage(int playerID, int damage) {
+        if(robotDamage[playerID]>0){
+            robotDamage[playerID]-=damage;
+        }
+        //TODO andre årsaker som gjør at player ikke skal få mer health?
     }
 
 
