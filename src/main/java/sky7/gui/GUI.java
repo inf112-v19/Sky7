@@ -210,14 +210,13 @@ public class GUI implements ApplicationListener {
 
 	public void showRegistry() {
 		for (ICard currentCards : localregistry) {
-			drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
-			font.draw(batch, currentCards.getPriority(), currentCards.getX() + 42, currentCards.getY() + 93);
-
 			if (currentCards.getY() != scaler) {
 				currentCards.setY(scaler);
 				currentCards.setX((scaler * 5) + yPos);
 				yPos += scaler;
 			}
+			drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
+			font.draw(batch, currentCards.getPriority(), currentCards.getX() + 42, currentCards.getY() + 93);
 		}
 	}
 
@@ -283,7 +282,7 @@ public class GUI implements ApplicationListener {
 		yPos = 64;
 		cardXpos = 0;
 		pointer = client.getPlayer().getNLocked();
-
+		
 		localregistry = (ArrayList<ICard>) client.getPlayer().getRegistry().clone();
 
 		hand = client.getHand();
@@ -302,9 +301,11 @@ public class GUI implements ApplicationListener {
 		System.out.println("\n\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + localregistry.size());
 		
 		resetcardpos(localregistry);
-		if (localregistry.size() != 5) {
+		
+		if (localregistry.size() <= 5) {
 			leftshift(localregistry);
 		}
+		
 		setHandPos(hand);
 		chooseCards();
 		cardXpos = 0;
