@@ -140,4 +140,8 @@ public interface IClient {
     boolean isFinishedProcessing();
 
     void placeRobotAtStart(int playerNr, Vector2 startPosition);
+
+    boolean loseLifeToken(int playerID);
+
+    boolean isGameOver();
 }

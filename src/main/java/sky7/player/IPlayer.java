@@ -95,4 +95,6 @@ public interface IPlayer {
 	void resetRegistry();
 
 	ICard[] getLockedRegistry();
+
+    boolean loseLifeToken();
 }

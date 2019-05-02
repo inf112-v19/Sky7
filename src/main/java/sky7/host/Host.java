@@ -34,9 +34,8 @@ public class Host implements IHost {
 
     private HashMap<Integer, ArrayList<ICard>> playersRegistries; // player registries
     private boolean[] remotePlayers;
-    private int[] lockedRegSlots, robotDamage;
-    private int[] visitedFlags = new int[8];
-    private boolean[] powerDown =  new boolean[8];
+    private int[] lockedRegSlots, robotDamage, lifeTokens, visitedFlags;
+    private boolean[] powerDown, gameOver;
     private HostNetHandler netHandler;
     private BoardGenerator bg;
     private IClient localClient;
@@ -57,25 +56,24 @@ public class Host implements IHost {
         localClient.connect(this, nPlayers++, boardName);
 
 
-
     }
 
     public Host() {
         initializeFieldVariables();
-        
+
         try {
             netHandler = new HostNetHandler((IHost) Host.this);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        
+
         try {
             board = bg.getBoardFromFile(boardName);
             game = new Game(this, board);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        
+
         nFlagsOnBoard = board.getFlags().size();
     }
 
@@ -126,8 +124,8 @@ public class Host implements IHost {
 
     @Override
     public void repairDamage(int playerID, int damage) {
-        if(robotDamage[playerID]>0){
-            robotDamage[playerID]-=damage;
+        if (robotDamage[playerID] > 0) {
+            robotDamage[playerID] -= damage;
         }
         //TODO andre årsaker som gjør at player ikke skal få mer health?
     }
@@ -145,6 +143,10 @@ public class Host implements IHost {
         remotePlayers = new boolean[8];
         lockedRegSlots = new int[8];
         robotDamage = new int[8];
+        lifeTokens = new int[8];
+        visitedFlags = new int[8];
+        powerDown = new boolean[8];
+        gameOver = new boolean[8];
     }
 
     /**
@@ -158,15 +160,15 @@ public class Host implements IHost {
             for (int j = 0; j < startCells.size(); j++) {
                 if (startCells.get(j).getNumber() == i + 1) {
                     // add to hosts board.
-                    board.placeRobotAtStart(i,startPositions.get(j));
+                    board.placeRobotAtStart(i, startPositions.get(j));
                     //board.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
 
                     // add to localClient
                     //localClient.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
-                    localClient.placeRobotAtStart(i,startPositions.get(j));
+                    localClient.placeRobotAtStart(i, startPositions.get(j));
 
                     // add to remote clients.
-                    netHandler.placeRobotAtStart(i,startPositions.get(j));
+                    netHandler.placeRobotAtStart(i, startPositions.get(j));
                     //netHandler.placeRobot(i, (int) startPositions.get(j).x, (int) startPositions.get(j).y);
                     break;
                 }
@@ -296,7 +298,6 @@ public class Host implements IHost {
     }
 
     /**
-     *
      * @param playerID
      */
     private void returnCardsNotLocked(int playerID) {
@@ -341,21 +342,23 @@ public class Host implements IHost {
 
         for (int i = 1; i < remotePlayers.length; i++) {
             if (remotePlayers[i]) {
-                if (!powerDown[i]) {
-                    netHandler.dealCards(i, pDeck.draw(Math.max(0, 9 - robotDamage[i])));
-                    System.out.println("Handing out " + (Math.max(0, 9 - robotDamage[i])) + " cards to player " + i);
-                } else {
-                    netHandler.dealCards(i, new ArrayList<ICard>());
-                    readyPlayers++;
+                if (gameOver[i]) {
+                    if (!powerDown[i]) {
+                        netHandler.dealCards(i, pDeck.draw(Math.max(0, 9 - robotDamage[i])));
+                        System.out.println("Handing out " + (Math.max(0, 9 - robotDamage[i])) + " cards to player " + i);
+                    } else {
+                        netHandler.dealCards(i, new ArrayList<ICard>());
+                        readyPlayers++;
+                    }
                 }
             }
         }
-        
-        for (int i=0; i<8; i++) {
+
+        for (int i = 0; i < 8; i++) {
             if (powerDown[i]) powerDown[i] = false;
         }
     }
-    
+
 
     // NET ------------------------
 
@@ -420,8 +423,8 @@ public class Host implements IHost {
 
     @Override
     public void robotVisitedFlag(int playerID, int flagNumber) {
-        if (visitedFlags[playerID] == flagNumber-1) visitedFlags[playerID]++;
-        
+        if (visitedFlags[playerID] == flagNumber - 1) visitedFlags[playerID]++;
+
         if (visitedFlags[playerID] == nFlagsOnBoard) {
             System.out.println("Player " + playerID + " has won the game!");
             // TODO victory stuff(?)
@@ -430,11 +433,30 @@ public class Host implements IHost {
 
     @Override
     public void powerDownRepair(boolean[] currentPD) {
-        for (int i=0; i<MAX_N_PLAYERS; i++) {
+        for (int i = 0; i < MAX_N_PLAYERS; i++) {
             if (currentPD[i]) {
                 robotDamage[i] = 0;
                 lockedRegSlots[i] = 0;
             }
         }
     }
+
+    @Override
+    public boolean loseLifeToken(int playerID) {
+        // TODO what happens at lose of life-token
+        // Check if game over
+        // if so, do not ask for registry
+        // send game update until game is won or everybody loses.
+        // host must continue to host until match is won or everybody loses.
+
+        if(!gameOver[playerID]){
+            gameOver[playerID] = --lifeTokens[playerID]<=0;
+            if(gameOver[playerID]) --nPlayers;
+        }
+        if(nPlayers == 0){
+            // TODO what happens if nobody wins.
+        }
+        return gameOver[playerID];
+    }
+
 }

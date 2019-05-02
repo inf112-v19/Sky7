@@ -31,6 +31,7 @@ public class Client implements IClient {
     private boolean readyToRender = false, selfPowerDown = false, finishedProcessing = true;
     private ClientNetHandler netHandler;
     private int nPlayers;
+    private boolean gameOver = false;
 
 
     public Client() {
@@ -256,5 +257,20 @@ public class Client implements IClient {
     @Override
     public void placeRobotAtStart(int playerNr, Vector2 startPosition) {
         board.placeRobotAtStart(playerNr,startPosition);
+    }
+
+    @Override
+    public boolean loseLifeToken(int playerID) {
+        if(playerID == player.getPlayerNumber()){
+            if(!gameOver){
+                gameOver = player.loseLifeToken();
+            }
+        }
+        return gameOver;
+    }
+
+    @Override
+    public boolean isGameOver() {
+        return gameOver;
     }
 }

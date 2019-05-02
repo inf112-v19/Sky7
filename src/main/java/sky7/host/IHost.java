@@ -113,4 +113,6 @@ public interface IHost {
      *  Call the Host to repair the robots in power down state
      */
     void powerDownRepair(boolean [] currentPD);
+
+    boolean loseLifeToken(int playerID);
 }
