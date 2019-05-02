@@ -145,6 +145,7 @@ public class Laser implements IActive {
 
     /**
      * return this lasers direction
+     *
      * @return direction of this laser
      */
     public DIRECTION getDirection() {
@@ -173,6 +174,7 @@ public class Laser implements IActive {
 
     /**
      * return how many lasers. Could either be one or two
+     *
      * @return number of laser
      */
     public int nrOfLasers() {
@@ -181,6 +183,7 @@ public class Laser implements IActive {
 
     /**
      * return if this laser is a beginning laser or not.
+     *
      * @return true if this laser is a starter, false otherwise
      */
     public boolean isStartPosition() {

@@ -69,6 +69,7 @@ public class Flag implements IInactive {
 
     /**
      * what number this flag has.
+     *
      * @return the number of this flag
      */
     public int getFlagNumber(){

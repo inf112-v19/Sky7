@@ -84,6 +84,7 @@ public class Wall implements IInactive {
 
     /**
      * tells where the wall is placed in the cell.
+     *
      * @return in what direction this wall is placed
      */
     public DIRECTION getDirection() {

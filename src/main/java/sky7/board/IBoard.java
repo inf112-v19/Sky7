@@ -41,22 +41,26 @@ public interface IBoard {
     /**
      * Place a robot on the board
      * 
-     * @param playerNr
-     * @param x
-     * @param y
+     * @param playerNr integer representing the number of the player
+     * @param x in x pos
+     * @param y in y pos
      */
     void placeRobot(int playerNr, int x, int y);
 
-    /*/**
-     * Attempt to move a robot forward or backward
-     * 
-     * @param currentPlayer the player/robot number to move
-     * @param move should be between -1 and 3
+    /**
+     * move robot with playerNumber in this direction
+     *
+     * @param playerNumber integer representing robots number
+     * @param direction in what direction robot should be moved to
      */
-    //void moveRobot(int currentPlayer, int move);
+    void moveRobot(Integer playerNumber, DIRECTION direction);
 
-    void moveRobot(Integer id, DIRECTION direction);
-
+    /**
+     * remove this cell in this pos from this board
+     *
+     * @param cell cell to be removed
+     * @param pos position of the cell to be removed
+     */
     void removeCell(ICell cell, Vector2 pos);
 
     /**
@@ -69,41 +73,128 @@ public interface IBoard {
 
     void moveConveyors();
 
+    /**
+     * return a list of the position of all pushers in this board
+     *
+     * @return pushers positions.
+     */
     List<Vector2> getPusherPos();
 
+    /**
+     * return a list of all the pushers on this board
+     *
+     * @return all the pushers
+     */
     List<Pusher> getPushers();
 
-    //Map<Integer, Flag> robotVisitFlag();
+    /**
+     * return the cell in that position
+     *
+     * @param positionOfCell position to find the cell
+     * @return the cell in that position
+     */
+    TreeSet<ICell> getCell(Vector2 positionOfCell);
 
-    TreeSet<ICell> getCell(Vector2 a);
-
+    /**
+     * return a list of the position of all robots in this board
+     *
+     * @return robots positions.
+     */
     Vector2[] getRobotPos();
 
+    /**
+     * return a list of all robots on this board
+     *
+     * @return all robots
+     */
     RobotTile[] getRobots();
 
+    /**
+     * move robot //TODO fjerne denne da den bare blir brukt i testene
+     *
+     * @param player the robot to move
+     * @param move move this many steps
+     */
     void moveRobot(int player, int move);
 
+    /**
+     * check if board contains this position
+     *
+     * @param pos the position to check.
+     * @return true if the position is within board
+     */
     boolean containsPosition(Vector2 pos);
 
-    Vector2 getDestination(Vector2 from, DIRECTION direction, int i);
+    /**
+     * return the destination after going this amount of steps in that direction from that position
+     *
+     * @param from start position
+     * @param direction in what direction
+     * @param steps how far
+     * @return the new position
+     */
+    Vector2 getDestination(Vector2 from, DIRECTION direction, int steps);
 
+    /**
+     * dont show the robot in this board
+     *
+     * @param player robot to hide
+     */
     void hideRobot(int player);
 
+    /**
+     *
+     * @return a list of all lasers in this board
+     */
     List<Laser> getLasers();
 
+    /**
+     *
+     * @return a list of all position of all lasers in this board
+     */
     List<Vector2> getLaserPos();
 
+    /**
+     * add a this cell in pos position
+     *
+     * @param cell cell to add
+     * @param pos in what positon
+     */
     void addCell(ICell cell, Vector2 pos);
 
+    /**
+     *
+     * @return list of  where all start points are
+     */
     List<Vector2> getStartPositions();
 
+    /**
+     *
+     * @return list of all start position in this board
+     */
     List<StartPosition> getStartCells();
 
+    /**
+     *
+     * @return a list of all the flags
+     */
     List<Flag> getFlags();
 
+    /**
+     *
+     * @return a list of all position to all flags
+     */
     List<Vector2> getFlagPositions();
 
+    /**
+     *
+     * @return a list with all wrenches
+     */
     List<Wrench> getWrenches();
 
+    /**
+     *
+     * @return a list of position to all the wrenches
+     */
     List<Vector2> getWrenchPositions();
 }

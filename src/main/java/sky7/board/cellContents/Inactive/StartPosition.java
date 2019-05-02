@@ -54,6 +54,7 @@ public class StartPosition implements IInactive {
 
     /**
      * the number of this start position
+     *
      * @return integer representing number of start position
      */
     public int getNumber() {

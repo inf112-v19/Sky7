@@ -49,6 +49,10 @@ public class CogWheel implements IActive {
         return Integer.compare(this.drawPriority(), other.drawPriority());
     }
 
+    /**
+     * in which way this rotate
+     * @return either rotate clockwise(1) or counterclockwise(-1)
+     */
     public int getRotation() {
         return this.rotDirection;
     }

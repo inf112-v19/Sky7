@@ -238,18 +238,14 @@ public class Board implements IBoard {
         return true;
     }
 
-    /**
-     * @param pos the position to check.
-     * @return true if the position is within board
-     */
     @Override
     public boolean containsPosition(Vector2 pos) {
         return (pos.x >= 0 && pos.y >= 0) && (pos.x < grid.length && pos.y < grid[0].length);
     }
 
     @Override
-    public void moveRobot(Integer id, DIRECTION direction) {
-        updateRobotPos(id, getDestination(robotPos[id], direction, 1));
+    public void moveRobot(Integer playerNumber, DIRECTION direction) {
+        updateRobotPos(playerNumber, getDestination(robotPos[playerNumber], direction, 1));
     }
 
     /**
@@ -271,11 +267,11 @@ public class Board implements IBoard {
      *
      * @param pos      the source from which to find the new coordinates
      * @param dir      the direction of travel
-     * @param distance the number of tiles to traverse
+     * @param steps the number of tiles to traverse
      * @return the target vector (coordinates)
      */
-    public Vector2 getDestination(Vector2 pos, DIRECTION dir, int distance) {
-        return new Vector2(pos.x + dir.getX() * distance, pos.y + dir.getY() * distance);
+    public Vector2 getDestination(Vector2 pos, DIRECTION dir, int steps) {
+        return new Vector2(pos.x + dir.getX() * steps, pos.y + dir.getY() * steps);
         /*Vector2 target;
         switch (dir) {
             case NORTH:
@@ -364,7 +360,6 @@ public class Board implements IBoard {
         }
     }
 
-
     /**
      * Move a robot to a target vector
      *
@@ -405,72 +400,31 @@ public class Board implements IBoard {
         System.out.println("Robot " + currentPlayer + " is headed " + robots[currentPlayer].getOrientation());
     }
 
-
     @Override
     public void moveConveyors() {
         // TODO Auto-generated method stub
     }
+
     @Override
     public List<Vector2> getPusherPos(){
         return pusherPos;
     }
+
     @Override
     public List<Pusher> getPushers(){
         return pushers;
     }
 
-
-
-/*
-    private boolean canPusherPush(Vector2 pos, DIRECTION dirToPush) {
-        if(wallInCurrentTile(pos,dirToPush)){
-            return false;
-        }
-        Vector2 newPos = getDestination(pos, dirToPush, 1);
-
-        if(!containsPosition(newPos)){//if the pusher push to outside of the board
-            return true;
-        }
-        if(wallInCurrentTileMadeByMaren(pos,dirToPush)){
-            return false;
-        }
-
-        return true;
-   //TODO hva om to roboter vil til samme felt samtidig?
-
-    }
-
-   /* @Override
-    public Map<Integer, Flag> robotVisitFlag(){
-        Map<Integer,Flag> robotWhoVisitedFlag = new HashMap<>();
-        for(int i=0; i<flags.size(); i++){
-            for(int j=0; j<robots.length; j++){
-                if(flagsPos.get(i).equals(robotPos[j])){
-                    int idOfRobot = robots[j].getId();
-                    robotWhoVisitedFlag.put(idOfRobot,flags.get(i));
-                }
-            }
-        }
-        return robotWhoVisitedFlag;
-    }*/
-
     @Override
-    public TreeSet<ICell> getCell(Vector2 a) {
-        return grid[(int) a.x][(int) a.y];
+    public TreeSet<ICell> getCell(Vector2 positionOfCell) {
+        return grid[(int) positionOfCell.x][(int) positionOfCell.y];
     }
 
     @Override
     public RobotTile[] getRobots() {
         return robots;
     }
-  /*  private boolean wallInCurrentTileMadeByMaren(Vector2 robotPos, DIRECTION dir) {
-        for (ICell item : grid[(int) robotPos.x][(int) robotPos.y]) {
-            if (item instanceof Wall) {
-                return (((Wall) item).getDirection() == dir.reverse());
-            }
-        }
-        return false;
-    }*/
+
 
 
 }
