@@ -66,6 +66,12 @@ public class Flag implements IInactive {
         return suppliers;
 
     }
+
+    /**
+     * what number this flag has.
+     *
+     * @return the number of this flag
+     */
     public int getFlagNumber(){
         return this.flagNumber;
     }
