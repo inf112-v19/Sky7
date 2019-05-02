@@ -1,4 +1,4 @@
-package sky7.board;
+
 
 
 import java.io.FileNotFoundException;
@@ -100,7 +100,7 @@ public class BoardGenerator implements IBoardGenerator {
 
         //mainGrid = rotate(mainGrid, 1);
         TreeSet<ICell>[][] finalGrid = combineGrids(startGrid, mainGrid, DIRECTION.SOUTH);
-        finalGrid = rotate(finalGrid, 1);
+        finalGrid = rotate(finalGrid, 3);
 
         return new Board(finalGrid, finalGrid.length, finalGrid[0].length);
     }
