@@ -1,11 +1,5 @@
 package sky7.Client;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
@@ -15,6 +9,12 @@ import sky7.game.Game;
 import sky7.host.IHost;
 import sky7.player.IPlayer;
 import sky7.player.Player;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class Client implements IClient {
 
@@ -218,6 +218,14 @@ public class Client implements IClient {
         if (playerID == this.player.getPlayerNumber()) player.applyDamage(damage);
         
         robotDamage[playerID] += damage;
+    }
+    @Override
+    public void repairDamage(int playerID, int health) {
+        if(playerID == this.player.getPlayerNumber()){
+            player.repairDamage(health);
+        }
+
+        robotDamage[playerID] -= health;
     }
 
     @Override
