@@ -45,17 +45,30 @@ public class Player implements IPlayer {
             nLocked = damage-4;
         }
 
-        // if health reaches 0, consume a life token and respawn
+        // TODO if health reaches 0, consume a life token and respawn
+    }
+    @Override
+    public void repairDamage(int applyHealth) {
+        if(damage>0){
+            updateDamage(damage-applyHealth);
+        }
+
+        System.out.println("Robot " + playerNumber + " repair " + applyHealth + " damage.");
+
+        if (damage > 4) {
+            nLocked = damage-4;
+        }
+
     }
 
-    @Override
+   /* @Override
     public void repair(int repairDamage) {
         updateDamage(damage-repairDamage);
         
         if (damage > 4) {
             nLocked = damage-4;
         } else nLocked = 0;
-    }
+    }*/
 
     @Override
     public void updateDamage(int totalDamage) {
