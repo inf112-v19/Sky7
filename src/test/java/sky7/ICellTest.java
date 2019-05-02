@@ -3,6 +3,7 @@ package sky7;
 import org.junit.Test;
 import sky7.board.ICell;
 import sky7.board.cellContents.Active.Belt;
+import sky7.board.cellContents.Active.CogWheel;
 import sky7.board.cellContents.Active.Laser;
 import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.DIRECTION;
@@ -17,12 +18,21 @@ import static org.junit.Assert.assertEquals;
 public class ICellTest {
 
     @Test
-    public void bottomTilesShouldHaveSamePriority(){
+    public void basicTilesShouldHaveSamePriority(){
         ArrayList<ICell> list = new ArrayList<>();
-        list.add(new Belt(DIRECTION.SOUTH,DIRECTION.NORTH, 1));
         list.add(new FloorTile());
-        list.add(new Hole());
         final int priority = 1;
+        for (int i = 0; i < list.size(); i++) {
+            assertEquals(list.get(i).drawPriority(), priority);
+        }
+    }
+    @Test
+    public void lowTilesShouldHaveSamePriority(){
+        ArrayList<ICell> list = new ArrayList<>();
+        list.add(new Wrench(1));
+        list.add(new StartPosition(1));
+        list.add(new Hole());
+        final int priority = 2;
         for (int i = 0; i < list.size(); i++) {
             assertEquals(priority, list.get(i).drawPriority());
         }
@@ -32,8 +42,9 @@ public class ICellTest {
     @Test
     public void middleTilesShouldHaveSamePriority(){
         ArrayList<ICell> list = new ArrayList<>();
-        list.add(new Flag(1));
-        list.add(new Wrench(1));;
+        list.add(new CogWheel(1));
+        list.add(new Pusher(DIRECTION.NORTH,true));
+        list.add(new Belt(DIRECTION.EAST, DIRECTION.WEST,1));
         final int middel = 3;
         for (int i = 0; i < list.size(); i++) {
             assertEquals(middel, list.get(i).drawPriority());
@@ -41,32 +52,32 @@ public class ICellTest {
     }
 
     @Test
-    public void topLevelShouldHaveSamePriority() {
-        ArrayList<ICell> list = new ArrayList<>();
-        list.add(new RobotTile(1));
-
-        final int top = 5;
-        for (int i = 0; i < list.size(); i++) {
-            assertEquals(top, list.get(i).drawPriority());
-        }
+    public void laserLayerShouldHaveCorrectPriority(){
+        Laser start = new Laser(true, DIRECTION.EAST, 1);
+        Laser middel = new Laser(false, DIRECTION.SOUTH, 2);
+        assertEquals(start.drawPriority(), 5);
+        assertEquals(middel.drawPriority(), 4);
     }
 
-    //@Test
-    public void topMiddleLevelShouldHaveSamePriority(){
-        ArrayList<ICell> list = new ArrayList<>();
-        list.add(new Wall(DIRECTION.EAST));
-        list.add(new Laser(true, DIRECTION.EAST, 1));
-        HashSet<Integer> set = new HashSet<>();
-        set.add(1);
-        set.add(3);
-        set.add(5);
-        //list.add(new Pusher(DIRECTION.EAST,set));
+    @Test
+    public void wallLayersShouldHaveCorrectPriority(){
+        Wall wallN = new Wall(DIRECTION.NORTH);
+        assertEquals(wallN.drawPriority(), 6);
+        Wall wallE = new Wall(DIRECTION.EAST);
+        assertEquals(wallE.drawPriority(), 7);
+        Wall wallS = new Wall(DIRECTION.SOUTH);
+        assertEquals(wallS.drawPriority(), 8);
+        Wall wallW = new Wall(DIRECTION.WEST);
+        assertEquals(wallW.drawPriority(), 9);
 
-        final int inBetween = 4;
-        for (int i = 0; i < list.size(); i++) {
-            assertEquals(inBetween,list.get(i).drawPriority());
-        }
     }
+
+    @Test
+    public void roboTileShouldHaveCorrectPriority(){
+        RobotTile robo = new RobotTile(1);
+        assertEquals(robo.drawPriority(), 10);
+    }
+
 
 
 }
