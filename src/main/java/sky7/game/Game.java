@@ -86,11 +86,10 @@ public class Game implements IGame {
 
         }
         //after 5th phase
-        respownRobots();
+        respawnRobots();
         repairRobotsOnRepairSite();
         System.out.println("Robots in Power Down state are repairing.");
         powerDownRepair(powerDown);
-
 
 
         if (hosting) {
@@ -98,7 +97,7 @@ public class Game implements IGame {
         } else client.finishedProcessing(board);
     }
 
-    private void respownRobots() {
+    private void respawnRobots() {
         for (Integer id : destroyedRobots) {
             RobotTile robot = board.getRobots()[id];
             robot.setOrientation(DIRECTION.NORTH);
@@ -281,6 +280,7 @@ public class Game implements IGame {
             if (facingWall(pos, laser.getDirection())
                     || facingWall(ahead, laser.getDirection().reverse())
                     || !board.containsPosition(ahead)
+                    || isRobotAhead(pos)
                     || isRobotAhead(ahead))
                 stopped = true;
 
@@ -376,8 +376,14 @@ public class Game implements IGame {
 
     private void applyDamage(int playerID, int damage) {
         if (disableDamage) return;
-        if (hosting) host.applyDamage(playerID, damage);
-        else client.applyDamage(playerID, damage);
+        if (hosting) {
+            if (host.applyDamage(playerID, damage)) killRobot(playerID);
+        }else if (client.applyDamage(playerID, damage)) killRobot(playerID);
+    }
+
+    private void killRobot(int playerID) {
+        board.hideRobot(playerID);
+        destroyedRobots.add(playerID);
     }
 
     private void repairDamage(int playerID, int health) {
@@ -426,8 +432,7 @@ public class Game implements IGame {
             render(100);
             dead = checkForHole(player);
         } else { // robot is outside the board.
-            board.hideRobot(player);
-            destroyedRobots.add(player);
+            killRobot(player);
             dead = true;
         }
         if (dead) render(50);
@@ -439,8 +444,7 @@ public class Game implements IGame {
             if (board.getRobots()[i] != null && player == board.getRobots()[i].getId()) {
                 for (ICell cell : board.getCell(board.getRobotPos()[i])) {
                     if (cell instanceof Hole) {
-                        board.hideRobot(player);
-                        destroyedRobots.add(player);
+                        killRobot(player);
                         return true;
                     }
                 }

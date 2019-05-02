@@ -117,10 +117,11 @@ public class Host implements IHost {
     }
 
     @Override
-    public void applyDamage(int playerID, int damage) {
+    public boolean applyDamage(int playerID, int damage) {
         robotDamage[playerID] += damage;
-        if (robotDamage[playerID] >= 10) // TODO respawn or lose game
-            if (robotDamage[playerID] > 4) lockedRegSlots[playerID] = robotDamage[playerID] - 4;
+        if (robotDamage[playerID] > 4) lockedRegSlots[playerID] = robotDamage[playerID] - 4;
+        if (robotDamage[playerID] >= 10) return true;
+        return false;
     }
 
     @Override

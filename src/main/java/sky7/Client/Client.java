@@ -215,10 +215,11 @@ public class Client implements IClient {
     }
 
     @Override
-    public void applyDamage(int playerID, int damage) {
+    public boolean applyDamage(int playerID, int damage) {
         if (playerID == this.player.getPlayerNumber()) player.applyDamage(damage);
         
         robotDamage[playerID] += damage;
+        return false;
     }
     @Override
     public void repairDamage(int playerID, int health) {

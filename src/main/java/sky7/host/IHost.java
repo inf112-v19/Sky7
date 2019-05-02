@@ -95,10 +95,11 @@ public interface IHost {
 
     /**
      *
-     * @param playerID
+     *  @param playerID
      * @param damage
+     * @return true if damage killed robot.
      */
-    void applyDamage(int playerID, int damage);
+    boolean applyDamage(int playerID, int damage);
 
     /**
      * Informs Host that a robot has visited a flag
