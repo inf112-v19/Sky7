@@ -201,7 +201,7 @@ public class GUI implements ApplicationListener {
 			powerdown.draw(batch);
 			if (isClicked(powerdown)) {
 				System.out.println("Powering down next round");
-//				client.powerDown();
+				client.powerDown();
 			}
 
 		}

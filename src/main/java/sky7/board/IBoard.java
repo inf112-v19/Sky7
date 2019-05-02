@@ -2,6 +2,7 @@ package sky7.board;
 
 import com.badlogic.gdx.math.Vector2;
 import sky7.board.cellContents.Active.Laser;
+import sky7.board.cellContents.Active.Pusher;
 import sky7.board.cellContents.DIRECTION;
 import sky7.board.cellContents.Inactive.Flag;
 import sky7.board.cellContents.Inactive.StartPosition;
@@ -67,6 +68,12 @@ public interface IBoard {
     void rotateRobot(int currentPlayer, int rotate);
 
     void moveConveyors();
+
+    List<Vector2> getPusherPos();
+
+    List<Pusher> getPushers();
+
+    //Map<Integer, Flag> robotVisitFlag();
 
     TreeSet<ICell> getCell(Vector2 a);
 

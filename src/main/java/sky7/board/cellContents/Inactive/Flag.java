@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public class Flag implements IInactive {
     private int flagNumber;
-    private static final int PRIORITY = 8;
+    private final int PRIORITY = 3;
     private Texture texture;
 
     public Flag(int flagNumber) {
@@ -65,5 +65,8 @@ public class Flag implements IInactive {
         }
         return suppliers;
 
+    }
+    public int getFlagNumber(){
+        return this.flagNumber;
     }
 }

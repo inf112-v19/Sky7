@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 public class Wrench implements IInactive {
     private int type;
-    private final static int PRIORITY = 9;
+    private final static int PRIORITY = 2;
     private Texture texture;
 
     public Wrench(int type) {

@@ -27,5 +27,6 @@ public class KryoRegister {
         kryo.register(ProgramCard.class);
         kryo.register(ArrayList.class);
         kryo.register(HashMap.class);
+        kryo.register(boolean[].class);
     }
 }

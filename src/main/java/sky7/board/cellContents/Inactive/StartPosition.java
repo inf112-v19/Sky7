@@ -1,24 +1,22 @@
 package sky7.board.cellContents.Inactive;
 
-import com.badlogic.gdx.graphics.Texture;
-import sky7.board.ICell;
-import sky7.board.cellContents.DIRECTION;
-import sky7.board.cellContents.IInactive;
-
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.badlogic.gdx.graphics.Texture;
+
+import sky7.board.ICell;
+import sky7.board.cellContents.IInactive;
+
 public class StartPosition implements IInactive {
     private int startNumber;
-    private static final int PRIORITY = 3;
+    private final int PRIORITY = 2;
     private Texture texture;
-    private DIRECTION direction;
 
     public StartPosition(int startNumber) {
         this.startNumber = startNumber;
-
     }
 
 

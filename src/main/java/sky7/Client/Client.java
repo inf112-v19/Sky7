@@ -4,12 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
+import sky7.board.cellContents.Inactive.Flag;
 import sky7.card.ICard;
-import sky7.card.IProgramCard;
 import sky7.game.Game;
 import sky7.host.IHost;
 import sky7.player.IPlayer;
@@ -21,9 +22,12 @@ public class Client implements IClient {
     private IHost host;
     private IPlayer player;
     private STATE state;
+    private int[] robotDamage = new int[8];
     private String boardName;
+    private HashSet<Integer> flagVisited;
     private Game game;
-    private boolean localClient, readyToRender = false; // True if this user is also running Host, false if remotely connected to Host.
+    private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
+    private boolean readyToRender = false, selfPowerDown = false;
     private ClientNetHandler netHandler;
     private int nPlayers;
 
@@ -32,6 +36,7 @@ public class Client implements IClient {
         //board = new Board(10,8);
         this.player = new Player();
         state = STATE.LOADING;
+        this.flagVisited = new HashSet<>();
         localClient = true;
     }
 
@@ -121,10 +126,12 @@ public class Client implements IClient {
 
         state = STATE.READY;
         if (localClient) {
-            host.ready(player.getPlayerNumber(), player.getRegistry(), player.getDiscard());
+            host.ready(player.getPlayerNumber(), player.getRegistry(), player.getDiscard(), selfPowerDown);
         } else {
-            netHandler.ready(player.getRegistry(), player.getDiscard());
+            netHandler.ready(player.getRegistry(), player.getDiscard(), selfPowerDown);
         }
+        
+        selfPowerDown = false;
     }
 
     @Override
@@ -144,6 +151,24 @@ public class Client implements IClient {
     public void activateLasers() {
         //TODO should call board.activateLasers
 
+
+    }
+    public void setFlagVisited(Flag visitedFlag){
+        int flagNumber = visitedFlag.getFlagNumber();
+        boolean canVisit= true;
+        //check if the player has visited every previous flag
+        for(int i=1; i<flagNumber; i++){
+            if(!hasVisitedFlag(i)){
+                canVisit = false;
+            }
+        }
+        if(canVisit){//if the player has visited every previous
+            this.flagVisited.add(flagNumber);
+        }
+    }
+
+    public boolean hasVisitedFlag(int flag){
+        return this.flagVisited.contains(flag);
     }
 
     @Override
@@ -152,9 +177,8 @@ public class Client implements IClient {
     }
 
     @Override
-    public void render(HashMap<Integer, ArrayList<ICard>> cards) {
-        game.process(cards);
-        
+    public void render(HashMap<Integer, ArrayList<ICard>> cards, boolean[] powerDown) {
+        new Thread(() -> { game.process(cards, powerDown.clone()); }).start();
     }
 
     /**
@@ -191,6 +215,26 @@ public class Client implements IClient {
 
     @Override
     public void applyDamage(int playerID, int damage) {
-        player.applyDamage(damage);
+        if (playerID == this.player.getPlayerNumber()) player.applyDamage(damage);
+        
+        robotDamage[playerID] += damage;
+    }
+
+    @Override
+    public void powerDown() {
+        selfPowerDown ^= true; // flip boolean value
+    }
+
+    @Override
+    public void powerDownRepair(boolean[] currentPD) {
+        
+        if (currentPD[player.getPlayerNumber()]) {
+            System.out.println("repairing self");
+            player.updateDamage(0);
+        }
+        
+        for (int i=0; i<8; i++) {
+            if (currentPD[i]) robotDamage[i] = 0;
+        }
     }
 }

@@ -1,7 +1,6 @@
 package sky7.game;
 
 import com.badlogic.gdx.math.Vector2;
-import sky7.Client.Client;
 import sky7.Client.IClient;
 import sky7.board.IBoard;
 import sky7.board.ICell;
@@ -27,6 +26,7 @@ public class Game implements IGame {
     private IBoard board;
     private List<Integer> destroyedRobots = new ArrayList<>();
     private boolean hosting;
+    private boolean disableDamage = false;
 
     /**
      * The construct for a game engine on host.
@@ -53,36 +53,51 @@ public class Game implements IGame {
 
 
     @Override
-    public void process(HashMap<Integer, ArrayList<ICard>> playerRegistrys) {
+    public void process(HashMap<Integer, ArrayList<ICard>> playerRegistrys, boolean[] powerDown) {
         destroyedRobots = new ArrayList<>();
         Queue<Queue<Event>> allPhases = findPlayerSequence(playerRegistrys);
         int count = 0;
+        int phaseNr = 1;
         for (Queue<Event> phase : allPhases) {
+            
             System.out.println("phase: " + count++);
+            
+            // B. Robots Move
             for (Event action : phase) {
                 if (!destroyedRobots.contains(action.player))
                     tryToMove(action);
-                expressConveyor();
-                normalAndExpressConveyor();
-                activatePushers();
-                activateCogwheels();
-                activateLasers();
-                placeBackup();
-                flags();
                 if (foundWinner()) break;
             }
+            
+            // C. Board Elements Move
+            expressConveyor();
+            normalAndExpressConveyor();
+            activatePushers(phaseNr);
+            activateCogwheels();
+            
+            // D. Lasers Fire
+            activateLasers();
+            
+            // E. Touch Checkpoints
+            placeBackup();
+            if (hosting) flags();
+            phaseNr++;
         }
-        //after 5th phaze
+        //after 5th phase
         repairRobotsOnRepairSite();
-        cleanUp();
+        System.out.println("Robots in Power Down state are repairing.");
+        powerDownRepair(powerDown);
 
         if (hosting) {
             host.finishedProcessing(board);
         } else client.finishedProcessing(board);
     }
 
-    private void cleanUp() {
-        // TODO this should be done differently
+    private void powerDownRepair(boolean[] powerDown) {
+        if (hosting) 
+            host.powerDownRepair(powerDown);
+        else 
+            client.powerDownRepair(powerDown);
     }
 
     private boolean foundWinner() {
@@ -96,8 +111,18 @@ public class Game implements IGame {
     }
 
     private void flags() {
-        // check winning condition.
-        //TODO
+        
+        RobotTile[] robots = board.getRobots();
+        for (int i = 0; i < robots.length; i++) {
+            if (robots[i] != null)
+                for (ICell cell : board.getCell(board.getRobotPos()[i])) {
+                    if (cell instanceof Flag) {
+                        System.out.println("Robot " + robots[i].getId() + " visited flag " + ((Flag)cell).getFlagNumber());
+                        host.robotVisitedFlag(robots[i].getId(), ((Flag)cell).getFlagNumber());
+                        break;
+                    }
+                }
+        }
 
         render(50);
     }
@@ -165,7 +190,6 @@ public class Game implements IGame {
         render(20);
 
         List<List<?>> next = moveLaserHeads(heads, positions);
-
         fireLasers(next.get(0), next.get(1));
 
         hide(heads, positions);
@@ -193,9 +217,9 @@ public class Game implements IGame {
                     RobotTile robot = (RobotTile) cell;
                     // TODO modifity the number of lasers for a robot when implemented.
                     nextHeads.add(new Laser(false, robot.getOrientation(), 1));
+
                     nextHeadPositions.add(board.getDestination(position, robot.getOrientation(), 1));
                 }
-
             }
         }
         list.add(nextHeads);
@@ -217,11 +241,12 @@ public class Game implements IGame {
         }
         if (ahead == null || !board.containsPosition(ahead)) {
             return true;
+
         } else {
             for (ICell aheadCell : board.getCell(ahead)) {
                 if (aheadCell instanceof Wall) return true;
                 if (aheadCell instanceof RobotTile) {
-                    applyDamage(((RobotTile)aheadCell).getId(), 1); // apply 1 damage
+                    applyDamage(((RobotTile) aheadCell).getId(), 1); // apply 1 damage
                     return true;
                 }
             }
@@ -230,6 +255,7 @@ public class Game implements IGame {
     }
 
     private void hide(List<?> lasers, List<?> laserPos) {
+
         // hide all lasers in the list.
         for (int i = 0; i < laserPos.size(); i++) {
             Vector2 pos = (Vector2) laserPos.get(i);
@@ -238,6 +264,7 @@ public class Game implements IGame {
                 board.removeCell(cell, pos);
             }
         }
+
     }
 
     private void show(List<?> lasers, List<?> laserPos) {
@@ -245,8 +272,8 @@ public class Game implements IGame {
         for (int i = 0; i < lasers.size(); i++) {
             Object cell = lasers.get(i);
             if (cell instanceof Laser) {
-                Laser laser = (Laser) cell;
 
+                Laser laser = (Laser) cell;
                 if (!laser.isStartPosition()) {
                     Vector2 pos = (Vector2) laserPos.get(i);
                     board.addCell(laser, pos);
@@ -255,8 +282,18 @@ public class Game implements IGame {
         }
     }
 
-    private void activatePushers() {
-        //TODO
+    private void activatePushers(int phaseNr) {
+        for(int i=0; i<board.getPushers().size(); i++){
+            for(int j=0; j<board.getRobots().length; j++){
+                if(board.getPusherPos().get(i).equals(board.getRobotPos()[j])){
+                    if(board.getPushers().get(i).doActivate(phaseNr)){
+                        if(robotCanGo(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection())){
+                            movePlayer(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection());
+                        }
+                    }
+                }
+            }
+        }
         render(50);
     }
 
@@ -271,9 +308,9 @@ public class Game implements IGame {
     }
 
     private void applyDamage(int playerID, int damage) {
-        if (hosting) {
-            host.applyDamage(playerID, damage);
-        } else if (client.getPlayer().getPlayerNumber() == playerID) client.applyDamage(playerID, damage);
+        if (disableDamage) return;
+        if (hosting) host.applyDamage(playerID, damage);
+        else client.applyDamage(playerID, damage);
     }
 
     /**
@@ -288,7 +325,7 @@ public class Game implements IGame {
             while (!dead && steps > 0) {
                 DIRECTION dir = board.getRobots()[action.player].getOrientation();
                 if (action.card.move() < 1) dir = dir.reverse();
-                if (canGo(action.player, dir)) {
+                if (robotCanGo(action.player, dir)) {
                     dead = movePlayer(action.player, dir);
                     steps--;
                 } else steps = 0;
@@ -342,9 +379,10 @@ public class Game implements IGame {
         board.rotateRobot(action.player, action.card.rotate());
     }
 
-    private boolean canGo(Integer id, DIRECTION dir) {
 
-        Vector2 here = board.getRobotPos()[id];
+    private boolean robotCanGo(Integer playerId, DIRECTION dir) {
+
+        Vector2 here = board.getRobotPos()[playerId];
 
         if (facingWall(here, dir)) return false;
 
@@ -384,12 +422,13 @@ public class Game implements IGame {
      */
     private boolean facingWall(Vector2 pos, DIRECTION direction) {
         // TODO check if there is a wall facing movement direction in the current cell
-        if (board.containsPosition(pos))
+        if (board.containsPosition(pos)) {
             for (ICell cell : board.getCell(pos)) {
                 if (cell instanceof Wall && ((Wall) cell).getDirection() == direction) {
                     return true;
                 }
             }
+        }
         return false;
     }
 
