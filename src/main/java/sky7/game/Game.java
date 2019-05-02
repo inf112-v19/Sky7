@@ -58,6 +58,7 @@ public class Game implements IGame {
         Queue<Queue<Event>> allPhases = findPlayerSequence(playerRegistrys);
         int count = 0;
         int phaseNr = 1;
+
         for (Queue<Event> phase : allPhases) {
 
             System.out.println("phase: " + count++);
@@ -85,13 +86,26 @@ public class Game implements IGame {
 
         }
         //after 5th phase
+        respownRobots();
         repairRobotsOnRepairSite();
         System.out.println("Robots in Power Down state are repairing.");
         powerDownRepair(powerDown);
 
+
+
         if (hosting) {
             host.finishedProcessing(board);
         } else client.finishedProcessing(board);
+    }
+
+    private void respownRobots() {
+        for (Integer id : destroyedRobots) {
+            RobotTile robot = board.getRobots()[id];
+            robot.setOrientation(DIRECTION.NORTH);
+            board.addCell(robot, robot.getArchiveMarker());
+            board.getRobotPos()[id] = robot.getArchiveMarker();
+        }
+        destroyedRobots.clear();
     }
 
     private void powerDownRepair(boolean[] powerDown) {
@@ -274,7 +288,7 @@ public class Game implements IGame {
         if (ahead == null || !board.containsPosition(ahead)) {
             stopped = true;
 
-        } 
+        }
         return stopped;
     }
 
@@ -473,7 +487,7 @@ public class Game implements IGame {
                 }
                 return false;
             } else return true;
-        } else return true;
+        } else return false;
     }
 
     /**

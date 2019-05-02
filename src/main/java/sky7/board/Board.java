@@ -157,6 +157,11 @@ public class Board implements IBoard {
     }
 
     @Override
+    public void placeRobotAtStart(int playerNr, Vector2 startPosition){
+        placeRobot(playerNr,(int) startPosition.x,(int) startPosition.y);
+        robots[playerNr].setArchiveMarker(startPosition);
+    }
+    @Override
     public void placeRobot(int playerNr, int x, int y) {
         System.out.println("Placing robot " + playerNr + " at " + x + ", " + y);
         robotPos[playerNr] = new Vector2(x, y);
@@ -286,10 +291,11 @@ public class Board implements IBoard {
     @Override
     public void hideRobot(int player) {
         Vector2 pos = robotPos[player];
-        deadRobots[player] = robots[player];
-        robots[player] = null;
-        deadRobotPos[player] = robotPos[player];
-        robotPos[player] = null;
+        //deadRobots[player] = robots[player];
+        //robots[player] = null;
+        //deadRobotPos[player] = robotPos[player];
+        //robotPos[player] = null;
+
 
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
