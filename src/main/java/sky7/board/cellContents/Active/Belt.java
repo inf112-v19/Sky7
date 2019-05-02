@@ -22,7 +22,6 @@ public class Belt implements IActive {
     public Belt(DIRECTION directionFrom, DIRECTION directionTo, int type) {
         this.directionFrom = directionFrom;
         this.directionTo = directionTo;
-        System.out.println(" Creating BELT TYPES: " + type);
         this.type = type;
     }
 
