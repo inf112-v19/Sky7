@@ -1,9 +1,20 @@
 # Sky7
 
 ## How to run
-- Clone git repo
+### Use if an IDE
+- Clone https://github.com/inf112-v19/Sky7.git
 - Import to an IDE as existing maven project
 - Run Main.java (src/main/java/sky7/main)
+
+### Jar
+- Do one of the following:
+	- Clone https://github.com/inf112-v19/Sky7.git
+	- Download the zip of executable with assets (ADD LINK)
+- Run Sky7RoboRally-V1.0.jar
+	- On windows: Open cmd, navigate to the folder containing the jar,
+		enter "java -jar Sky7RoboRally-V1.0.jar"
+	- Mac: TODO
+	- Linux: TODO
 
 ## Current functionality
 - Game starts in "menu" with only one button. This will later be populated with options to host or connect, what board to load etc.
@@ -14,11 +25,12 @@
 - Player is dealt new cards each round.
 
 ## Documentation
-- Class diagram in Documents folder
+- Class diagram in [Documents/Class diagram](Documents/Class diagram).
+- Network diagram in [Documents/Class diagram](Documents/Class diagram).
+- DrawPriority explanation in [Documents](Documents).
 
 ## Known bugs
-- Trying to load a board which is not quadratic crashes the game.
-	- It is likely a mix-up of x and y somewhere in Board.
+- 
 
 ## Tests
 ### JUNIT tests
@@ -33,6 +45,8 @@
 - BoardTests
     - Tests that the you can retrieve information correctly from Board. 
     - Tests that the movement of the robots on the board is correct follow the rules.
+- DrawPriorityTest
+	- Tests that ICell classes behave and compare correctly in a TreeSet.
 - FlagTest
     - Basic check for flag values
 - RoboTest
