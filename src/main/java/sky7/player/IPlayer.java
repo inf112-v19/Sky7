@@ -76,15 +76,17 @@ public interface IPlayer {
     /**
      * @return player damage
      */
-    CharSequence getDamage();
+    int getDamage();
 
     /**
      * @return life tokens
      */
 
-    CharSequence getLifeToken();
+    int getLifeToken();
 
     int getNLocked();
 
 	void resetRegistry();
+
+	ICard[] getLockedRegistry();
 }

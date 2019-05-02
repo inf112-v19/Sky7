@@ -45,9 +45,10 @@ public class GUI implements ApplicationListener {
 	private int pointer = 0;
 	private int yPos = 64;
 	private int scaler = 128;
-
+	
 	private ArrayList<ICard> hand;
 	private ArrayList<ICard> localregistry = new ArrayList<>();
+	private ICard[] lockedRegistry;
 	TextInput listener;
 	BackGround background;
 	BoardPrinter boardprinter;
@@ -87,6 +88,11 @@ public class GUI implements ApplicationListener {
 			textures.put("Join", new Texture("assets/menu/Join2.png"));
 			textures.put("PowerDown", new Texture("assets/menu/PowerDown2.png"));
 			textures.put("Begin", new Texture("assets/menu/Begin.png"));
+
+			for (int i=0; i<7; i++) {
+				textures.put("Robot" + i, new Texture("assets/robots/Robot" + i + ".png"));
+			}
+
 			textureAtlas = new TextureAtlas("assets/cards/Cards.txt");
 			reset = new Sprite(textures.get("reset"));
 			reset.setPosition(scaler * 4, scaler + 32);
@@ -100,6 +106,7 @@ public class GUI implements ApplicationListener {
 			powerdown.setPosition(scaler * 13, 32);
 			wait = new Sprite(textures.get("Begin"));
 			wait.setPosition(scaler * 7, scaler * 7);
+
 			addSprites();
 			listener = new TextInput(this);
 			background = new BackGround(windowWidth, windowHeight, scaler, textures, batch);
@@ -178,7 +185,7 @@ public class GUI implements ApplicationListener {
 			 * render reset button only if at least one card is selected and
 			 * when the player has not pressed the "ready" button
 			 */
-			if (!cardsChoosen && pointer > client.getPlayer().getNLocked()) {
+			if (!cardsChoosen) {// && pointer > client.getPlayer().getNLocked()) {
 				reset.draw(batch);
 				if (isClicked(reset)) {
 					reset();
@@ -186,7 +193,7 @@ public class GUI implements ApplicationListener {
 			}
 
 			// Render "GO" button only if 5 cards are choosen and player has taken less than 9 damage
-			if (localregistry.size() == 5 && Integer.parseInt((String) client.getPlayer().getDamage()) <= 9) {
+			if (localregistry.size() == 5 && client.getPlayer().getDamage() <= 9) {
 				confirm.draw(batch);
 
 				// if confirm is clicked:
@@ -237,13 +244,10 @@ public class GUI implements ApplicationListener {
 	public void chooseCards() {
 		// check if the current hand is not the same as the hand in Client
 		if (!hand.equals(client.getHand())) {
-			if (client.finishedProcessing(client.gameBoard()) {
+			if (client.isFinishedProcessing()) {
 				reset();
 			}
 		}
-
-
-
 
 		// if GO is not pressed, draw available cards
 		if (!cardsChoosen) {
@@ -262,7 +266,11 @@ public class GUI implements ApplicationListener {
 				for (ICard card : hand) {
 					if (clickPos.x <= scaler + card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
 						if (card.getY() != scaler) {
+							
+							System.out.println("Setting");
+//							localregistry.set(pointer, card);
 							localregistry.add(card);
+							
 							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef() + " \tPriority: \t" + card.getPriority());
 							card.setY(-scaler);
 							pointer++;
@@ -282,30 +290,39 @@ public class GUI implements ApplicationListener {
 		client.lockRegistry();
 	}
 
+	@SuppressWarnings("unchecked")
 	public void reset() {
 		System.out.println("\n----------- Resetting -----------");
 		cardsChoosen = false;
 		yPos = 64;
 		cardXpos = 0;
+
 		pointer = client.getPlayer().getNLocked();
 
 		localregistry = (ArrayList<ICard>) client.getPlayer().getRegistry().clone();
+		lockedRegistry = client.getPlayer().getLockedRegistry().clone();
 
 		hand = client.getHand();
+
+		// should add locked cards to registry, but doesnt
+		for (int i=0; i<localregistry.size(); i++) {
+			if (lockedRegistry[i] != null) {
+				localregistry.set(i, lockedRegistry[i]);
+			}
+		}
 
 		//Print out new cards
 		for (ICard card : hand) {
 			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t");
 		}
-
-		//Print out players current registry
-		System.out.println("\n\nCurrent registry: ");
+		System.out.println("\nLocked/player registry: ");
 		for (ICard card : localregistry) {
-			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t");
+			if (card != null) {
+				System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t");
+			}
 		}
 
 		System.out.println("\n\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + localregistry.size());
-
 		resetcardpos(localregistry);
 
 		if (localregistry.size() <= 5) {
@@ -313,8 +330,9 @@ public class GUI implements ApplicationListener {
 		}
 
 		setHandPos(hand);
-		chooseCards();
 		cardXpos = 0;
+		chooseCards();
+		System.out.println("----------- end reset -----------");
 	}
 
 	private void resetcardpos(ArrayList<ICard> localregistry) {
@@ -393,7 +411,8 @@ public class GUI implements ApplicationListener {
 	 * Show health and healthtokens
 	 */
 	public void showHealth() {
-		font.draw(batch, "Damage: " + client.getPlayer().getDamage() + "\nTokens: " + client.getPlayer().getLifeToken(), 12 * scaler + 72, 2 * scaler - 32);
+		batch.draw(textures.get("Robot" + client.getPlayer().getPlayerNumber()), 13*scaler, scaler, scaler, scaler);
+		font.draw(batch, "Damage: " + client.getPlayer().getDamage() + "\nTokens: " + client.getPlayer().getLifeToken(), 14 * scaler, 2 * scaler - 32);
 	}
 
 	/**

@@ -14,6 +14,7 @@ public class Player implements IPlayer {
     private int lifeTokens = 3;
     private ArrayList<ICard> hand;
     private ArrayList<ICard> registry;
+    private ICard[] lockedRegistry;
     private Set<ICard> discard;
     private int nLocked = 0;
     private int playerNumber = 1;
@@ -22,10 +23,19 @@ public class Player implements IPlayer {
     public Player() {
         hand = new ArrayList<ICard>(MAX_CARDS_IN_DECK);
         registry = new ArrayList<ICard>(MAX_CARDS_IN_REGISTRY);
-
+        lockedRegistry = new ICard[5];
+        
+        for (int i=0; i<lockedRegistry.length; i++) {
+        	lockedRegistry[i] = null;
+        }
     }
 
     @Override
+    public ICard[] getLockedRegistry() {
+		return lockedRegistry;
+	}
+
+	@Override
     public void applyDamage(int applyDamage) {
         updateDamage(damage+applyDamage);
 
@@ -75,8 +85,14 @@ public class Player implements IPlayer {
     @Override
     public void clearRegistry() {
         if (registry.size() > 0) {
+        	
+        	for (int i=5; i>5-nLocked; i--) {
+        		lockedRegistry[i] = registry.get(i);
+        	}
+        	
             for (int i=0; i<5-nLocked; i++) {
                 registry.remove(0); // remove the (5-nLocked) left-most cards
+                lockedRegistry[i] = null;
             }
         }
     }
@@ -120,21 +136,19 @@ public class Player implements IPlayer {
                 registry.add(positionInRegistry, chosenCard);
             }
         }*/
+    	lockedRegistry[positionInRegistry] = chosenCard;
         registry.add(positionInRegistry, chosenCard);
         discard.remove(chosenCard);
     }
 
 	@Override
-	public CharSequence getDamage() {
-		String healthStr = Integer.toString(damage);
-		return healthStr;
+	public int getDamage() {
+		return damage;
 	}
 
 	@Override
-	public CharSequence getLifeToken() {
-		String lifeTokensStr = Integer.toString(lifeTokens);
-		return lifeTokensStr;
+	public int getLifeToken() {
+		return lifeTokens;
 	}
 	
-
 }
