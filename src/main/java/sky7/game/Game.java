@@ -59,25 +59,25 @@ public class Game implements IGame {
         int count = 0;
         int phaseNr = 1;
         for (Queue<Event> phase : allPhases) {
-            
+
             System.out.println("phase: " + count++);
-            
+
             // B. Robots Move
             for (Event action : phase) {
                 if (!destroyedRobots.contains(action.player))
                     tryToMove(action);
                 if (foundWinner()) break;
             }
-            
+
             // C. Board Elements Move
             expressConveyor();
             normalAndExpressConveyor();
             activatePushers(phaseNr);
             activateCogwheels();
-            
+
             // D. Lasers Fire
             activateLasers();
-            
+
             // E. Touch Checkpoints
             placeBackup();
             if (hosting) flags();
@@ -94,9 +94,9 @@ public class Game implements IGame {
     }
 
     private void powerDownRepair(boolean[] powerDown) {
-        if (hosting) 
+        if (hosting)
             host.powerDownRepair(powerDown);
-        else 
+        else
             client.powerDownRepair(powerDown);
     }
 
@@ -111,14 +111,14 @@ public class Game implements IGame {
     }
 
     private void flags() {
-        
+
         RobotTile[] robots = board.getRobots();
         for (int i = 0; i < robots.length; i++) {
             if (robots[i] != null)
                 for (ICell cell : board.getCell(board.getRobotPos()[i])) {
                     if (cell instanceof Flag) {
-                        System.out.println("Robot " + robots[i].getId() + " visited flag " + ((Flag)cell).getFlagNumber());
-                        host.robotVisitedFlag(robots[i].getId(), ((Flag)cell).getFlagNumber());
+                        System.out.println("Robot " + robots[i].getId() + " visited flag " + ((Flag) cell).getFlagNumber());
+                        host.robotVisitedFlag(robots[i].getId(), ((Flag) cell).getFlagNumber());
                         break;
                     }
                 }
@@ -142,12 +142,12 @@ public class Game implements IGame {
 
     private void repairRobotsOnRepairSite() {
         // REPAIR SITES: A robot on a repair site repairs 1 point of damage. A robot on a double tool repair site also draws 1 Option card.
-        for(int i =0; i<board.getWrenches().size(); i++){
-            for(int j=0; j<board.getRobots().length; j++){
-                if(board.getWrenchPositions().get(i).equals(board.getRobotPos()[j])){
-                    if(board.getWrenches().get(i).getType()==1){
+        for (int i = 0; i < board.getWrenches().size(); i++) {
+            for (int j = 0; j < board.getRobots().length; j++) {
+                if (board.getWrenchPositions().get(i).equals(board.getRobotPos()[j])) {
+                    if (board.getWrenches().get(i).getType() == 1) {
                         repairDamage(board.getRobots()[j].getId(), 1);
-                    }else if(board.getWrenches().get(i).getType()==2){
+                    } else if (board.getWrenches().get(i).getType() == 2) {
                         repairDamage(board.getRobots()[j].getId(), 1);
                         //TODO should this draw 1 option card?
                     }
@@ -295,11 +295,11 @@ public class Game implements IGame {
     }
 
     private void activatePushers(int phaseNr) {
-        for(int i=0; i<board.getPushers().size(); i++){
-            for(int j=0; j<board.getRobots().length; j++){
-                if(board.getPusherPos().get(i).equals(board.getRobotPos()[j])){
-                    if(board.getPushers().get(i).doActivate(phaseNr)){
-                        if(robotCanGo(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection())){
+        for (int i = 0; i < board.getPushers().size(); i++) {
+            for (int j = 0; j < board.getRobots().length; j++) {
+                if (board.getPusherPos().get(i).equals(board.getRobotPos()[j])) {
+                    if (board.getPushers().get(i).doActivate(phaseNr)) {
+                        if (robotCanGo(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection())) {
                             movePlayer(board.getRobots()[j].getId(), board.getPushers().get(i).getDirection());
                         }
                     }
@@ -327,7 +327,7 @@ public class Game implements IGame {
 
     private void repairDamage(int playerID, int health) {
         if (disableDamage) return;
-        if (hosting) host.repairDamage(playerID,health);
+        if (hosting) host.repairDamage(playerID, health);
         else client.repairDamage(playerID, health);
     }
 
@@ -420,14 +420,17 @@ public class Game implements IGame {
         Vector2 ahead = board.getDestination(from, direction, 1);
 
         // if we are facing a wall, then we cannot move a robot.
-        if (!facingWall(ahead, direction.reverse())) {
-            // check if there is an immovable robot in front
-            for (ICell cell : board.getCell(ahead)) {
-                if (cell instanceof RobotTile) {
-                    return occupiedNextCell(ahead, direction);
+        if (board.containsPosition(ahead)) {
+            if (!facingWall(ahead, direction.reverse())) {
+                // check if there is an immovable robot in front
+
+                for (ICell cell : board.getCell(ahead)) {
+                    if (cell instanceof RobotTile) {
+                        return occupiedNextCell(ahead, direction);
+                    }
                 }
-            }
-            return false;
+                return false;
+            } else  return true;
         } else return true;
     }
 
