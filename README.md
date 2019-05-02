@@ -7,11 +7,11 @@
 - Run Main.java (src/main/java/sky7/main)
 
 ### Jar
-- Do one of the following:
-	- Clone https://github.com/inf112-v19/Sky7.git
-	- Download the zip of executable with assets (ADD LINK)
+- Download Sky7RoboRally-V0.1.zip from 
+	https://github.com/inf112-v19/Sky7/releases/tag/V0.1-alpha
+- Extract the zip file
 - Run Sky7RoboRally-V1.0.jar
-	- On windows: Open cmd, navigate to the folder containing the jar,
+	- Windows: Open cmd, navigate to the folder containing the jar,
 		enter "java -jar Sky7RoboRally-V1.0.jar"
 	- Mac: TODO
 	- Linux: TODO
