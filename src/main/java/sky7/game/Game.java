@@ -142,7 +142,19 @@ public class Game implements IGame {
 
     private void repairRobotsOnRepairSite() {
         // REPAIR SITES: A robot on a repair site repairs 1 point of damage. A robot on a double tool repair site also draws 1 Option card.
-        //TODO
+        for(int i =0; i<board.getWrenches().size(); i++){
+            for(int j=0; j<board.getRobots().length; j++){
+                if(board.getWrenchPositions().get(i).equals(board.getRobotPos()[j])){
+                    if(board.getWrenches().get(i).getType()==1){
+                        repairDamage(board.getRobots()[j].getId(), 1);
+                    }else if(board.getWrenches().get(i).getType()==2){
+                        repairDamage(board.getRobots()[j].getId(), 1);
+                        //TODO should this draw 1 option card?
+                    }
+                }
+            }
+
+        }
         render(50);
     }
 
@@ -311,6 +323,12 @@ public class Game implements IGame {
         if (disableDamage) return;
         if (hosting) host.applyDamage(playerID, damage);
         else client.applyDamage(playerID, damage);
+    }
+
+    private void repairDamage(int playerID, int health) {
+        if (disableDamage) return;//hva er dette?
+        if (hosting) host.repairDamage(playerID,health);
+        else client.repairDamage(playerID, health);
     }
 
     /**
