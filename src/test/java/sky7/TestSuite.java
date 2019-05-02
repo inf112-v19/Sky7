@@ -15,7 +15,7 @@ import sky7.client.ClientTest;
     RoboTest.class,
     ClientTest.class,
     FlagTest.class,
-//    ICellTest.class,
+    ICellTest.class,
     ProgramDeckTest.class,
 //    HostTest.class
     DrawPriorityTest.class
