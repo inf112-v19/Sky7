@@ -311,17 +311,6 @@ public class GUI implements ApplicationListener {
 			}
 		}
 
-		//Print out new cards
-		for (ICard card : hand) {
-			System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t");
-		}
-		System.out.println("\nLocked/player registry: ");
-		for (ICard card : localregistry) {
-			if (card != null) {
-				System.out.print(card.GetSpriteRef() + " Priority: " + card.getPriority() + " \t");
-			}
-		}
-
 		System.out.println("\n\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + localregistry.size());
 		resetcardpos(localregistry);
 
@@ -438,7 +427,7 @@ public class GUI implements ApplicationListener {
 	private void initiateClient() {
 		hand = client.getHand();
 		setHandPos(hand);
-		boardprinter = new BoardPrinter(client.gameBoard().getHeight(), client.gameBoard().getWidth(), scaler, batch);
+		boardprinter = new BoardPrinter(client.gameBoard().getWidth(), client.gameBoard().getHeight(), scaler, batch);
 	}
 
 	/**
