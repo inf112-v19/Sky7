@@ -6,6 +6,8 @@ import sky7.Client.IClient;
 import sky7.board.ICell;
 import sky7.board.cellContents.robots.RobotTile;
 
+import java.util.ArrayList;
+
 public class BoardPrinter {
 	int width;
 	int height;
@@ -23,7 +25,8 @@ public class BoardPrinter {
 	public void showBoard(IClient game) {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
-				for (ICell cell : game.gameBoard().getTileTexture(i, j)) {
+				ArrayList<ICell> list = new ArrayList<>(game.gameBoard().getTileTexture(i,j));
+				for (ICell cell : list) {
 					if (cell instanceof RobotTile) {
 						int rotation = findRotation((RobotTile)cell);
 						batch.draw(new TextureRegion(cell.getTexture()), (i+2)*scaler, (j+2)*scaler, scaler/2, scaler/2, scaler, scaler, 1, 1, rotation);

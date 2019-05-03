@@ -20,7 +20,7 @@ import sky7.client.ClientTest;
     FlagTest.class,
     ICellTest.class,
     ProgramDeckTest.class,
-//    HostTest.class,
+    HostTest.class,
     DrawPriorityTest.class
 })
 
