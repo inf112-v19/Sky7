@@ -189,10 +189,12 @@ public class GUI implements ApplicationListener {
 			
 		} else if (clientLobby) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth * scaler, windowHeight * scaler);
+			font.getData().setScale(3);
 			font.draw(batch, client.getNPlayers() + " Connected Players", 7 * scaler, 6 * scaler);
 			if (client.readyToRender()) {
 				initiateClient();
 				clientLobby = false;
+				font.getData().setScale(2);
 			}
 		} else {
 			background.showDock(); //Render background and registry slots
@@ -230,12 +232,12 @@ public class GUI implements ApplicationListener {
 					System.out.println("Powering down next round");
 					client.powerDown();
 				}
-			} else if (client.getPlayer().getLifeToken() == 0 && client.getPlayer().getDamage() >= 9){
+			} else if (client.getPlayer().getLifeToken() <= 0 ){
 				font.getData().setScale(8);
-				font.draw(batch, "GAME OVER", 5*scaler, scaler);
+				font.draw(batch, "GAME OVER", 6*scaler-72, scaler);
 			} else {
 				font.getData().setScale(8);
-				font.draw(batch, "YOU WON", 5*scaler, scaler);
+				font.draw(batch, "YOU WON", 6*scaler, scaler);
 			}
 		}
 		batch.end();
