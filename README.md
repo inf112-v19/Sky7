@@ -9,12 +9,12 @@ for Windows, Mac and Linux.
 - Run Main.java (src/main/java/sky7/main)
 
 ### Jar
-- Download [Latest release](https://github.com/inf112-v19/Sky7/releases/tag/V0.1-alpha)
+- Download [Sky7RoboRally-V0.2-alpha.zip](https://github.com/inf112-v19/Sky7/releases/tag/V0.2-alpha)
 - Extract the zip file
-- Run Sky7RoboRally-V1.0.jar
+- Run Sky7RoboRally-V0.2-alpha.jar
 	- Windows / Linux / OSX: 
 		Open cmd/terminal, navigate to the folder containing the jar,
-		enter "java -jar Sky7RoboRally-V1.0.jar"
+		enter "java -jar Sky7RoboRally-V0.2-alpha.jar"
 
 ## How to play
 - LAN mode
