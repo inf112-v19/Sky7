@@ -67,7 +67,6 @@ public class Game implements IGame {
             for (Event action : phase) {
                 if (!destroyedRobots.contains(action.player))
                     tryToMove(action);
-                if (foundWinner()) break;
             }
 
             // C. Board Elements Move
@@ -86,19 +85,15 @@ public class Game implements IGame {
 
         }
         //after 5th phase
-        respownRobots();
+        respawnRobots();
         repairRobotsOnRepairSite();
-        System.out.println("Robots in Power Down state are repairing.");
         powerDownRepair(powerDown);
 
 
-
-        if (hosting) {
-            host.finishedProcessing(board);
-        } else client.finishedProcessing(board);
+        if (hosting) host.finishedProcessing(board);
     }
 
-    private void respownRobots() {
+    private void respawnRobots() {
         for (Integer id : destroyedRobots) {
             RobotTile robot = board.getRobots()[id];
             robot.setOrientation(DIRECTION.NORTH);
@@ -109,20 +104,13 @@ public class Game implements IGame {
     }
 
     private void powerDownRepair(boolean[] powerDown) {
-        if (hosting)
+        if (hosting) {
             host.powerDownRepair(powerDown);
-        else
+//            System.out.println("(Host) Robots in Power Down state are repairing.");
+        } else {
             client.powerDownRepair(powerDown);
-    }
-
-    private boolean foundWinner() {
-        //TODO winner if the clients player, can be found from RoboTile.playerNr.
-        /*int winner = 0;
-        if (host != null) {
-            host.setWinner(0);
-            return true;
-        } else return true;*/
-        return false;
+//            System.out.println("(Client) Robots in Power Down state are repairing.");
+        }
     }
 
     private void flags() {
@@ -193,153 +181,119 @@ public class Game implements IGame {
     private void activateLasers() {
         //TODO lasers should only be laser start position.
 
-        List<ICell> lasersHeads = new ArrayList<>();
+        List<ICell> lasersHeadss = new ArrayList<>();
         List<Vector2> headPosition = new ArrayList<>();
 
-        lasersHeads.addAll(board.getLasers());
-        headPosition.addAll(board.getLaserPos());
+
+        List<Laser> lasersHeads = new ArrayList<>();
+        List<Vector2> headPositions = new ArrayList<>();
+
+        // get laserStartPositions.
+        // add new laser lines at start positions
+
+        for (int i = 0; i < board.getLasers().size(); i++) {
+            Laser startLaser = board.getLasers().get(i);
+            lasersHeads.add(new Laser(false, startLaser.getDirection(), startLaser.nrOfLasers()));
+            headPositions.add(board.getLaserPos().get(i));
+        }
+
+        // get robot positions
+        // add new laser lines ahead of robots.
 
         for (int i = 0; i < board.getRobots().length; i++) {
-            if (board.getRobots()[i] != null) {
-                lasersHeads.add(board.getRobots()[i]);
-                headPosition.add(board.getRobotPos()[i]);
-
-            }
-        }
-        fireLasers(lasersHeads, headPosition); // presume that lasers are only laser start positions and robot position
-    }
-
-    private void fireLasers(List<?> heads, List<?> positions) {
-        //presume that lasers and laserPos are the head positions of the lasers and robots.
-        if (heads.isEmpty()) return;
-
-        show(heads, positions);
-        render(20);
-
-        List<List<?>> next = moveLaserHeads(heads, positions);
-        fireLasers(next.get(0), next.get(1));
-
-        hide(heads, positions);
-        render(20);
-    }
-
-    private List<List<?>> moveLaserHeads(List<?> heads, List<?> positions) {
-        List<List<?>> list = new ArrayList<>();
-
-        List<ICell> nextHeads = new ArrayList<>();
-        List<Vector2> nextHeadPositions = new ArrayList<>();
-
-        for (int i = 0; i < heads.size(); i++) {
-            //For each laser head, get the next position of the head.
-
-            ICell cell = (ICell) heads.get(i);
-            Vector2 position = (Vector2) positions.get(i);
-
-            if (!laserStopped(cell, position)) {
-                if (cell instanceof Laser) {
-                    Laser laser = (Laser) cell;
-                    nextHeads.add(new Laser(false, laser.getDirection(), laser.nrOfLasers()));
-                    nextHeadPositions.add(board.getDestination(position, laser.getDirection(), 1));
-                } else if (cell instanceof RobotTile) {
-                    RobotTile robot = (RobotTile) cell;
-                    // TODO modifity the number of lasers for a robot when implemented.
-                    nextHeads.add(new Laser(false, robot.getOrientation(), 1));
-
-                    nextHeadPositions.add(board.getDestination(position, robot.getOrientation(), 1));
+            RobotTile robot = board.getRobots()[i];
+            if (robot != null) {
+                if (robotAhead(robot.getOrientation(), board.getRobotPos()[i])) {
+                    lasersHeads.add(new Laser(false, robot.getOrientation(), 1));
+                    headPositions.add(board.getDestination(board.getRobotPos()[i], robot.getOrientation(), 1));
                 }
             }
         }
-        list.add(nextHeads);
-        list.add(nextHeadPositions);
 
-        return list;
+        Pair<List<Laser>, List<Vector2>> lasers = new Pair<>(lasersHeads, headPositions);
+        fireLasers(lasers); // presume that lasers are only laser start positions and robot position
     }
 
-    private boolean laserStopped(ICell cell, Vector2 pos) {
-        // if there is a wall it is edge of the board, then return true;
-        // if the is a robot infront, then add damage to the robots health.
-
-
-        Vector2 ahead = null;
-        boolean stopped = false;
-        if (cell instanceof RobotTile) {
-            RobotTile robot = (RobotTile) cell;
-            ahead = board.getDestination(pos, robot.getOrientation(), 1);
-
-            if (facingWall(pos, robot.getOrientation())
-                    || facingWall(ahead, robot.getOrientation().reverse())
-                    || !board.containsPosition(ahead)
-                    || isRobotAhead(ahead))
-                stopped = true;
-
-        } else if (cell instanceof Laser) {
-            Laser laser = (Laser) cell;
-            ahead = board.getDestination(pos, laser.getDirection(), 1);
-            // if the current position contains a wall in the direction of the laser then stop laser.
-            // if there is a robot, then do damage on the robot and stop laser
-
-            if (facingWall(pos, laser.getDirection())
-                    || facingWall(ahead, laser.getDirection().reverse())
-                    || !board.containsPosition(ahead)
-                    || isRobotAhead(ahead))
-                stopped = true;
-
+    private boolean robotAhead(DIRECTION dir, Vector2 pos) {
+        if (facingWall(pos, dir)) return false;
+        Vector2 ahead = board.getDestination(pos, dir, 1);
+        if (!board.containsPosition(ahead)) return false;
+        if (facingWall(ahead, dir.reverse())) return false;
+        for (ICell cell : board.getCell(ahead)) {
+            if (cell instanceof RobotTile)
+                return true;
         }
-        if (ahead == null || !board.containsPosition(ahead)) {
-            stopped = true;
-
-        }
-        return stopped;
+        return robotAhead(dir, ahead);
     }
 
-    private boolean isRobotAhead(Vector2 ahead) {
-        for (ICell c : board.getCell(ahead)) {
-            if (c instanceof RobotTile) {
-                applyDamage(((RobotTile) c).getId(), 1); // apply 1 damage
+    private void fireLasers(Pair<List<Laser>, List<Vector2>> lasers) {
+        //presume that lasers and laserPos are the head positions of the lasers and robots.
+        if (lasers.a.isEmpty()) return;
+
+        show(lasers);
+        render(20);
+
+        Pair<List<Laser>, List<Vector2>> next = moveLaserHeads(lasers);
+        fireLasers(next);
+
+        hide(lasers);
+        render(20);
+    }
+
+    private Pair<List<Laser>, List<Vector2>> moveLaserHeads(Pair<List<Laser>, List<Vector2>> lasers) {
+        Pair<List<Laser>, List<Vector2>> nextLasers;
+
+        List<Laser> nextHeads = new ArrayList<>();
+        List<Vector2> nextHeadPositions = new ArrayList<>();
+
+        for (int i = 0; i < lasers.a.size(); i++) {
+            //For each laser head, get the next position of the head.
+
+            Laser laser = lasers.a.get(i);
+            Vector2 position = lasers.b.get(i);
+
+            if (!laserStopped(laser, position)) {
+                nextHeads.add(new Laser(false, laser.getDirection(), laser.nrOfLasers()));
+                nextHeadPositions.add(board.getDestination(position, laser.getDirection(), 1));
+            }
+        }
+
+        return new Pair<>(nextHeads, nextHeadPositions);
+    }
+
+    private boolean laserStopped(Laser laser, Vector2 pos) {
+
+        // if pos has a robot. apply damage return true
+        for (ICell cell : board.getCell(pos)) {
+            if (cell instanceof RobotTile) {
+                applyDamage(((RobotTile) cell).getId(), 1);
                 return true;
             }
         }
-        return false;
+        // if facing wall
+        if (facingWall(pos, laser.getDirection())) return true;
+        else {
+            Vector2 ahead = board.getDestination(pos, laser.getDirection(), 1);
+            if (board.containsPosition(ahead)) {
+                return facingWall(pos, laser.getDirection().reverse());
+            }
+            return false;
+        }
     }
 
-    private void hide(List<?> lasers, List<?> laserPos) {
+    private void hide(Pair<List<Laser>, List<Vector2>> lasers) {
 
         // hide all lasers in the list.
-        for (int i = 0; i < laserPos.size(); i++) {
-            Vector2 pos = (Vector2) laserPos.get(i);
-            List<ICell> toRemove = new ArrayList<>();
-            for (ICell cell : board.getCell(pos)) {
-                if (cell instanceof Laser && !((Laser) cell).isStartPosition()) {
-                    toRemove.add(cell);
-                }
-            }
-
-            for (ICell cell : toRemove) {
-                board.removeCell(cell, pos);
-            }
-            /*ICell cell = (ICell) lasers.get(i);
-            if (!(cell instanceof RobotTile) && !((Laser) cell).isStartPosition()) {
-                board.removeCell(cell, pos);
-            }*/
+        for (int i = 0; i < lasers.a.size(); i++) {
+            board.removeCell(lasers.a.get(i), lasers.b.get(i));
         }
 
     }
 
-    private void show(List<?> lasers, List<?> laserPos) {
+    private void show(Pair<List<Laser>, List<Vector2>> lasers) {
         // show all lasers in the list.
-        for (int i = 0; i < lasers.size(); i++) {
-            Object cell = lasers.get(i);
-            if (cell instanceof Laser) {
-
-                Laser laser = (Laser) cell;
-                if (laser.isStartPosition()) {
-                    Vector2 pos = (Vector2) laserPos.get(i);
-                    board.addCell(new Laser(false, laser.getDirection(), laser.nrOfLasers()), pos);
-                } else {
-                    Vector2 pos = (Vector2) laserPos.get(i);
-                    board.addCell(laser, pos);
-                }
-            }
+        for (int i = 0; i < lasers.a.size(); i++) {
+            board.addCell(lasers.a.get(i), lasers.b.get(i));
         }
     }
 
@@ -376,8 +330,9 @@ public class Game implements IGame {
 
     private void applyDamage(int playerID, int damage) {
         if (disableDamage) return;
-        if (hosting) host.applyDamage(playerID, damage);
-        else client.applyDamage(playerID, damage);
+        if (hosting) {
+            if (host.applyDamage(playerID, damage)) killRobot(playerID);
+        } else if (client.applyDamage(playerID, damage)) killRobot(playerID);
     }
 
     private void repairDamage(int playerID, int health) {
@@ -385,6 +340,18 @@ public class Game implements IGame {
         if (hosting) host.repairDamage(playerID, health);
         else client.repairDamage(playerID, health);
 
+    }
+
+    private boolean loseLifeToken(int playerID) {
+        if (hosting) {
+            return host.loseLifeToken(playerID);
+        } else return client.loseLifeToken(playerID);
+    }
+
+    private void killRobot(int playerID) {
+        board.hideRobot(playerID);
+        // not playerID has entered game over, respawn
+        if (!loseLifeToken(playerID)) destroyedRobots.add(playerID);
     }
 
     /**
@@ -426,8 +393,7 @@ public class Game implements IGame {
             render(100);
             dead = checkForHole(player);
         } else { // robot is outside the board.
-            board.hideRobot(player);
-            destroyedRobots.add(player);
+            killRobot(player);
             dead = true;
         }
         if (dead) render(50);
@@ -439,8 +405,7 @@ public class Game implements IGame {
             if (board.getRobots()[i] != null && player == board.getRobots()[i].getId()) {
                 for (ICell cell : board.getCell(board.getRobotPos()[i])) {
                     if (cell instanceof Hole) {
-                        board.hideRobot(player);
-                        destroyedRobots.add(player);
+                        killRobot(player);
                         return true;
                     }
                 }
@@ -542,6 +507,26 @@ public class Game implements IGame {
         return phases;
     }
 
+    /**
+     * An event is a card associated with a player.
+     */
+    private class Pair<A, B> {
+        private A a;
+        private B b;
+
+        private Pair(A a, B b) {
+            this.a = a;
+            this.b = b;
+        }
+
+        public A getA() {
+            return a;
+        }
+
+        public B getB() {
+            return b;
+        }
+    }
 
     /**
      * An event is a card associated with a player.

@@ -39,16 +39,14 @@ public class GUI implements ApplicationListener {
 	private TextureAtlas textureAtlas;
 	private Sprite reset, confirm, host, join, powerdown, wait;
 
-	private boolean cardsChoosen, hostLobby = false, clientLobby = false, mainMenu = true;
+	private boolean cardsChosen, hostLobby = false, clientLobby = false, mainMenu = true;
 
 	private int cardXpos = 0;
-	private int pointer = 0;
-	private int yPos = 64;
 	private int scaler = 128;
 	
 	private ArrayList<ICard> hand;
-	private ArrayList<ICard> localregistry = new ArrayList<>();
-	private ICard[] lockedRegistry;
+	private ICard[] registry = new ICard[5];
+	private int cardsInReg = 0;
 	TextInput listener;
 	BackGround background;
 	BoardPrinter boardprinter;
@@ -185,7 +183,7 @@ public class GUI implements ApplicationListener {
 			 * render reset button only if at least one card is selected and
 			 * when the player has not pressed the "ready" button
 			 */
-			if (!cardsChoosen) {// && pointer > client.getPlayer().getNLocked()) {
+			if (!cardsChosen) {// && pointer > client.getPlayer().getNLocked()) {
 				reset.draw(batch);
 				if (isClicked(reset)) {
 					reset();
@@ -193,18 +191,16 @@ public class GUI implements ApplicationListener {
 			}
 
 			// Render "GO" button only if 5 cards are choosen and player has taken less than 9 damage
-			if (localregistry.size() == 5 && client.getPlayer().getDamage() <= 9) {
+			if (cardsInReg == 5) {
 				confirm.draw(batch);
 
 				// if confirm is clicked:
 				if (isClicked(confirm)) {
-					cardsChoosen = true;
+					cardsChosen = true;
 					setRegistry();
-					//					setRegistry();
-					//					pointer = client.getPlayer().getNLocked();
 				}
 			}
-
+			
 			powerdown.draw(batch);
 			if (isClicked(powerdown)) {
 				System.out.println("Powering down next round");
@@ -216,15 +212,12 @@ public class GUI implements ApplicationListener {
 	}
 
 	public void showRegistry() {
-		for (ICard currentCards : localregistry) {
-			if (currentCards.getY() != scaler) {
-				currentCards.setY(scaler);
-				currentCards.setX((scaler * 5) + yPos);
-				yPos += scaler;
-			}
-			drawSprite(currentCards.GetSpriteRef(), currentCards.getX(), currentCards.getY());
-			font.draw(batch, currentCards.getPriority(), currentCards.getX() + 42, currentCards.getY() + 93);
-		}
+	    for (int i=0; i<5; i++) {
+            if (registry[i] != null) {
+                drawSprite(registry[i].GetSpriteRef(), 64+scaler*(5+i), scaler);
+                font.draw(batch, registry[i].getPriority(), scaler*(5+i+1)-64 + 42, scaler + 93);
+            }
+        }
 	}
 
 	@Override
@@ -243,20 +236,20 @@ public class GUI implements ApplicationListener {
 	 */
 	public void chooseCards() {
 		// check if the current hand is not the same as the hand in Client
-		if (!hand.equals(client.getHand())) {
+//		if (!hand.equals(client.getHand())) {
 			if (client.isFinishedProcessing()) {
 				reset();
 			}
-		}
+//		}
 
 		// if GO is not pressed, draw available cards
-		if (!cardsChoosen) {
+		if (!cardsChosen) {
 			for (ICard card : hand) {
 				drawSprite(card.GetSpriteRef(), card.getX(), card.getY());
 				font.draw(batch, card.getPriority(), card.getX() + 42, card.getY() + 93);
 			}
 		}
-		if (!cardsChoosen && localregistry.size() < 5) {
+		if (!cardsChosen && cardsInReg < 5) {
 
 			//check if card is clicked
 			if (Gdx.input.justTouched()) {
@@ -269,11 +262,16 @@ public class GUI implements ApplicationListener {
 							
 							System.out.println("Setting");
 //							localregistry.set(pointer, card);
-							localregistry.add(card);
+							for (int i=0; i<5; i++) {
+                                if (registry[i] == null) {
+                                    registry[i] = card;
+                                    cardsInReg++;
+                                    break;
+                                }
+                            }
 							
-							System.out.println(pointer + " card(s) choosen " + card.GetSpriteRef() + " \tPriority: \t" + card.getPriority());
+							System.out.println(cardsInReg + " card(s) choosen " + card.GetSpriteRef() + " \tPriority: \t" + card.getPriority());
 							card.setY(-scaler);
-							pointer++;
 						}
 					}
 				}
@@ -283,61 +281,30 @@ public class GUI implements ApplicationListener {
 
 	public void setRegistry() {
 		//check if there actually are 5 chosen cards
-		cardsChoosen = true;
-		for (int i = 0; i < localregistry.size(); i++) {
-			client.setCard(localregistry.get(i), i);
+	    if (cardsInReg < 5) throw new IllegalStateException("GUI attempting to set registry with less than 5 cards");
+		cardsChosen = true;
+		for (int i = 0; i < 5; i++) {
+			client.setCard(registry[i], i);
 		}
 		client.lockRegistry();
 	}
 
-	@SuppressWarnings("unchecked")
 	public void reset() {
 		System.out.println("\n----------- Resetting -----------");
-		cardsChoosen = false;
-		yPos = 64;
+		cardsChosen = false;
 		cardXpos = 0;
-
-		pointer = client.getPlayer().getNLocked();
-
-		localregistry = (ArrayList<ICard>) client.getPlayer().getRegistry().clone();
-		lockedRegistry = client.getPlayer().getLockedRegistry().clone();
-
+		
+		cardsInReg = client.getPlayer().getNLocked();
+		System.out.println("Locked cards: " + cardsInReg);
+		
+		registry = client.getPlayer().getRegistry().clone();
+		
 		hand = client.getHand();
-
-		// should add locked cards to registry, but doesnt
-		for (int i=0; i<localregistry.size(); i++) {
-			if (lockedRegistry[i] != null) {
-				localregistry.set(i, lockedRegistry[i]);
-			}
-		}
-
-		System.out.println("\n\nPointer/Locked: \t" + pointer + "\nPlayer Registry size: \t" + localregistry.size());
-		resetcardpos(localregistry);
-
-		if (localregistry.size() <= 5) {
-			leftshift(localregistry);
-		}
 
 		setHandPos(hand);
 		cardXpos = 0;
 		chooseCards();
 		System.out.println("----------- end reset -----------");
-	}
-
-	private void resetcardpos(ArrayList<ICard> localregistry) {
-		for (ICard card : localregistry) {
-			card.setX(0);
-			card.setY(0);
-		}
-	}
-
-	private void leftshift(ArrayList<ICard> arr) {
-		for (int i = 0; i < arr.size(); i++) {
-			ICard temp = arr.get(i);
-			temp.setY(scaler);
-			temp.setX((scaler * 5) + yPos);
-			yPos += scaler;
-		}
 	}
 
 	/**
