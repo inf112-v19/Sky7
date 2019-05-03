@@ -174,10 +174,10 @@ public class GUI implements ApplicationListener {
 			}
 			
 			Board1.draw(batch);
-			font.draw(batch, "DizzyDash", scaler * 3 + 32, scaler * 7 + 80);
+			font.draw(batch, "VaultAssault", scaler * 3 + 32, scaler * 7 + 80);
 			if(isClicked(Board1)){
-				h.setBoardName("assets/Boards/DizzyDash.json");
-				client.setBoardName("assets/Boards/DizzyDash.json");
+				h.setBoardName("assets/Boards/VaultAssault.json");
+				client.setBoardName("assets/Boards/VaultAssault.json");
 			}
 			
 			Board2.draw(batch);

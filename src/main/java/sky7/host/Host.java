@@ -27,8 +27,7 @@ public class Host implements IHost {
     }
 
     // FIELD VARIABLES --------------
-    private String boardName = "assets/Boards/CheckMate.json";
-
+    private String boardName = "assets/Boards/VaultAssault.json";
     // TODO MAX_N_PLAYERS should be set based on board.
     private int MAX_N_PLAYERS = 8, nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0, winner = -1;
     private int nFlagsOnBoard = 4; // TODO should be set based on loaded board
