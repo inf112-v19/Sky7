@@ -67,7 +67,6 @@ public class Game implements IGame {
             for (Event action : phase) {
                 if (!destroyedRobots.contains(action.player))
                     tryToMove(action);
-                if (foundWinner()) break;
             }
 
             // C. Board Elements Move
@@ -88,13 +87,10 @@ public class Game implements IGame {
         //after 5th phase
         respawnRobots();
         repairRobotsOnRepairSite();
-        System.out.println("Robots in Power Down state are repairing.");
         powerDownRepair(powerDown);
 
 
-        if (hosting) {
-            host.finishedProcessing(board);
-        } else client.finishedProcessing(board);
+        if (hosting) host.finishedProcessing(board);
     }
 
     private void respawnRobots() {
@@ -108,20 +104,13 @@ public class Game implements IGame {
     }
 
     private void powerDownRepair(boolean[] powerDown) {
-        if (hosting)
+        if (hosting) {
             host.powerDownRepair(powerDown);
-        else
+//            System.out.println("(Host) Robots in Power Down state are repairing.");
+        } else {
             client.powerDownRepair(powerDown);
-    }
-
-    private boolean foundWinner() {
-        //TODO winner if the clients player, can be found from RoboTile.playerNr.
-        /*int winner = 0;
-        if (host != null) {
-            host.setWinner(0);
-            return true;
-        } else return true;*/
-        return false;
+//            System.out.println("(Client) Robots in Power Down state are repairing.");
+        }
     }
 
     private void flags() {

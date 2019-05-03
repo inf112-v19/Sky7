@@ -1,21 +1,20 @@
 package sky7.Client;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.badlogic.gdx.math.Vector2;
+
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
-import sky7.board.cellContents.Inactive.Flag;
 import sky7.card.ICard;
 import sky7.game.Game;
 import sky7.host.IHost;
 import sky7.player.IPlayer;
 import sky7.player.Player;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 
 public class Client implements IClient {
 
@@ -25,7 +24,6 @@ public class Client implements IClient {
     private STATE state;
     private int[] robotDamage = new int[8];
     private String boardName;
-    private HashSet<Integer> flagVisited;
     private Game game;
     private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
     private boolean readyToRender = false, selfPowerDown = false, finishedProcessing = true;
@@ -38,7 +36,6 @@ public class Client implements IClient {
         //board = new Board(10,8);
         this.player = new Player();
         state = STATE.LOADING;
-        this.flagVisited = new HashSet<>();
         localClient = true;
     }
 
@@ -78,7 +75,6 @@ public class Client implements IClient {
 
     @Override
     public void chooseCards(ArrayList<ICard> hand) {
-        player.clearRegistry();
         player.setHand(hand);
         state = STATE.CHOOSING_CARDS;
     }
@@ -128,9 +124,9 @@ public class Client implements IClient {
 
         state = STATE.READY;
         if (localClient) {
-            host.ready(player.getPlayerNumber(), player.getRegistry(), player.getDiscard(), selfPowerDown);
+            host.ready(player.getPlayerNumber(), player.getChosenRegistry(), player.getDiscard(), selfPowerDown);
         } else {
-            netHandler.ready(player.getRegistry(), player.getDiscard(), selfPowerDown);
+            netHandler.ready(player.getChosenRegistry(), player.getDiscard(), selfPowerDown);
         }
         
         selfPowerDown = false;
@@ -154,41 +150,17 @@ public class Client implements IClient {
 
 
     }
-    public void setFlagVisited(Flag visitedFlag){
-        int flagNumber = visitedFlag.getFlagNumber();
-        boolean canVisit= true;
-        //check if the player has visited every previous flag
-        for(int i=1; i<flagNumber; i++){
-            if(!hasVisitedFlag(i)){
-                canVisit = false;
-            }
-        }
-        if(canVisit){//if the player has visited every previous
-            this.flagVisited.add(flagNumber);
-        }
-    }
-
-    public boolean hasVisitedFlag(int flag){
-        return this.flagVisited.contains(flag);
-    }
 
     @Override
     public void finishedProcessing(IBoard board) {
     	finishedProcessing = true;
+    	player.clearRegistry();
     }
 
     @Override
     public void render(HashMap<Integer, ArrayList<ICard>> cards, boolean[] powerDown) {
     	finishedProcessing = false;
     	new Thread(() -> { game.process(cards, powerDown.clone()); }).start();
-    }
-
-    /**
-     * @param programCardsString a string representation of programcards
-     * @return a list of IProgramCards
-     */
-    private ArrayList<ICard> convertStringToProgramCards(String programCardsString) {
-        return null;//TODO
     }
 
     public int getID() {
@@ -238,20 +210,23 @@ public class Client implements IClient {
 
     @Override
     public void powerDownRepair(boolean[] currentPD) {
-        
         if (currentPD[player.getPlayerNumber()]) {
-            System.out.println("repairing self");
             player.updateDamage(0);
         }
         
         for (int i=0; i<8; i++) {
             if (currentPD[i]) robotDamage[i] = 0;
         }
+        
+        finishedProcessing(null);
     }
     
     @Override
     public boolean isFinishedProcessing() {
-    	return finishedProcessing;
+        if (finishedProcessing) {
+            finishedProcessing = false;
+            return true;
+        } else return false;
     }
 
     @Override

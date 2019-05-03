@@ -342,7 +342,7 @@ public class Host implements IHost {
 
         for (int i = 1; i < remotePlayers.length; i++) {
             if (remotePlayers[i]) {
-                if (gameOver[i]) {
+                if (!gameOver[i]) {
                     if (!powerDown[i]) {
                         netHandler.dealCards(i, pDeck.draw(Math.max(0, 9 - robotDamage[i])));
                         System.out.println("Handing out " + (Math.max(0, 9 - robotDamage[i])) + " cards to player " + i);

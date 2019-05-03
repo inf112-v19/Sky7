@@ -43,6 +43,7 @@ public class Board implements IBoard {
     private List<Wrench> wrenches;
     private List<Vector2> wrenchPositions;
 
+    @SuppressWarnings("unchecked")
     public Board(int width, int height) {
         this.width = width;
         this.height = height;
@@ -132,7 +133,7 @@ public class Board implements IBoard {
 
     @Override
     public TreeSet<ICell> getTileTexture(int x, int y) {
-        return grid[x][y];
+        return (TreeSet<ICell>) grid[x][y].clone();
     }
 
     @Override
@@ -609,23 +610,6 @@ public class Board implements IBoard {
     public List<Pusher> getPushers() {
         return pushers;
     }
-
-
-
-
-   /* @Override
-    public Map<Integer, Flag> robotVisitFlag(){
-        Map<Integer,Flag> robotWhoVisitedFlag = new HashMap<>();
-        for(int i=0; i<flags.size(); i++){
-            for(int j=0; j<robots.length; j++){
-                if(flagsPos.get(i).equals(robotPos[j])){
-                    int idOfRobot = robots[j].getId();
-                    robotWhoVisitedFlag.put(idOfRobot,flags.get(i));
-                }
-            }
-        }
-        return robotWhoVisitedFlag;
-    }*/
 
     private boolean roboEntriningFromMultipalDir(Vector2 coords, DIRECTION dir, boolean onlyExpress) {
         if (!containsPosition(coords)) {

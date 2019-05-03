@@ -37,7 +37,7 @@ public interface IPlayer {
     /**
      * @return a list of cards chosen by player
      */
-    ArrayList<ICard> getRegistry();
+    ICard[] getRegistry();
 
     /**
      * @param programCards the program cards the player can choose from.
@@ -97,4 +97,6 @@ public interface IPlayer {
 	ICard[] getLockedRegistry();
 
     boolean loseLifeToken();
+
+    ArrayList<ICard> getChosenRegistry();
 }

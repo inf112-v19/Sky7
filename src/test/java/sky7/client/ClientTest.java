@@ -71,7 +71,7 @@ public class ClientTest {
             }
 
             // assert that the stored registry is made up of the chosen cards each round
-            ArrayList<ICard> reg = clients.get(0).getPlayer().getRegistry();
+            ArrayList<ICard> reg = clients.get(0).getPlayer().getChosenRegistry();
             assertEquals(reg.size(), 5);
             for (int i=0; i<5 ; i++) {
                 assertTrue(((ProgramCard)reg.get(i)).equals(((ProgramCard)given.get(i))));
