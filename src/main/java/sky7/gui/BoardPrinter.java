@@ -19,7 +19,9 @@ public class BoardPrinter {
 		this.batch = batch;
 	}
 
-	// draw the gameboard as a grid of width*height, each square at 128*128 pixels
+	/**
+	 * draw the gameboard as a grid of width*height, each square at 128*128 pixels
+ 	 */
 	public void showBoard(IClient game) {
 		for (int i = 0; i < height; i++) {
 			for (int j = 0; j < width; j++) {
@@ -36,7 +38,9 @@ public class BoardPrinter {
 		}
 	}
 
-	// Find rotation of a robot
+	/**
+	 * Find rotation of a robot
+	 */
 	private int findRotation(RobotTile robot) {
 		switch (robot.getOrientation()) {
 			case EAST:

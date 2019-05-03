@@ -1,8 +1,5 @@
 package sky7.gui;
 
-import java.io.FileNotFoundException;
-import java.util.*;
-
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -16,11 +13,15 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.*;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import sky7.Client.Client;
+import sky7.Client.IClient;
 import sky7.card.ICard;
 import sky7.host.Host;
-import sky7.Client.IClient;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class GUIold implements ApplicationListener {
@@ -219,7 +220,7 @@ public class GUIold implements ApplicationListener {
     }
 
     /**
-     *
+     * start host
      */
     private void startHost() {
         hostLobby = true;
@@ -248,8 +249,9 @@ public class GUIold implements ApplicationListener {
     }
 
     /**
+     * Connect a client to a host.
      *
-     * @param hostName
+     * @param hostName string representing host
      */
     public void connectClient(String hostName) {
         client = new Client();
@@ -309,11 +311,11 @@ public class GUIold implements ApplicationListener {
     }
 
     /**
-     * draw a sprite in the set position
+     * Draw a sprite in the set position
      *
-     * @param name
-     * @param x
-     * @param y
+     * @param name string representing the sprite
+     * @param x x-position
+     * @param y y-position
      */
     public void drawSprite(String name, float x, float y) {
         Sprite sprite = sprites.get(name);
@@ -323,7 +325,7 @@ public class GUIold implements ApplicationListener {
 
 
     /**
-     * pick which cards you want to use
+     * Pick which cards you want to use
      */
     public void chooseCards() {
         // check if the current hand is not the same as the hand in Client
@@ -361,7 +363,7 @@ public class GUIold implements ApplicationListener {
     }
 
     /**
-     * show chosen cards
+     * Show chosen cards
      */
     public void showRegistry() {
         for (ICard currentCards : registry) {
@@ -386,8 +388,8 @@ public class GUIold implements ApplicationListener {
     /**
      * check if the clicked position is a sprite
      *
-     * @param sprite
-     * @return
+     * @param sprite the sprite to check
+     * @return true if a sprite is clicked, false otherwise.
      */
     public boolean isClicked(Sprite sprite) {
         if (Gdx.input.justTouched()) {
@@ -425,9 +427,9 @@ public class GUIold implements ApplicationListener {
     }
 
     /**
-     * reset the cardpositions
+     * reset the card positions
      *
-     * @param cards
+     * @param cards to be reset
      */
     private void resetCardPos(ArrayList<ICard> cards) {
         for (ICard card : cards) {
@@ -437,9 +439,9 @@ public class GUIold implements ApplicationListener {
     }
 
     /**
-     * set the x position for the cards to spread them accross the map
+     * Set the x position for the cards to spread them accross the map
      *
-     * @param hand
+     * @param hand hand to be set
      */
     private void setHandPos(ArrayList<ICard> hand) {
         for (ICard card : hand) {

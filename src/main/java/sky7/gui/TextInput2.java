@@ -2,7 +2,9 @@ package sky7.gui;
 
 import com.badlogic.gdx.Input.TextInputListener;
 
-// Get user input
+/*
+ 	Get user input
+*/
 public class TextInput2 implements TextInputListener {
 	String input;
 	GUIold gui;

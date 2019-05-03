@@ -1,8 +1,5 @@
 package sky7.gui;
 
-import java.io.FileNotFoundException;
-import java.util.*;
-
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -16,11 +13,15 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas.AtlasRegion;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.*;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import sky7.Client.Client;
+import sky7.Client.IClient;
 import sky7.card.ICard;
 import sky7.host.Host;
-import sky7.Client.IClient;
+
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class GUI implements ApplicationListener {
@@ -211,6 +212,9 @@ public class GUI implements ApplicationListener {
 		batch.end();
 	}
 
+	/**
+	 * show registry in the screen
+	 */
 	public void showRegistry() {
 	    for (int i=0; i<5; i++) {
             if (registry[i] != null) {
@@ -281,6 +285,9 @@ public class GUI implements ApplicationListener {
 		}
 	}
 
+	/**
+	 * set 5 chosen chards.
+	 */
 	public void setRegistry() {
 		//check if there actually are 5 chosen cards
 	    if (cardsInReg < 5) throw new IllegalStateException("GUI attempting to set registry with less than 5 cards");
@@ -291,6 +298,9 @@ public class GUI implements ApplicationListener {
 		client.lockRegistry();
 	}
 
+	/**
+	 * reset the chosen cards.
+	 */
 	public void reset() {
 		System.out.println("\n----------- Resetting -----------");
 		cardsChosen = false;
@@ -309,9 +319,9 @@ public class GUI implements ApplicationListener {
 	}
 
 	/**
-	 * set the x position for the cards to spread them accross the map
+	 * set the x position for the cards to spread them across the map
 	 *
-	 * @param hand
+	 * @param hand the hand to be set
 	 */
 	private void setHandPos(ArrayList<ICard> hand) {
 		for (ICard card : hand) {
@@ -325,8 +335,8 @@ public class GUI implements ApplicationListener {
 	/**
 	 * check if the clicked position is a sprite
 	 *
-	 * @param sprite
-	 * @return
+	 * @param sprite the sprite to check
+	 * @return true if a sprite is clicked, false otherwise.
 	 */
 	public boolean isClicked(Sprite sprite) {
 		if (Gdx.input.justTouched()) {
@@ -354,9 +364,9 @@ public class GUI implements ApplicationListener {
 	/**
 	 * draw a sprite in the set position
 	 *
-	 * @param name
-	 * @param x
-	 * @param y
+	 * @param name name of the sprite
+	 * @param x x-coordinate
+	 * @param y y-coordinate
 	 */
 	public void drawSprite(String name, float x, float y) {
 		Sprite sprite = sprites.get(name);
@@ -365,7 +375,7 @@ public class GUI implements ApplicationListener {
 	}
 
 	/**
-	 * Show health and healthtokens
+	 * Show health and life tokens
 	 */
 	public void showHealth() {
 		batch.draw(textures.get("Robot" + client.getPlayer().getPlayerNumber()), 13*scaler, scaler, scaler, scaler);
@@ -373,7 +383,7 @@ public class GUI implements ApplicationListener {
 	}
 
 	/**
-	 *
+	 * Start the host
 	 */
 	private void startHost() {
 		hostLobby = true;
@@ -390,7 +400,7 @@ public class GUI implements ApplicationListener {
 	}
 
 	/**
-	 *
+	 * Initiate client
 	 */
 	private void initiateClient() {
 		hand = client.getHand();
@@ -399,8 +409,9 @@ public class GUI implements ApplicationListener {
 	}
 
 	/**
+	 * Connect client to hostName
 	 *
-	 * @param hostName
+	 * @param hostName string representing host
 	 */
 	public void connectClient(String hostName) {
 		client = new Client();
