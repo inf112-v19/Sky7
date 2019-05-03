@@ -27,8 +27,7 @@ public class Host implements IHost {
     }
 
     // FIELD VARIABLES --------------
-    private String boardName = "assets/Boards/CheckMate.json";
-
+    private String boardName = "assets/Boards/VaultAssault.json";
     // TODO MAX_N_PLAYERS should be set based on board.
     private int MAX_N_PLAYERS = 8, nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0, winner = -1;
     private int nFlagsOnBoard = 4; // TODO should be set based on loaded board
@@ -58,8 +57,6 @@ public class Host implements IHost {
         this();
         localClient = cli;
         localClient.connect(this, nPlayers++, boardName);
-
-
     }
 
     public Host() {
@@ -71,6 +68,16 @@ public class Host implements IHost {
             e.printStackTrace();
         }
 
+        
+    }
+
+
+    // PUBLIC METHODS ------------------
+
+    @Override
+    public void Begin() {
+        netHandler.distributeBoard(boardName);
+        
         try {
             board = bg.getBoardFromFile(boardName);
             game = new Game(this, board);
@@ -79,15 +86,14 @@ public class Host implements IHost {
         }
 
         nFlagsOnBoard = board.getFlags().size();
-    }
-
-
-    // PUBLIC METHODS ------------------
-
-    @Override
-    public void Begin() {
-        // TODO Check other conditions if necessary
-        netHandler.distributeBoard(boardName);
+        
+        // Give clients time to generate board before placing robots and starting.
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
         placeRobots();
         run();
     }
@@ -339,13 +345,14 @@ public class Host implements IHost {
      */
     private void giveOutCards() {
         // give 9 cards to each player
-        // TODO: handle situation where host should hand out less than 9 cards to damaged robots
-        if (!powerDown[0]) {
-            System.out.println("Handing out " + (9 - robotDamage[0]) + " cards to player " + 0);
-            localClient.chooseCards(pDeck.draw(9 - robotDamage[0]));
-        } else {
-            localClient.chooseCards(new ArrayList<ICard>());
-            readyPlayers++;
+        if (!gameOver[0]) {
+            if (!powerDown[0]) {
+                System.out.println("Handing out " + (Math.max(0, 9 - robotDamage[0])) + " cards to player 0");
+                localClient.chooseCards(pDeck.draw(Math.max(0, 9 - robotDamage[0])));
+            } else {
+                localClient.chooseCards(new ArrayList<ICard>());
+                readyPlayers++;
+            }
         }
 
         for (int i = 1; i < remotePlayers.length; i++) {
@@ -435,7 +442,8 @@ public class Host implements IHost {
 
         if (visitedFlags[playerID] == nFlagsOnBoard) {
             System.out.println("Player " + playerID + " has won the game!");
-            // TODO victory stuff(?)
+            localClient.winnerFound(playerID);
+            netHandler.winnerFound(playerID);
         }
     }
 

@@ -27,7 +27,7 @@ public class Client implements IClient {
     private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
     private boolean readyToRender = false, selfPowerDown = false, finishedProcessing = true;
     private ClientNetHandler netHandler;
-    private int nPlayers;
+    private int nPlayers, winner = -1;
     private boolean gameOver = false;
 
 
@@ -44,12 +44,14 @@ public class Client implements IClient {
     }
 
     @Override
-    public void join(String hostName) {
-        localClient = false;
+    public boolean join(String hostName) {
         try {
             netHandler = new ClientNetHandler(this, hostName);
+            localClient = false;
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Unable to connect to host \"" + hostName + "\"");
+            return false;
         }
     }
     
@@ -64,7 +66,6 @@ public class Client implements IClient {
         this.host = host;
         player.setPlayerNumber(playerNumber);
         this.boardName = boardName;
-        generateBoard();
     }
     
     @Override
@@ -83,6 +84,7 @@ public class Client implements IClient {
      * generate a board
      */
     public void generateBoard() {
+        if (localClient) boardName = host.getBoardName();
         IBoardGenerator generator = new BoardGenerator();
         try {
             board = generator.getBoardFromFile(boardName);
@@ -141,20 +143,6 @@ public class Client implements IClient {
     @Override
     public void placeRobot(int playerNr, int xPos, int yPos) {
         board.placeRobot(playerNr, xPos, yPos);
-    }
-
-    @Override
-    public void activateBoardElements() {
-        //board.moveConveyors();
-        //board.rotateCogs();
-
-    }
-
-    @Override
-    public void activateLasers() {
-        //TODO should call board.activateLasers
-
-
     }
 
     @Override
@@ -250,5 +238,15 @@ public class Client implements IClient {
     @Override
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    @Override
+    public void winnerFound(int playerID) {
+        winner = playerID;
+    }
+    
+    @Override
+    public int isWinnerFound() {
+        return winner;
     }
 }

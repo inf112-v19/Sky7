@@ -88,18 +88,6 @@ public interface IClient {
     void placeRobot(int playerNr, int xPos, int yPos);
 
     /**
-     * activate the board elements by calling board method
-     * called from host
-     */
-    void activateBoardElements();
-
-    /**
-     * activate the lasers by calling board method.
-     * called from host
-     */
-    void activateLasers();
-
-    /**
      * when process is done.
      *
      * @param board this board
@@ -111,8 +99,9 @@ public interface IClient {
     /**
      * join the game
      * @param hostName string representing the name of the host
+     * @return true if connected
      */
-    void join(String hostName);
+    boolean join(String hostName);
 
     /**
      * @return integer representing the number of players.
@@ -193,4 +182,16 @@ public interface IClient {
      * @return true if game is over, false otherwise.
      */
     boolean isGameOver();
+
+    /**
+     * Someone has won the game
+     * 
+     * @param playerID the ID of the winner
+     */
+    void winnerFound(int playerID);
+
+    /**
+     * @return a playerID >= 0 if someone has won the game
+     */
+    int isWinnerFound();
 }

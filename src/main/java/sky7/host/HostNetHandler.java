@@ -1,16 +1,25 @@
 package sky7.host;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
-import sky7.net.packets.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import sky7.net.packets.Begin;
+import sky7.net.packets.ClientConnectionAccepted;
+import sky7.net.packets.Hand;
+import sky7.net.packets.NumberOfPlayers;
+import sky7.net.packets.PlaceRobot;
+import sky7.net.packets.PlaceRobotAtStart;
+import sky7.net.packets.ProcessRound;
+import sky7.net.packets.RegistryDiscard;
+import sky7.net.packets.WinnerFound;
 
 public class HostNetHandler {
     
@@ -89,6 +98,12 @@ public class HostNetHandler {
         pr.playerID = playerID;
         pr.startPosition = startPosition;
         server.sendToAllTCP(pr);
+    }
+    
+    public void winnerFound(int playerID) {
+        WinnerFound fw = new WinnerFound();
+        fw.playerID = playerID;
+        server.sendToAllTCP(fw);
     }
 
     private class HostListener extends Listener {

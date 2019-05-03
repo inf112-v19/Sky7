@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import sky7.Client.Client;
 import sky7.Client.IClient;
+import sky7.Client.STATE;
 import sky7.card.ICard;
 import sky7.host.Host;
 
@@ -38,9 +39,10 @@ public class GUI implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	private TextureAtlas textureAtlas;
-	private Sprite reset, confirm, host, join, powerdown, wait, Board1, Board2;
+	private Sprite reset, confirm, host, join, powerdown, wait, Board1, Board2, Board3;
 
 	private boolean cardsChosen, hostLobby = false, clientLobby = false, mainMenu = true;
+	private boolean firstHand, powerDownChosen;
 
 	private int cardXpos = 0;
 	private int scaler = 128;
@@ -109,6 +111,8 @@ public class GUI implements ApplicationListener {
 			Board1.setPosition(scaler * 3, scaler * 7);
 			Board2 = new Sprite(textures.get("Plain"));
 			Board2.setPosition(scaler * 11, scaler * 7);
+			Board3 = new Sprite(textures.get("Plain"));
+            Board3.setPosition(scaler * 7, scaler * 10);
 			
 			addSprites();
 			listener = new TextInput(this);
@@ -163,6 +167,7 @@ public class GUI implements ApplicationListener {
 
 			if (isClicked(wait)) {
 				hostLobby = false;
+				initiateClient();
 				new Thread() {
 					public void run() {
 						h.Begin();
@@ -174,18 +179,28 @@ public class GUI implements ApplicationListener {
 			}
 			
 			Board1.draw(batch);
-			font.draw(batch, "DizzyDash", scaler * 3 + 32, scaler * 7 + 80);
+			font.draw(batch, "VaultAssault", scaler * 3 + 32, scaler * 7 + 80);
 			if(isClicked(Board1)){
-				h.setBoardName("assets/Boards/DizzyDash.json");
-				client.setBoardName("assets/Boards/DizzyDash.json");
+			    System.out.println("Board VaultAssault chosen.");
+				h.setBoardName("assets/Boards/VaultAssault.json");
+				client.setBoardName("assets/Boards/VaultAssault.json");
 			}
 			
 			Board2.draw(batch);
 			font.draw(batch, "CheckMate", scaler*11 + 32, scaler * 7 + 80);
 			if(isClicked(Board2)){
+			    System.out.println("Board CheckMate chosen.");
 				h.setBoardName("assets/Boards/CheckMate.json");
 				client.setBoardName("assets/Boards/CheckMate.json");
 			}
+			
+			Board3.draw(batch);
+            font.draw(batch, "DizzyDash", scaler*7 + 32, scaler * 10 + 80);
+            if(isClicked(Board3)){
+                System.out.println("Board DizzyDash chosen.");
+                h.setBoardName("assets/Boards/DizzyDash.json");
+                client.setBoardName("assets/Boards/DizzyDash.json");
+            }
 			
 		} else if (clientLobby) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth * scaler, windowHeight * scaler);
@@ -196,11 +211,26 @@ public class GUI implements ApplicationListener {
 				clientLobby = false;
 				font.getData().setScale(2);
 			}
+			
+		} else if (client.isWinnerFound() >= 0) {
+		    batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth * scaler, windowHeight * scaler);
+            font.getData().setScale(6);
+            if (client.isWinnerFound() == client.getPlayer().getPlayerNumber())
+                font.draw(batch, "You have won the game!", 4 * scaler, 8 * scaler);
+            else {
+                font.draw(batch, "Someone got all the flags before you!", 2 * scaler, 8 * scaler);
+                font.draw(batch, "Better luck next time.", 3 * scaler, 7 * scaler);
+            }
 		} else {
 			background.showDock(); //Render background and registry slots
 			boardprinter.showBoard(client);
+			
+			if (!firstHand && client.getState() == STATE.CHOOSING_CARDS) {
+			    firstHand = true;
+			    loadFirstHand();
+			}
 
-			if (!client.isGameOver() && client.getPlayer().getLifeToken() > 0) {
+			if (!client.isGameOver() && client.getPlayer().getLifeToken() >= 0) {
 				chooseCards(); //Render 9 selectable cards
 				showRegistry();
 				showHealth(); //Render health of player
@@ -227,17 +257,17 @@ public class GUI implements ApplicationListener {
 					}
 				}
 
-				powerdown.draw(batch);
-				if (isClicked(powerdown)) {
-					System.out.println("Powering down next round");
-					client.powerDown();
+				if (!powerDownChosen) {
+				    powerdown.draw(batch);
+	                if (isClicked(powerdown)) {
+	                    System.out.println("Powering down next round");
+	                    client.powerDown();
+	                    powerDownChosen = true;
+	                }
 				}
-			} else if (client.getPlayer().getLifeToken() <= 0 ){
+			} else if (client.isGameOver() && client.getPlayer().getLifeToken() == 0) {
 				font.getData().setScale(8);
-				font.draw(batch, "GAME OVER", 6*scaler-72, scaler);
-			} else {
-				font.getData().setScale(8);
-				font.draw(batch, "YOU WON", 6*scaler, scaler);
+				font.draw(batch, "GAME OVER", 6 * scaler - 72, scaler);
 			}
 		}
 		batch.end();
@@ -343,6 +373,11 @@ public class GUI implements ApplicationListener {
 
 		hand = client.getHand();
 
+		if (powerDownChosen) {
+		    powerDownChosen = false;
+		    client.powerDown(); // changes powerDown from true to false in Client
+		}
+		
 		setHandPos(hand);
 		chooseCards();
 		System.out.println("----------- end reset -----------");
@@ -420,8 +455,6 @@ public class GUI implements ApplicationListener {
 		client = new Client();
 		h = new Host(client);
 
-		initiateClient();
-
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
@@ -433,11 +466,20 @@ public class GUI implements ApplicationListener {
 	 * Initiate client
 	 */
 	private void initiateClient() {
-		hand = client.getHand();
-		setHandPos(hand);
+		
+		try {
+            client.generateBoard();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 		boardprinter = new BoardPrinter(client.gameBoard().getWidth(), client.gameBoard().getHeight(), scaler, batch);
 	}
 
+	private void loadFirstHand() {
+	    hand = client.getHand();
+        setHandPos(hand);
+	}
+	
 	/**
 	 * Connect client to hostName
 	 *
@@ -445,15 +487,16 @@ public class GUI implements ApplicationListener {
 	 */
 	public void connectClient(String hostName) {
 		client = new Client();
-		client.join(hostName);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (client.join(hostName)) {
+		    try {
+		        Thread.sleep(1000);
+		    } catch (InterruptedException e) {
+		        e.printStackTrace();
+		    }
+		    
+		    mainMenu = false;
+		    clientLobby = true;
 		}
-
-		mainMenu = false;
-		clientLobby = true;
 	}
 
 }
