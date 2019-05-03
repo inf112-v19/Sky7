@@ -309,18 +309,14 @@ public class Game implements IGame {
     }
 
     private void normalAndExpressConveyor() {
-        System.out.println("Start convos both");
         board.moveConveyors(false);
-        System.out.println("End convos both");
         render(50);
     }
 
     private void expressConveyor() {
         // TODO check if this robot is on a conveyor belt and there is another robot in front that is also on the convoyer belt
 
-        System.out.println("Start move express convo");
         board.moveConveyors(true);
-        System.out.println("End move express convo");
         render(50);
     }
 
