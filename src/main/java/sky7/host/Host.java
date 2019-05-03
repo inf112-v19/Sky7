@@ -460,6 +460,9 @@ public class Host implements IHost {
         if(!gameOver[playerID]){
             gameOver[playerID] = --lifeTokens[playerID]<=0;
             if(gameOver[playerID]) --nPlayers;
+            if(nPlayers == 0){
+                terminated = true;
+            }
         }
         return gameOver[playerID];
     }
