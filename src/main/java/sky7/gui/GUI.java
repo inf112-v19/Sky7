@@ -259,8 +259,7 @@ public class GUI implements ApplicationListener {
 				for (ICard card : hand) {
 					if (clickPos.x <= scaler + card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
 						if (card.getY() != scaler) {
-							
-							System.out.println("Setting");
+
 //							localregistry.set(pointer, card);
 							for (int i=0; i<5; i++) {
                                 if (registry[i] == null) {
@@ -303,8 +302,7 @@ public class GUI implements ApplicationListener {
 
 		setHandPos(hand);
 		cardXpos = 0;
-		chooseCards();
-		System.out.println("----------- end reset -----------");
+		System.out.println("----------- end reset -----------\n");
 	}
 
 	/**
