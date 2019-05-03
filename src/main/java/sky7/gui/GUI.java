@@ -42,7 +42,7 @@ public class GUI implements ApplicationListener {
 	private Sprite reset, confirm, host, join, powerdown, wait, Board1, Board2, Board3;
 
 	private boolean cardsChosen, hostLobby = false, clientLobby = false, mainMenu = true;
-	private boolean firstHand;
+	private boolean firstHand, powerDownChosen;
 
 	private int cardXpos = 0;
 	private int scaler = 128;
@@ -247,11 +247,15 @@ public class GUI implements ApplicationListener {
 					}
 				}
 
-				powerdown.draw(batch);
-				if (isClicked(powerdown)) {
-					System.out.println("Powering down next round");
-					client.powerDown();
+				if (!powerDownChosen) {
+				    powerdown.draw(batch);
+	                if (isClicked(powerdown)) {
+	                    System.out.println("Powering down next round");
+	                    client.powerDown();
+	                    powerDownChosen = true;
+	                }
 				}
+				
 			} else if (client.getPlayer().getLifeToken() <= 0 ){
 				font.getData().setScale(8);
 				font.draw(batch, "GAME OVER", 6*scaler-72, scaler);
@@ -363,6 +367,11 @@ public class GUI implements ApplicationListener {
 
 		hand = client.getHand();
 
+		if (powerDownChosen) {
+		    powerDownChosen = false;
+		    client.powerDown(); // changes powerDown from true to false in Client
+		}
+		
 		setHandPos(hand);
 		chooseCards();
 		System.out.println("----------- end reset -----------");
