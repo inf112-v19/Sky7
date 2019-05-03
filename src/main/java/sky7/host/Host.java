@@ -68,14 +68,7 @@ public class Host implements IHost {
             e.printStackTrace();
         }
 
-        try {
-            board = bg.getBoardFromFile(boardName);
-            game = new Game(this, board);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        nFlagsOnBoard = board.getFlags().size();
+        
     }
 
 
@@ -84,6 +77,15 @@ public class Host implements IHost {
     @Override
     public void Begin() {
         netHandler.distributeBoard(boardName);
+        
+        try {
+            board = bg.getBoardFromFile(boardName);
+            game = new Game(this, board);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        nFlagsOnBoard = board.getFlags().size();
         
         // Give clients time to generate board before placing robots and starting.
         try {
@@ -343,13 +345,14 @@ public class Host implements IHost {
      */
     private void giveOutCards() {
         // give 9 cards to each player
-        // TODO: handle situation where host should hand out less than 9 cards to damaged robots
-        if (!powerDown[0]) {
-            System.out.println("Handing out " + (9 - robotDamage[0]) + " cards to player " + 0);
-            localClient.chooseCards(pDeck.draw(9 - robotDamage[0]));
-        } else {
-            localClient.chooseCards(new ArrayList<ICard>());
-            readyPlayers++;
+        if (!gameOver[0]) {
+            if (!powerDown[0]) {
+                System.out.println("Handing out " + (Math.max(0, 9 - robotDamage[0])) + " cards to player 0");
+                localClient.chooseCards(pDeck.draw(Math.max(0, 9 - robotDamage[0])));
+            } else {
+                localClient.chooseCards(new ArrayList<ICard>());
+                readyPlayers++;
+            }
         }
 
         for (int i = 1; i < remotePlayers.length; i++) {
