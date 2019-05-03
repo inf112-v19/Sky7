@@ -1,12 +1,6 @@
 package sky7.Client;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.badlogic.gdx.math.Vector2;
-
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
@@ -15,6 +9,11 @@ import sky7.game.Game;
 import sky7.host.IHost;
 import sky7.player.IPlayer;
 import sky7.player.Player;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Client implements IClient {
 
@@ -79,7 +78,9 @@ public class Client implements IClient {
         state = STATE.CHOOSING_CARDS;
     }
 
-
+    /**
+     * generate a board
+     */
     public void generateBoard() {
         IBoardGenerator generator = new BoardGenerator();
         try {
@@ -98,6 +99,10 @@ public class Client implements IClient {
     }
 
 
+    /**
+     * update board to a different board
+     * @param board updated board
+     */
     public void updateBoard(IBoard board){
         this.board = board;
     }
