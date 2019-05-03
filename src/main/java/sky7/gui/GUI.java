@@ -176,12 +176,14 @@ public class GUI implements ApplicationListener {
 			font.draw(batch, "DizzyDash", scaler * 3 + 32, scaler * 7 + 80);
 			if(isClicked(Board1)){
 				h.setBoardName("assets/Boards/DizzyDash.json");
+				client.setBoardName("assets/Boards/DizzyDash.json");
 			}
 			
 			Board2.draw(batch);
-			font.draw(batch, "Board2", scaler*11 + 32, scaler * 7 + 80);
+			font.draw(batch, "CheckMate", scaler*11 + 32, scaler * 7 + 80);
 			if(isClicked(Board2)){
-				h.setBoardName("assets/Boards/DizzyDash.json");
+				h.setBoardName("assets/Boards/CheckMate.json");
+				client.setBoardName("assets/Boards/CheckMate.json");
 			}
 			
 		} else if (clientLobby) {
