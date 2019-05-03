@@ -265,7 +265,7 @@ public class GUI implements ApplicationListener {
 	                    powerDownChosen = true;
 	                }
 				}
-			} else if (client.isGameOver()) {
+			} else if (client.isGameOver() && client.getPlayer().getLifeToken() == 0) {
 				font.getData().setScale(8);
 				font.draw(batch, "GAME OVER", 6 * scaler - 72, scaler);
 			}
