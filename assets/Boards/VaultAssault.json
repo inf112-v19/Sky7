@@ -1,0 +1,8 @@
+{
+  "name": "Vault Assault",
+  "length": "short",
+  "players": "2-4",
+  "width": "12",
+  "height": "12",
+  "grid": "t1 f f_wN f_bSN0 f_wN f f_bSN0 f_wN f f_wN f_bSN1 f f_cC bWE0 bWE0 bWN0 f f_pEO_wW bSN0 f f f bSN1 f bNS1 f f h f f_wS pNO_wS f h f bSN1 f_wE bNWE1 bWS1 f f f f f_g1 f f f bSN1 f f_lTE1_wW bNS1 f f f_wW_wN f f f_wN_wE f f f f_wE_lTW1 f bNS1 f_wE f f t2 t2 f f_g3 f_pEO_wW f f f bNS1 f_pWO_wE f f t2 t2 f f f_pEO_wW bSE1 bWE1 f_wW_lTE1 bNS1 f f f_wW_wS f f f_wS_wE f f bSN1 f_wE_lTW1 bEW1 cC f_wN_lTS1 f f f f f f f bSN1 f f_wW f f h f f_wN f_wN_pSP f h f bSN1 f_wE bWE1 bWS1 f f f f bSE1 bWE1 bWE1 bWE1 bWN1 f f bNS1 f_wS_lTN1 f f_g2 f bSN1 f_wS f f_wS f t1"
+}

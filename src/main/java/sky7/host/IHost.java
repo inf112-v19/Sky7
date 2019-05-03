@@ -16,12 +16,12 @@ public interface IHost {
     HOST_STATE getCurrentState();
 
     /**
-     * @return
+     * @return this deck
      */
     IDeck getpDeck();
 
     /**
-     * @return
+     * @return this board
      */
     IBoard getBoard();
 
@@ -48,6 +48,8 @@ public interface IHost {
      */
     void terminate();
 
+    void setBoardName(String boardName);
+
     /**
      * Begin the game.
      */
@@ -65,21 +67,22 @@ public interface IHost {
 
 
     /**
-     * @param board
+     * @param board this board
      */
     void finishedProcessing(IBoard board);
 
     /**
-     * @param winner
+     * @param winner id of winning player
      */
     void setWinner(int winner);
 
     /**
+     * Increase robot health if standing on wrench.
      *
-     * @param playerID
-     * @param damage
+     * @param playerID player to be repair
+     * @param health amount to heal
      */
-    void repairDamage(int playerID, int damage);
+    void repairDamage(int playerID, int health);
 
     /**
      * @return playerID nr to be given to the newly connected player
@@ -88,24 +91,25 @@ public interface IHost {
 
     /**
      *
-     * @param playerID
+     * @param playerID players id
      */
     void remotePlayerDisconnected(int playerID);
 
 
     /**
+     * Decrease robot health with damage amount.
      *
-     *  @param playerID
-     * @param damage
-     * @return true if damage killed robot.
+     * @param playerID robot to be damaged
+     * @param damage amount of damage
+     * @return true if damage killed robot, false otherwise.
      */
     boolean applyDamage(int playerID, int damage);
 
     /**
      * Informs Host that a robot has visited a flag
      * 
-     * @param playerID
-     * @param flagNumber
+     * @param playerID robot that visited a flag
+     * @param flagNumber integer representing the flag
      */
     void robotVisitedFlag(int playerID, int flagNumber);
 
@@ -114,5 +118,11 @@ public interface IHost {
      */
     void powerDownRepair(boolean [] currentPD);
 
+    /**
+     * Check if robot loose a life token
+     *
+     * @param playerID robot to check
+     * @return true if robot lose life token, false otherwise.
+     */
     boolean loseLifeToken(int playerID);
 }

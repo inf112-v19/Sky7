@@ -1,16 +1,25 @@
 package sky7.host;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+
 import sky7.card.ICard;
 import sky7.net.KryoRegister;
-import sky7.net.packets.*;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import sky7.net.packets.Begin;
+import sky7.net.packets.ClientConnectionAccepted;
+import sky7.net.packets.Hand;
+import sky7.net.packets.NumberOfPlayers;
+import sky7.net.packets.PlaceRobot;
+import sky7.net.packets.PlaceRobotAtStart;
+import sky7.net.packets.ProcessRound;
+import sky7.net.packets.RegistryDiscard;
+import sky7.net.packets.WinnerFound;
 
 public class HostNetHandler {
     
@@ -33,20 +42,37 @@ public class HostNetHandler {
     public int getNumberOfConnectedPlayers() {
         return server.getConnections().length;
     }
-    
+
+    /**
+     * Deal cards to playerID
+     *
+     * @param playerID robot to get cards
+     * @param cards cards to be dealt
+     */
     public void dealCards(int playerID, ArrayList<ICard> cards) {
         Hand h = new Hand();
         h.cards = cards;
         server.sendToTCP(playerToConnection.get(playerID), h);
     }
-    
+
+    /**
+     * Distribute registries
+     *
+     * @param registries to be distribute
+     * @param powerDown list of every power down
+     */
     public void distributeRegistries(HashMap<Integer, ArrayList<ICard>> registries, boolean[] powerDown) {
         ProcessRound pr = new ProcessRound();
         pr.registries = registries;
         pr.powerDown = powerDown;
         server.sendToAllTCP(pr);
     }
-    
+
+    /**
+     * Distribute board
+     *
+     * @param boardName string representing the name of the board
+     */
     public void distributeBoard(String boardName) {
         Begin b = new Begin();
         b.boardName = boardName;
@@ -61,11 +87,23 @@ public class HostNetHandler {
         server.sendToAllTCP(pr);
     }
 
+    /**
+     * place playerID in their start position.
+     *
+     * @param playerID robot to be placed
+     * @param startPosition position to be placed at
+     */
     public void placeRobotAtStart(int playerID, Vector2 startPosition) {
         PlaceRobotAtStart pr = new PlaceRobotAtStart();
         pr.playerID = playerID;
         pr.startPosition = startPosition;
         server.sendToAllTCP(pr);
+    }
+    
+    public void winnerFound(int playerID) {
+        WinnerFound fw = new WinnerFound();
+        fw.playerID = playerID;
+        server.sendToAllTCP(fw);
     }
 
     private class HostListener extends Listener {
@@ -84,7 +122,7 @@ public class HostNetHandler {
             server.sendToAllTCP(nop);
             connection.setKeepAliveTCP(5000);
         }
-
+        
         public void disconnected (Connection connection) {
             System.out.println("Client disconnected, ID: " + connectionToPlayer.get(connection.getID()));
             host.remotePlayerDisconnected(connectionToPlayer.get(connection.getID()));
