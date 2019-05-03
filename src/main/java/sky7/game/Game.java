@@ -31,8 +31,8 @@ public class Game implements IGame {
     /**
      * The construct for a game engine on host.
      *
-     * @param host
-     * @param board
+     * @param host a host if this game engine belongs to a host
+     * @param board the board that this engine will work on.
      */
     public Game(Host host, IBoard board) {
         this.host = host;
@@ -43,8 +43,8 @@ public class Game implements IGame {
     /**
      * The constructor for a game engine on client or host
      *
-     * @param client
-     * @param board
+     * @param client a client if this game engine belongs to a client
+     * @param board the board that this engine will work on.
      */
     public Game(IClient client, IBoard board) {
         this.client = client;
@@ -93,6 +93,9 @@ public class Game implements IGame {
         if (hosting) host.finishedProcessing(board);
     }
 
+    /**
+     * respawn robots at their previous respawn positions.
+     */
     private void respawnRobots() {
         for (Integer id : destroyedRobots) {
             RobotTile robot = board.getRobots()[id];
@@ -165,7 +168,7 @@ public class Game implements IGame {
                         repairDamage(board.getRobots()[j].getId(), 1);
                     } else if (board.getWrenches().get(i).getType() == 2) {
                         repairDamage(board.getRobots()[j].getId(), 1);
-                        //TODO should this draw 1 option card?
+                        //could draw 1 option card here
                     }
                 }
             }
@@ -195,7 +198,7 @@ public class Game implements IGame {
      * activate lasers
      */
     private void activateLasers() {
-        //TODO lasers should only be laser start position.
+        // lasers should only be laser start position.
 
         List<Laser> lasersHeads = new ArrayList<>();
         List<Vector2> headPositions = new ArrayList<>();
@@ -223,7 +226,7 @@ public class Game implements IGame {
         }
 
         Pair<List<Laser>, List<Vector2>> lasers = new Pair<>(lasersHeads, headPositions);
-        fireLasers(lasers); // presume that lasers are only laser start positions and robot position
+        fireLasers(lasers);
     }
 
     /**
@@ -266,7 +269,7 @@ public class Game implements IGame {
     /**
      * For each laser head, get the next position of the head.
      * @param lasers list of laser to find the next for
-     * @return
+     * @return a pair containing laser heads and their positions
      */
     private Pair<List<Laser>, List<Vector2>> moveLaserHeads(Pair<List<Laser>, List<Vector2>> lasers) {
 
@@ -361,13 +364,19 @@ public class Game implements IGame {
         render(50);
     }
 
+    /**
+     * activate both normal and express conveyor
+     */
+
     private void normalAndExpressConveyor() {
         board.moveConveyors(false);
         render(50);
     }
 
+    /**
+     * activate expressConveyor belt
+     */
     private void expressConveyor() {
-        // TODO check if this robot is on a conveyor belt and there is another robot in front that is also on the convoyer belt
 
         board.moveConveyors(true);
         render(50);
@@ -553,7 +562,6 @@ public class Game implements IGame {
      * @return true if there is no obstacle, such as a wall in the {@param direction}
      */
     private boolean facingWall(Vector2 pos, DIRECTION direction) {
-        // TODO check if there is a wall facing movement direction in the current cell
         if (board.containsPosition(pos)) {
             for (ICell cell : board.getCell(pos)) {
                 if (cell instanceof Wall && ((Wall) cell).getDirection() == direction) {
@@ -566,7 +574,7 @@ public class Game implements IGame {
 
     @Override
     public void render(int milliSec) {
-        // TODO call render if this game belongs to a client, else ignore.
+        // call render if this game belongs to a client, else ignore.
         if (client != null) {
             client.updateBoard(board);
             try {
@@ -584,7 +592,6 @@ public class Game implements IGame {
      * @return All 5 phases queued, where each phase is a queue of Event containing player Id and A card.
      */
     private Queue<Queue<Event>> findPlayerSequence(HashMap<Integer, ArrayList<ICard>> playerRegistries) {
-        // TODO make test for this.
 
         Queue<Queue<Event>> phases = new LinkedList<>();
         for (int i = 0; i < NR_OF_PHASES; i++) {
