@@ -57,8 +57,6 @@ public class Host implements IHost {
         this();
         localClient = cli;
         localClient.connect(this, nPlayers++, boardName);
-
-
     }
 
     public Host() {
@@ -85,8 +83,15 @@ public class Host implements IHost {
 
     @Override
     public void Begin() {
-        // TODO Check other conditions if necessary
         netHandler.distributeBoard(boardName);
+        
+        // Give clients time to generate board before placing robots and starting.
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
         placeRobots();
         run();
     }

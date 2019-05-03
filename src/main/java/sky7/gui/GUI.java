@@ -16,6 +16,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import sky7.Client.Client;
 import sky7.Client.IClient;
+import sky7.Client.STATE;
 import sky7.card.ICard;
 import sky7.host.Host;
 
@@ -38,9 +39,10 @@ public class GUI implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	private TextureAtlas textureAtlas;
-	private Sprite reset, confirm, host, join, powerdown, wait, Board1, Board2;
+	private Sprite reset, confirm, host, join, powerdown, wait, Board1, Board2, Board3;
 
 	private boolean cardsChosen, hostLobby = false, clientLobby = false, mainMenu = true;
+	private boolean firstHand;
 
 	private int cardXpos = 0;
 	private int scaler = 128;
@@ -109,6 +111,8 @@ public class GUI implements ApplicationListener {
 			Board1.setPosition(scaler * 3, scaler * 7);
 			Board2 = new Sprite(textures.get("Plain"));
 			Board2.setPosition(scaler * 11, scaler * 7);
+			Board3 = new Sprite(textures.get("Plain"));
+            Board3.setPosition(scaler * 7, scaler * 10);
 			
 			addSprites();
 			listener = new TextInput(this);
@@ -163,6 +167,7 @@ public class GUI implements ApplicationListener {
 
 			if (isClicked(wait)) {
 				hostLobby = false;
+				initiateClient();
 				new Thread() {
 					public void run() {
 						h.Begin();
@@ -176,6 +181,7 @@ public class GUI implements ApplicationListener {
 			Board1.draw(batch);
 			font.draw(batch, "VaultAssault", scaler * 3 + 32, scaler * 7 + 80);
 			if(isClicked(Board1)){
+			    System.out.println("Board VaultAssault chosen.");
 				h.setBoardName("assets/Boards/VaultAssault.json");
 				client.setBoardName("assets/Boards/VaultAssault.json");
 			}
@@ -183,9 +189,18 @@ public class GUI implements ApplicationListener {
 			Board2.draw(batch);
 			font.draw(batch, "CheckMate", scaler*11 + 32, scaler * 7 + 80);
 			if(isClicked(Board2)){
+			    System.out.println("Board CheckMate chosen.");
 				h.setBoardName("assets/Boards/CheckMate.json");
 				client.setBoardName("assets/Boards/CheckMate.json");
 			}
+			
+			Board3.draw(batch);
+            font.draw(batch, "DizzyDash", scaler*7 + 32, scaler * 10 + 80);
+            if(isClicked(Board3)){
+                System.out.println("Board DizzyDash chosen.");
+                h.setBoardName("assets/Boards/DizzyDash.json");
+                client.setBoardName("assets/Boards/DizzyDash.json");
+            }
 			
 		} else if (clientLobby) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth * scaler, windowHeight * scaler);
@@ -199,6 +214,11 @@ public class GUI implements ApplicationListener {
 		} else {
 			background.showDock(); //Render background and registry slots
 			boardprinter.showBoard(client);
+			
+			if (!firstHand && client.getState() == STATE.CHOOSING_CARDS) {
+			    firstHand = true;
+			    loadFirstHand();
+			}
 
 			if (!client.isGameOver() && client.getPlayer().getLifeToken() > 0) {
 				chooseCards(); //Render 9 selectable cards
@@ -420,8 +440,6 @@ public class GUI implements ApplicationListener {
 		client = new Client();
 		h = new Host(client);
 
-		initiateClient();
-
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
@@ -433,11 +451,20 @@ public class GUI implements ApplicationListener {
 	 * Initiate client
 	 */
 	private void initiateClient() {
-		hand = client.getHand();
-		setHandPos(hand);
+		
+		try {
+            client.generateBoard();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 		boardprinter = new BoardPrinter(client.gameBoard().getWidth(), client.gameBoard().getHeight(), scaler, batch);
 	}
 
+	private void loadFirstHand() {
+	    hand = client.getHand();
+        setHandPos(hand);
+	}
+	
 	/**
 	 * Connect client to hostName
 	 *

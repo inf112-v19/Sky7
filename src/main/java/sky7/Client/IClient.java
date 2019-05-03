@@ -88,18 +88,6 @@ public interface IClient {
     void placeRobot(int playerNr, int xPos, int yPos);
 
     /**
-     * activate the board elements by calling board method
-     * called from host
-     */
-    void activateBoardElements();
-
-    /**
-     * activate the lasers by calling board method.
-     * called from host
-     */
-    void activateLasers();
-
-    /**
      * when process is done.
      *
      * @param board this board
