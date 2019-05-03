@@ -62,7 +62,11 @@ public class ProgramDeck implements IDeck {
     }
 
 
-
+    /**
+     * a get method used for testing
+     *
+     * @return a list of program cards
+     */
     public ProgramCard[] getProgramCardsForTesting(){
         ProgramCard[] deck = new ProgramCard[availableCards.size()];
         int i = 0;
