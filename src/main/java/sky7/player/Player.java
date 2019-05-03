@@ -48,8 +48,6 @@ public class Player implements IPlayer {
         if (damage > 4) {
             nLocked = damage - 4;
         }
-
-        // TODO if health reaches 0, consume a life token and respawn
     }
 
     @Override
@@ -66,14 +64,6 @@ public class Player implements IPlayer {
 
     }
 
-   /* @Override
-    public void repair(int repairDamage) {
-        updateDamage(damage-repairDamage);
-        
-        if (damage > 4) {
-            nLocked = damage-4;
-        } else nLocked = 0;
-    }*/
 
     @Override
     public void updateDamage(int totalDamage) {

@@ -51,7 +51,7 @@ public class Belt implements IActive {
             }
             texture = new Texture(path);
         }
-        return texture; //TODO: add Belt Texture
+        return texture;
     }
 
     @Override

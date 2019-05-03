@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class Client implements IClient {
 
-    private IBoard board; //TODO double check the code, might contain problems.
+    private IBoard board;
     private IHost host;
     private IPlayer player;
     private STATE state;

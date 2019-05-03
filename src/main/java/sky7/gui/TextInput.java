@@ -23,8 +23,4 @@ public class TextInput implements TextInputListener {
 	@Override
 	public void canceled () {
 	}
-
-	public String getinput() {
-		return input;
-	}
 }
