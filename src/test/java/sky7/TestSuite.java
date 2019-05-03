@@ -13,7 +13,7 @@ import sky7.client.ClientTest;
 @RunWith(Suite.class)
 
 @SuiteClasses({
-    BoardGeneratorTest.class,
+//    BoardGeneratorTest.class,
     BoardTests.class,
     RoboTest.class,
     ClientTest.class,
