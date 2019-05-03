@@ -99,8 +99,9 @@ public interface IClient {
     /**
      * join the game
      * @param hostName string representing the name of the host
+     * @return true if connected
      */
-    void join(String hostName);
+    boolean join(String hostName);
 
     /**
      * @return integer representing the number of players.
