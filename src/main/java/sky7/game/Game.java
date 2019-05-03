@@ -197,10 +197,6 @@ public class Game implements IGame {
     private void activateLasers() {
         //TODO lasers should only be laser start position.
 
-        List<ICell> lasersHeadss = new ArrayList<>();
-        List<Vector2> headPosition = new ArrayList<>();
-
-
         List<Laser> lasersHeads = new ArrayList<>();
         List<Vector2> headPositions = new ArrayList<>();
 

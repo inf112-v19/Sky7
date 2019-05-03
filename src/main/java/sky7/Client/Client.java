@@ -74,6 +74,7 @@ public class Client implements IClient {
 
     @Override
     public void chooseCards(ArrayList<ICard> hand) {
+//        player.clearRegistry();
         player.setHand(hand);
         state = STATE.CHOOSING_CARDS;
     }
@@ -159,6 +160,7 @@ public class Client implements IClient {
     @Override
     public void finishedProcessing(IBoard board) {
     	finishedProcessing = true;
+        player.clearRegistry();
     	player.clearRegistry();
     }
 

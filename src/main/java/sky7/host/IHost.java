@@ -48,6 +48,8 @@ public interface IHost {
      */
     void terminate();
 
+    void setBoardName(String boardName);
+
     /**
      * Begin the game.
      */
