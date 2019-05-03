@@ -197,7 +197,7 @@ public class GUI implements ApplicationListener {
 			background.showDock(); //Render background and registry slots
 			boardprinter.showBoard(client);
 
-			if (!client.isGameOver()) {
+			if (!client.isGameOver() && client.getPlayer().getLifeToken() > 0) {
 				chooseCards(); //Render 9 selectable cards
 				showRegistry();
 				showHealth(); //Render health of player
@@ -206,7 +206,7 @@ public class GUI implements ApplicationListener {
 				 * render reset button only if at least one card is selected and
 				 * when the player has not pressed the "ready" button
 				 */
-				if (!cardsChosen) {// && pointer > client.getPlayer().getNLocked()) {
+				if (!cardsChosen && cardsInReg > client.getPlayer().getNLocked()) {
 					reset.draw(batch);
 					if (isClicked(reset)) {
 						reset();
@@ -214,7 +214,7 @@ public class GUI implements ApplicationListener {
 				}
 
 				// Render "GO" button only if 5 cards are choosen and player has taken less than 9 damage
-				if (cardsInReg == 5) {
+				if (cardsInReg == 5 && cardsChosen == false) {
 					confirm.draw(batch);
 
 					// if confirm is clicked:
@@ -229,9 +229,12 @@ public class GUI implements ApplicationListener {
 					System.out.println("Powering down next round");
 					client.powerDown();
 				}
-			} else {
+			} else if (client.getPlayer().getLifeToken() == 0 && client.getPlayer().getDamage() >= 9){
 				font.getData().setScale(8);
 				font.draw(batch, "GAME OVER", 5*scaler, scaler);
+			} else {
+				font.getData().setScale(8);
+				font.draw(batch, "YOU WON", 5*scaler, scaler);
 			}
 		}
 		batch.end();
