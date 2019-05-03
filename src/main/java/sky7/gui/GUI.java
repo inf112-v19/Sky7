@@ -37,7 +37,7 @@ public class GUI implements ApplicationListener {
 	private OrthographicCamera camera;
 	private Vector3 clickPos = new Vector3();
 	private TextureAtlas textureAtlas;
-	private Sprite reset, confirm, host, join, powerdown, wait;
+	private Sprite reset, confirm, host, join, powerdown, wait, Board1, Board2;
 
 	private boolean cardsChosen, hostLobby = false, clientLobby = false, mainMenu = true;
 
@@ -71,7 +71,6 @@ public class GUI implements ApplicationListener {
 			windowHeight = height + 2;
 			batch = new SpriteBatch();
 			font = new BitmapFont();
-			font.getData().setScale(2, 2);
 			font.setColor(Color.GOLDENROD);
 			camera = new OrthographicCamera();
 			viewport = new ExtendViewport(windowWidth * scaler, windowHeight * scaler, camera);
@@ -86,6 +85,7 @@ public class GUI implements ApplicationListener {
 			textures.put("Join", new Texture("assets/menu/Join2.png"));
 			textures.put("PowerDown", new Texture("assets/menu/PowerDown2.png"));
 			textures.put("Begin", new Texture("assets/menu/Begin.png"));
+			textures.put("Plain", new Texture("assets/menu/Plain.png"));
 
 			for (int i=0; i<7; i++) {
 				textures.put("Robot" + i, new Texture("assets/robots/Robot" + i + ".png"));
@@ -104,7 +104,11 @@ public class GUI implements ApplicationListener {
 			powerdown.setPosition(scaler * 13, 32);
 			wait = new Sprite(textures.get("Begin"));
 			wait.setPosition(scaler * 7, scaler * 7);
-
+			Board1 = new Sprite(textures.get("Plain"));
+			Board1.setPosition(scaler * 3, scaler * 7);
+			Board2 = new Sprite(textures.get("Plain"));
+			Board2.setPosition(scaler * 11, scaler * 7);
+			
 			addSprites();
 			listener = new TextInput(this);
 			background = new BackGround(windowWidth, windowHeight, scaler, textures, batch);
@@ -150,9 +154,11 @@ public class GUI implements ApplicationListener {
 			}
 
 		} else if (hostLobby) {
+			font.getData().setScale(3);
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth * scaler, windowHeight * scaler);
+			
 			wait.draw(batch);
-			font.draw(batch, h.getnPlayers() + " Connected Players", 7 * scaler, 6 * scaler);
+			font.draw(batch, h.getnPlayers() + " Connected Players", 6 * scaler + 64, 6 * scaler);
 
 			if (isClicked(wait)) {
 				hostLobby = false;
@@ -163,8 +169,21 @@ public class GUI implements ApplicationListener {
 				}.start();
 				this.width = client.gameBoard().getWidth();
 				this.height = client.gameBoard().getHeight();
+				font.getData().setScale(2);
 			}
-
+			
+			Board1.draw(batch);
+			font.draw(batch, "DizzyDash", scaler * 3 + 32, scaler * 7 + 80);
+			if(isClicked(Board1)){
+				h.setBoardName("assets/Boards/DizzyDash.json");
+			}
+			
+			Board2.draw(batch);
+			font.draw(batch, "Board2", scaler*11 + 32, scaler * 7 + 80);
+			if(isClicked(Board2)){
+				h.setBoardName("assets/Boards/DizzyDash.json");
+			}
+			
 		} else if (clientLobby) {
 			batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth * scaler, windowHeight * scaler);
 			font.draw(batch, client.getNPlayers() + " Connected Players", 7 * scaler, 6 * scaler);

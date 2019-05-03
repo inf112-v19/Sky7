@@ -21,6 +21,10 @@ import java.util.List;
  */
 public class Host implements IHost {
 
+    @Override
+    public void setBoardName(String boardName) {
+        this.boardName = boardName;
+    }
 
     // FIELD VARIABLES --------------
     private String boardName = "assets/Boards/DizzyDash.json";
