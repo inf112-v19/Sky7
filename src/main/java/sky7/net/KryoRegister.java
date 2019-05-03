@@ -23,6 +23,7 @@ public class KryoRegister {
         kryo.register(NumberOfPlayers.class);
         kryo.register(Begin.class);
         kryo.register(PlaceRobotAtStart.class);
+        kryo.register(WinnerFound.class);
         
         //other necessary resources
         kryo.register(ICard.class);

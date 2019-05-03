@@ -55,8 +55,7 @@ public class ClientNetHandler {
                 PlaceRobotAtStart pr = (PlaceRobotAtStart)object;
                 client.placeRobotAtStart(pr.playerID, pr.startPosition);
 
-            }
-            else if (object instanceof NumberOfPlayers) {
+            } else if (object instanceof NumberOfPlayers) {
                 client.updateNPlayers(((NumberOfPlayers)object).nPlayers);
                 
             } else if (object instanceof Begin) {
@@ -66,6 +65,8 @@ public class ClientNetHandler {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
+            } else if (object instanceof WinnerFound) {
+                client.winnerFound(((WinnerFound)object).playerID);
             }
         }
     }

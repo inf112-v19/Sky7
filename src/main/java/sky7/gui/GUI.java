@@ -211,6 +211,16 @@ public class GUI implements ApplicationListener {
 				clientLobby = false;
 				font.getData().setScale(2);
 			}
+			
+		} else if (client.isWinnerFound() >= 0) {
+		    batch.draw(textures.get("Splashscreen"), 0, 0, windowWidth * scaler, windowHeight * scaler);
+            font.getData().setScale(6);
+            if (client.isWinnerFound() == client.getPlayer().getPlayerNumber())
+                font.draw(batch, "You have won the game!", 4 * scaler, 8 * scaler);
+            else {
+                font.draw(batch, "Someone got all the flags before you!", 2 * scaler, 8 * scaler);
+                font.draw(batch, "Better luck next time.", 3 * scaler, 7 * scaler);
+            }
 		} else {
 			background.showDock(); //Render background and registry slots
 			boardprinter.showBoard(client);
@@ -256,13 +266,7 @@ public class GUI implements ApplicationListener {
 	                }
 				}
 				
-			} else if (client.getPlayer().getLifeToken() <= 0 ){
-				font.getData().setScale(8);
-				font.draw(batch, "GAME OVER", 6*scaler-72, scaler);
-			} else {
-				font.getData().setScale(8);
-				font.draw(batch, "YOU WON", 6*scaler, scaler);
-			}
+			} 
 		}
 		batch.end();
 	}
@@ -481,15 +485,16 @@ public class GUI implements ApplicationListener {
 	 */
 	public void connectClient(String hostName) {
 		client = new Client();
-		client.join(hostName);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (client.join(hostName)) {
+		    try {
+		        Thread.sleep(1000);
+		    } catch (InterruptedException e) {
+		        e.printStackTrace();
+		    }
+		    
+		    mainMenu = false;
+		    clientLobby = true;
 		}
-
-		mainMenu = false;
-		clientLobby = true;
 	}
 
 }
