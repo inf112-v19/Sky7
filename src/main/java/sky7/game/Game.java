@@ -269,7 +269,6 @@ public class Game implements IGame {
      * @return
      */
     private Pair<List<Laser>, List<Vector2>> moveLaserHeads(Pair<List<Laser>, List<Vector2>> lasers) {
-        Pair<List<Laser>, List<Vector2>> nextLasers;
 
         List<Laser> nextHeads = new ArrayList<>();
         List<Vector2> nextHeadPositions = new ArrayList<>();

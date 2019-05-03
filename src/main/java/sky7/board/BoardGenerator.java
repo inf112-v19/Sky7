@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 /**
  * A Class for generating a board object parsed from a json file.
  */
+@SuppressWarnings("unchecked")
 public class BoardGenerator implements IBoardGenerator {
     private static HashMap<String, Supplier<ICell>> ICellFactory = new HashMap<>();
 
@@ -182,6 +183,7 @@ public class BoardGenerator implements IBoardGenerator {
      * @param numberOfRotationsClockWise 1 for 90 deg with clock, 2 for 180 deg, 3 for 270 deg
      * @return rotated grid
      */
+
     private TreeSet<ICell>[][] rotate(TreeSet<ICell>[][] grid, int numberOfRotationsClockWise) {
         TreeSet<ICell>[][] rotated;
         switch (numberOfRotationsClockWise) {

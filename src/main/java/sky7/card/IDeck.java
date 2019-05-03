@@ -1,7 +1,6 @@
 package sky7.card;
 
 import java.util.ArrayList;
-import java.util.Stack;
 
 public interface IDeck {
 
