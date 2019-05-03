@@ -18,8 +18,8 @@
 	
 ### Utfør et retrospektiv før leveranse med fokus på hele prosjektet:
 	- Hva justerte dere underveis, og hvorfor? Ble det bedre?
-		- Sluttet med pull request og gikk over til å bruke en branch "experimental" for å kombinere flere endringer. 
-		Vi merger den inn i master kun når den er stabil.
+		- Sluttet med pull request og gikk over til å bruke en branch "experimental" for å kombinere 
+		flere endringer. Vi merger den inn i master kun når den er stabil.
 		- Det ble betydlig bedre, altså mer effektivt og det førte til at vi fikk gjort mer raskere.
 		- Byttet fra trello til github project board for å ha færre platformer å jobbe på. 
 		Av samme grunn bruker vi bare slack som kommunikasjonsplatform.
