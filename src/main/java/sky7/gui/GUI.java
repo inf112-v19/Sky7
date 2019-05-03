@@ -175,9 +175,15 @@ public class GUI implements ApplicationListener {
 		} else {
 			background.showDock(); //Render background and registry slots
 			boardprinter.showBoard(client);
-			showHealth(); //Render health of player
-			chooseCards(); //Render 9 selectable cards
-			showRegistry();
+			
+			if (!client.isGameOver()) {
+				chooseCards(); //Render 9 selectable cards
+				showRegistry();
+				showHealth(); //Render health of player
+			} else {
+				font.getData().setScale(8);
+				font.draw(batch, "GAME OVER", 5*scaler, 10*scaler);
+			}
 
 			/*
 			 * render reset button only if at least one card is selected and
