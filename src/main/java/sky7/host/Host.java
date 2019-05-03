@@ -146,6 +146,9 @@ public class Host implements IHost {
         lockedRegSlots = new int[8];
         robotDamage = new int[8];
         lifeTokens = new int[8];
+        for (int i = 0; i < lifeTokens.length; i++) {
+            lifeTokens[i] = 3;
+        }
         visitedFlags = new int[8];
         powerDown = new boolean[8];
         gameOver = new boolean[8];
