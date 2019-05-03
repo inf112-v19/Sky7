@@ -15,10 +15,4 @@ public interface ICell extends Comparable<ICell>{
      * @return priority of the cell
      */
     int drawPriority(); // TODO Abstract away the priority of each ICell type to a txt file or Enumeration class.
-
-    /**
-     *
-     * @return if this cell i visible.
-     */
-    boolean isVisible();
 }

@@ -33,11 +33,6 @@ public class FloorTile implements IInactive {
     }
 
     @Override
-    public boolean isVisible() {
-        return true;
-    }
-
-    @Override
     public int compareTo(ICell other) {
         return Integer.compare(this.drawPriority(), other.drawPriority());
     }

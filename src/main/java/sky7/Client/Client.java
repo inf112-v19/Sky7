@@ -158,10 +158,6 @@ public class Client implements IClient {
     	new Thread(() -> { game.process(cards, powerDown.clone()); }).start();
     }
 
-    public int getID() {
-        return player.getPlayerNumber();
-    }
-
     @Override
     public int getNPlayers() {
         return this.nPlayers;
