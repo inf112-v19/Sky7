@@ -36,7 +36,7 @@ for Windows, Mac and Linux.
 - DrawPriority explanation in [Documents](Documents).
 
 ## Known bugs
-- 
+- Lasers are not rendering correctly.
 
 ## Tests
 ### JUNIT tests
