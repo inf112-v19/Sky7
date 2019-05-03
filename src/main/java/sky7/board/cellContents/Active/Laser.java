@@ -16,7 +16,6 @@ public class Laser implements IActive {
     private final int numberOfLasers;
     private Texture texture;
     private int PRIORITY = 4;
-    private boolean visible = true;
 
     public Laser(boolean start, DIRECTION direction, int numberOfLasers) {
         this.start = start;
@@ -117,25 +116,6 @@ public class Laser implements IActive {
     @Override
     public int drawPriority() {
         return PRIORITY;
-    }
-
-    /**
-     * change visible to false, and hide laser from board
-     */
-    public void hide(){
-        visible = false;
-    }
-
-    /**
-     * change visible to true, and reveal laser from board
-     */
-    public void reveal(){
-        visible = true;
-    }
-
-    @Override
-    public boolean isVisible() {
-        return visible;
     }
 
     @Override

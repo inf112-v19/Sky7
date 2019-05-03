@@ -246,7 +246,7 @@ public class GUI implements ApplicationListener {
 	/**
 	 * show registry in the screen
 	 */
-	public void showRegistry() {
+	private void showRegistry() {
 	    for (int i=0; i<5; i++) {
             if (registry[i] != null) {
                 registry[i].setX(64+scaler*(5+i));
@@ -271,7 +271,7 @@ public class GUI implements ApplicationListener {
 	/**
 	 * pick which cards you want to use
 	 */
-	public void chooseCards() {
+	private void chooseCards() {
 		// check if the current hand is not the same as the hand in Client
 		//		if (!hand.equals(client.getHand())) {
 		if (client.isFinishedProcessing()) {
@@ -318,7 +318,7 @@ public class GUI implements ApplicationListener {
 	/**
 	 * set 5 chosen chards.
 	 */
-	public void setRegistry() {
+	private void setRegistry() {
 		//check if there actually are 5 chosen cards
 		if (cardsInReg < 5) throw new IllegalStateException("GUI attempting to set registry with less than 5 cards");
 		cardsChosen = true;
@@ -331,7 +331,7 @@ public class GUI implements ApplicationListener {
 	/**
 	 * reset the chosen cards.
 	 */
-	public void reset() {
+	private void reset() {
 		System.out.println("\n----------- Resetting -----------");
 		cardsChosen = false;
 		cardXpos = 0;
@@ -368,7 +368,7 @@ public class GUI implements ApplicationListener {
 	 * @param sprite the sprite to check
 	 * @return true if a sprite is clicked, false otherwise.
 	 */
-	public boolean isClicked(Sprite sprite) {
+	private boolean isClicked(Sprite sprite) {
 		if (Gdx.input.justTouched()) {
 			camera.unproject(clickPos.set(Gdx.input.getX(), Gdx.input.getY(), 0));
 			if (clickPos.x > sprite.getX() && clickPos.x < sprite.getX() + sprite.getWidth()) {
@@ -383,7 +383,7 @@ public class GUI implements ApplicationListener {
 	/**
 	 * Add sprites to a textureAtlas as in create() method
 	 */
-	public void addSprites() {
+	private void addSprites() {
 		Array<AtlasRegion> regions = textureAtlas.getRegions();
 		for (AtlasRegion region : regions) {
 			Sprite sprite = textureAtlas.createSprite(region.name);
@@ -398,7 +398,7 @@ public class GUI implements ApplicationListener {
 	 * @param x x-coordinate
 	 * @param y y-coordinate
 	 */
-	public void drawSprite(String name, float x, float y) {
+	private void drawSprite(String name, float x, float y) {
 		Sprite sprite = sprites.get(name);
 		sprite.setPosition(x, y);
 		sprite.draw(batch);
@@ -407,7 +407,7 @@ public class GUI implements ApplicationListener {
 	/**
 	 * Show health and life tokens
 	 */
-	public void showHealth() {
+	private void showHealth() {
 		batch.draw(textures.get("Robot" + client.getPlayer().getPlayerNumber()), 13*scaler, scaler, scaler, scaler);
 		font.draw(batch, "Damage: " + client.getPlayer().getDamage() + "\nTokens: " + client.getPlayer().getLifeToken(), 14 * scaler, 2 * scaler - 32);
 	}
