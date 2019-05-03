@@ -181,4 +181,16 @@ public interface IClient {
      * @return true if game is over, false otherwise.
      */
     boolean isGameOver();
+
+    /**
+     * Someone has won the game
+     * 
+     * @param playerID the ID of the winner
+     */
+    void winnerFound(int playerID);
+
+    /**
+     * @return a playerID >= 0 if someone has won the game
+     */
+    int isWinnerFound();
 }

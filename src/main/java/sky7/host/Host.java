@@ -442,7 +442,8 @@ public class Host implements IHost {
 
         if (visitedFlags[playerID] == nFlagsOnBoard) {
             System.out.println("Player " + playerID + " has won the game!");
-            // TODO victory stuff(?)
+            localClient.winnerFound(playerID);
+            netHandler.winnerFound(playerID);
         }
     }
 
