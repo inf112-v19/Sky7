@@ -60,8 +60,9 @@ public class Game implements IGame {
         int phaseNr = 1;
 
         for (Queue<Event> phase : allPhases) {
-
-            System.out.println("phase: " + count++);
+            
+            if (hosting) System.out.println("HOST - phase: " + count++);
+            else System.out.println("CLIENT - phase: " + count++);
 
             // B. Robots Move
             for (Event action : phase) {
@@ -88,7 +89,6 @@ public class Game implements IGame {
         respawnRobots();
         repairRobotsOnRepairSite();
         powerDownRepair(powerDown);
-
 
         if (hosting) host.finishedProcessing(board);
     }
@@ -383,8 +383,12 @@ public class Game implements IGame {
     private void applyDamage(int playerID, int damage) {
         if (disableDamage) return;
         if (hosting) {
+            System.out.println("HOST damage to robot " + playerID);
             if (host.applyDamage(playerID, damage)) killRobot(playerID);
-        } else if (client.applyDamage(playerID, damage)) killRobot(playerID);
+        } else {
+            System.out.println("CLIENT damage to robot " + playerID);
+            if (client.applyDamage(playerID, damage)) killRobot(playerID);
+        }
     }
 
     /**
