@@ -19,15 +19,22 @@ public interface IClient {
      */
     IBoard gameBoard();
 
-
     /**
      * @param host         the host that this client is playing at.
      * @param playerNumber the number of the player on this client.
      */
     void connect(IHost host, int playerNumber);
 
+    /**
+     * @param host the host that this client is playing at.
+     * @param playerNumber the number of the player on this client.
+     * @param boardName the name of the board
+     */
     void connect(IHost host, int playerNumber, String boardName);
 
+    /**
+     * @param playerNumber the number of the player on this client.
+     */
     void connect(int playerNumber);
 
     /**
@@ -92,19 +99,43 @@ public interface IClient {
      */
     void activateLasers();
 
-
+    /**
+     * when process is done.
+     *
+     * @param board this board
+     */
     void finishedProcessing(IBoard board);
 
     void render(HashMap<Integer, ArrayList<ICard>> cards, boolean[] powerDown);
 
+    /**
+     * join the game
+     * @param hostName string representing the name of the host
+     */
     void join(String hostName);
 
+    /**
+     * @return integer representing the number of players.
+     */
     int getNPlayers();
 
+    /**
+     * change NPlayers
+     *
+     * @param nPlayers new number of players
+     */
     void updateNPlayers(int nPlayers);
 
+    /**
+     * put a name of the board.
+     *
+     * @param boardName new name of the board
+     */
     void setBoardName(String boardName);
 
+    /**
+     * @return true when ready, false otherwise.
+     */
     boolean readyToRender();
 
     /**
@@ -117,7 +148,7 @@ public interface IClient {
     boolean applyDamage(int playerID, int damage);
 
     /**
-     * @param board
+     * @param board board to update to
      */
     void updateBoard(IBoard board);
 
@@ -129,6 +160,9 @@ public interface IClient {
      */
     void repairDamage(int playerID, int health);
 
+    /**
+     * Player dont get new cards and can not play the next round. Repair all damage.
+     */
     void powerDown();
 
     /**
@@ -136,12 +170,27 @@ public interface IClient {
      */
     void powerDownRepair(boolean[] currentPD);
 
-
+    /**
+     * @return true if finish processing, false otherwise
+     */
     boolean isFinishedProcessing();
 
+    /**
+     * If a robot go outside the board or lose a life token, this method should put the robot at startposition
+     *
+     * @param playerNr player to be put at start position
+     * @param startPosition position to be put
+     */
     void placeRobotAtStart(int playerNr, Vector2 startPosition);
 
+    /**
+     * @param playerID player to check
+     * @return true if playerID lose a life token, false otherwise.
+     */
     boolean loseLifeToken(int playerID);
 
+    /**
+     * @return true if game is over, false otherwise.
+     */
     boolean isGameOver();
 }

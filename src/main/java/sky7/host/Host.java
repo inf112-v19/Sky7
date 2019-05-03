@@ -127,18 +127,17 @@ public class Host implements IHost {
     }
 
     @Override
-    public void repairDamage(int playerID, int damage) {
+    public void repairDamage(int playerID, int health) {
         if (robotDamage[playerID] > 0) {
-            robotDamage[playerID] -= damage;
+            robotDamage[playerID] -= health;
         }
-        //TODO andre årsaker som gjør at player ikke skal få mer health?
     }
 
 
     // PRIVATE METHODS -----------------
 
     /**
-     *
+     * Initialize field variables
      */
     private void initializeFieldVariables() {
         pDeck = new ProgramDeck();
@@ -154,7 +153,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Place robot in start positions
      */
     private void placeRobots() {
         List<StartPosition> startCells = board.getStartCells();
@@ -182,7 +181,7 @@ public class Host implements IHost {
     }
 
     /**
-     * run the game state by state.
+     * Run the game state by state.
      */
     private synchronized void run() {
         while (!terminated) {
@@ -217,7 +216,7 @@ public class Host implements IHost {
 
 
     /**
-     *
+     * Begin th game
      */
     private void runBEGIN() {
         currentState = HOST_STATE.BEGIN;
@@ -225,7 +224,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Deal cards to players
      */
     private void runDEAL_CARDS() {
         currentState = HOST_STATE.DEAL_CARDS;
@@ -236,7 +235,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Waiting for players to be ready
      */
     private void runWAIT_FOR_PLAYERS() {
         currentState = HOST_STATE.WAIT_FOR_PLAYERS;
@@ -246,7 +245,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Distribute registry
      */
     private void runDISTRIBUTE_REGISTRY() {
         currentState = HOST_STATE.DISTRIBUTE_REGISTRY;
@@ -256,7 +255,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Beginning processing
      */
     private void runBEGIN_PROCESSING() {
         if (currentState == HOST_STATE.DISTRIBUTE_REGISTRY) {
@@ -269,7 +268,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Waiting for processing
      */
     private void runWAIT_FOR_PROCESSING() {
         try {
@@ -281,7 +280,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Game is finished
      */
     private void runFINISHED() {
         // TODO if there is something to do when game is finished
@@ -290,7 +289,7 @@ public class Host implements IHost {
 
 
     /**
-     * returns the cards both chosen and not chosen by a player.
+     * Returns the cards both chosen and not chosen by a player.
      */
     private void returnCardsToDeck() {
         // return registry cards to deck - need to implement locked cards later
@@ -302,7 +301,9 @@ public class Host implements IHost {
     }
 
     /**
-     * @param playerID
+     * return the card that is not locked.
+     *
+     * @param playerID the robot
      */
     private void returnCardsNotLocked(int playerID) {
         if (!playersRegistries.containsKey(playerID)) return;
@@ -317,7 +318,7 @@ public class Host implements IHost {
     }
 
     /**
-     * waits for players to be ready.
+     * Waits for players to be ready.
      */
     private synchronized void waitForPlayersToBeReady() {
         // wait for all players to be ready
@@ -331,7 +332,7 @@ public class Host implements IHost {
     }
 
     /**
-     * gives out 9 card to each player, at the start of a round.
+     * Gives out 9 card to each player, at the start of a round.
      */
     private void giveOutCards() {
         // give 9 cards to each player
