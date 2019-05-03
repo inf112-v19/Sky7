@@ -65,7 +65,7 @@
 	- Testes
 		- Se README.md, under "Tests"
 
-### Produktet skal fungerer på Linux ( Ubuntu / Debian ), Windows og OSX.
+### Produktet skal fungere på Linux ( Ubuntu / Debian ), Windows og OSX.
     - Testet på Windows og OSX
     
 ### Dokumentér også hvordan testene skal kjøres.

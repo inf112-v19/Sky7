@@ -23,9 +23,8 @@ public class Main {
             LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
             cfg.title = "Sky7 Games";
             // TODO Width and Height should adapt to the resolution of a screen.
-            cfg.width = 1755;
-//            cfg.height = 1536;
-            cfg.height = 1200;
+            cfg.width = 1366;
+            cfg.height = 1536;
             cfg.foregroundFPS = 30;
             cfg.backgroundFPS = 30;
 

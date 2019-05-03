@@ -1,0 +1,8 @@
+{
+  "name": "Check Mate",
+  "length": "short",
+  "players": "5-8",
+  "width": "12",
+  "height": "12",
+  "grid": "f f f_wN f f_wN f f f_wN f f_wN f f_t1 f bSE0 bWE0 bWE0 bWE0 bWE0 bWE0 bWE0 bWE0 bWE0 bWS0 f f_wW bSN0 bWE1 f_wN bWE1 f_wN bEW1_wN f_g1 bEW1 f bNS0 f_wE f bSN1 f_wW h f bWE1 f bEW1 f bEW1_wE bNS0 f f_wW bSN0 bWE1 f bWE1 f h f bEW1 f bNS0 f_wE f bSN0 f_wW bWE1 f t2 f bEW1 f bEW1_wE bNS0 f f bSN0 bEW1_wW f bWE1 f t2 f h f_wE bNS0 f f_wW bSN0 f bWE1 f h f bEW1 f bEW1 bNS0 f_wE f bSN0 bWE1_wW f_g2 bWE1 f bEW1 f bEW1 f_wE bNS0 f f_wW bSN0 f bWE1 f bWE1 f bEW1 f bEW1 bNS0 f_wE f bEN0 bEW0 bEW0 bEW0 bEW0 bEW0 bEW0 bEW0 bEW0 bNW0 f t1 f f_wS f f_wS f f f_wS f f_wS f f"
+}

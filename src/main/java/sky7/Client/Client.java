@@ -1,12 +1,6 @@
 package sky7.Client;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import com.badlogic.gdx.math.Vector2;
-
 import sky7.board.BoardGenerator;
 import sky7.board.IBoard;
 import sky7.board.IBoardGenerator;
@@ -15,6 +9,11 @@ import sky7.game.Game;
 import sky7.host.IHost;
 import sky7.player.IPlayer;
 import sky7.player.Player;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Client implements IClient {
 
@@ -28,7 +27,7 @@ public class Client implements IClient {
     private boolean localClient; // True if this user is also running Host, false if remotely connected to Host.
     private boolean readyToRender = false, selfPowerDown = false, finishedProcessing = true;
     private ClientNetHandler netHandler;
-    private int nPlayers;
+    private int nPlayers, winner = -1;
     private boolean gameOver = false;
 
 
@@ -45,12 +44,14 @@ public class Client implements IClient {
     }
 
     @Override
-    public void join(String hostName) {
-        localClient = false;
+    public boolean join(String hostName) {
         try {
             netHandler = new ClientNetHandler(this, hostName);
+            localClient = false;
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Unable to connect to host \"" + hostName + "\"");
+            return false;
         }
     }
     
@@ -65,7 +66,6 @@ public class Client implements IClient {
         this.host = host;
         player.setPlayerNumber(playerNumber);
         this.boardName = boardName;
-        generateBoard();
     }
     
     @Override
@@ -75,12 +75,16 @@ public class Client implements IClient {
 
     @Override
     public void chooseCards(ArrayList<ICard> hand) {
+//        player.clearRegistry();
         player.setHand(hand);
         state = STATE.CHOOSING_CARDS;
     }
 
-
+    /**
+     * generate a board
+     */
     public void generateBoard() {
+        if (localClient) boardName = host.getBoardName();
         IBoardGenerator generator = new BoardGenerator();
         try {
             board = generator.getBoardFromFile(boardName);
@@ -98,6 +102,10 @@ public class Client implements IClient {
     }
 
 
+    /**
+     * update board to a different board
+     * @param board updated board
+     */
     public void updateBoard(IBoard board){
         this.board = board;
     }
@@ -138,22 +146,9 @@ public class Client implements IClient {
     }
 
     @Override
-    public void activateBoardElements() {
-        //board.moveConveyors();
-        //board.rotateCogs();
-
-    }
-
-    @Override
-    public void activateLasers() {
-        //TODO should call board.activateLasers
-
-
-    }
-
-    @Override
     public void finishedProcessing(IBoard board) {
     	finishedProcessing = true;
+        player.clearRegistry();
     	player.clearRegistry();
     }
 
@@ -247,5 +242,15 @@ public class Client implements IClient {
     @Override
     public boolean isGameOver() {
         return gameOver;
+    }
+
+    @Override
+    public void winnerFound(int playerID) {
+        winner = playerID;
+    }
+    
+    @Override
+    public int isWinnerFound() {
+        return winner;
     }
 }

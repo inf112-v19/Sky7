@@ -1,7 +1,5 @@
 package sky7.board.cellContents;
 
-import com.badlogic.gdx.math.Vector2;
-
 public enum DIRECTION {
     NORTH(0,1),
     SOUTH(0,-1),
@@ -108,24 +106,32 @@ public enum DIRECTION {
                     case EAST: return 1;
                     case SOUTH: return 2;
                     case WEST: return -1;
-                }
+            default:
+                break;
+            }
                 break;
             case EAST: switch (dir){
                 case SOUTH: return 1;
                 case WEST: return 2;
                 case NORTH: return -1;
+            default:
+                break;
             }
                 break;
             case SOUTH: switch (dir){
                 case WEST: return 1;
                 case NORTH: return 2;
                 case EAST: return -1;
+            default:
+                break;
             }
                 break;
             case WEST: switch (dir){
                 case NORTH: return 1;
                 case EAST: return 2;
                 case SOUTH: return -1;
+            default:
+                break;
             }
                 break;
         }

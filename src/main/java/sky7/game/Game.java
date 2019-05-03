@@ -60,8 +60,9 @@ public class Game implements IGame {
         int phaseNr = 1;
 
         for (Queue<Event> phase : allPhases) {
-
-            System.out.println("phase: " + count++);
+            
+            if (hosting) System.out.println("HOST - phase: " + count++);
+            else System.out.println("CLIENT - phase: " + count++);
 
             // B. Robots Move
             for (Event action : phase) {
@@ -89,7 +90,6 @@ public class Game implements IGame {
         repairRobotsOnRepairSite();
         powerDownRepair(powerDown);
 
-
         if (hosting) host.finishedProcessing(board);
     }
 
@@ -103,6 +103,11 @@ public class Game implements IGame {
         destroyedRobots.clear();
     }
 
+    /**
+     * repair all damage for robots in power down.
+     *
+     * @param powerDown list of robots who chose to power down
+     */
     private void powerDownRepair(boolean[] powerDown) {
         if (hosting) {
             host.powerDownRepair(powerDown);
@@ -113,8 +118,10 @@ public class Game implements IGame {
         }
     }
 
+    /**
+     * check if a robot visits a flag and update that robot visited that flag.
+     */
     private void flags() {
-
         RobotTile[] robots = board.getRobots();
         for (int i = 0; i < robots.length; i++) {
             if (robots[i] != null)
@@ -130,6 +137,9 @@ public class Game implements IGame {
         render(50);
     }
 
+    /**
+     * update a robots archive marker if the robot is visiting a wrench or a flag.
+     */
     private void placeBackup() {
         RobotTile[] robots = board.getRobots();
         for (int i = 0; i < robots.length; i++) {
@@ -143,8 +153,11 @@ public class Game implements IGame {
         }
     }
 
+    /**
+     * A robot on a repair site repairs 1 point of damage.
+     * A robot on a double tool repair site also draws 1 Option card (if we have option cards).
+     */
     private void repairRobotsOnRepairSite() {
-        // REPAIR SITES: A robot on a repair site repairs 1 point of damage. A robot on a double tool repair site also draws 1 Option card.
         for (int i = 0; i < board.getWrenches().size(); i++) {
             for (int j = 0; j < board.getRobots().length; j++) {
                 if (board.getWrenchPositions().get(i).equals(board.getRobotPos()[j])) {
@@ -178,12 +191,11 @@ public class Game implements IGame {
         render(50);
     }
 
+    /**
+     * activate lasers
+     */
     private void activateLasers() {
         //TODO lasers should only be laser start position.
-
-        List<ICell> lasersHeadss = new ArrayList<>();
-        List<Vector2> headPosition = new ArrayList<>();
-
 
         List<Laser> lasersHeads = new ArrayList<>();
         List<Vector2> headPositions = new ArrayList<>();
@@ -214,6 +226,13 @@ public class Game implements IGame {
         fireLasers(lasers); // presume that lasers are only laser start positions and robot position
     }
 
+    /**
+     * check if there is a robot a head
+     *
+     * @param dir in what direction to check
+     * @param pos from position
+     * @return true if there is a robot ahead, false otherwise.
+     */
     private boolean robotAhead(DIRECTION dir, Vector2 pos) {
         if (facingWall(pos, dir)) return false;
         Vector2 ahead = board.getDestination(pos, dir, 1);
@@ -226,6 +245,10 @@ public class Game implements IGame {
         return robotAhead(dir, ahead);
     }
 
+    /**
+     * fire lasers
+     * @param lasers laser to be fire
+     */
     private void fireLasers(Pair<List<Laser>, List<Vector2>> lasers) {
         //presume that lasers and laserPos are the head positions of the lasers and robots.
         if (lasers.a.isEmpty()) return;
@@ -240,8 +263,12 @@ public class Game implements IGame {
         render(20);
     }
 
+    /**
+     * For each laser head, get the next position of the head.
+     * @param lasers list of laser to find the next for
+     * @return
+     */
     private Pair<List<Laser>, List<Vector2>> moveLaserHeads(Pair<List<Laser>, List<Vector2>> lasers) {
-        Pair<List<Laser>, List<Vector2>> nextLasers;
 
         List<Laser> nextHeads = new ArrayList<>();
         List<Vector2> nextHeadPositions = new ArrayList<>();
@@ -261,6 +288,13 @@ public class Game implements IGame {
         return new Pair<>(nextHeads, nextHeadPositions);
     }
 
+    /**
+     * Check if a laser fire in a robot or a wall. Should also apply damage if it hits a robot.
+     *
+     * @param laser the laser to check
+     * @param pos laser position
+     * @return true if it fires a wall or a robot, false otherwise.
+     */
     private boolean laserStopped(Laser laser, Vector2 pos) {
 
         // if pos has a robot. apply damage return true
@@ -281,6 +315,11 @@ public class Game implements IGame {
         }
     }
 
+    /**
+     * dont show lasers.
+     *
+     * @param lasers to be hided.
+     */
     private void hide(Pair<List<Laser>, List<Vector2>> lasers) {
 
         // hide all lasers in the list.
@@ -290,6 +329,10 @@ public class Game implements IGame {
 
     }
 
+    /**
+     * show lasers.
+     * @param lasers to be showed.
+     */
     private void show(Pair<List<Laser>, List<Vector2>> lasers) {
         // show all lasers in the list.
         for (int i = 0; i < lasers.a.size(); i++) {
@@ -297,6 +340,12 @@ public class Game implements IGame {
         }
     }
 
+    /**
+     * Activate pushers.
+     * If a robot stands on a pusher that activates in current phase and the robot is not blocked, it should be pushed.
+     *
+     * @param phaseNr current phase
+     */
     private void activatePushers(int phaseNr) {
         for (int i = 0; i < board.getPushers().size(); i++) {
             for (int j = 0; j < board.getRobots().length; j++) {
@@ -313,28 +362,39 @@ public class Game implements IGame {
     }
 
     private void normalAndExpressConveyor() {
-        System.out.println("Start convos both");
         board.moveConveyors(false);
-        System.out.println("End convos both");
         render(50);
     }
 
     private void expressConveyor() {
         // TODO check if this robot is on a conveyor belt and there is another robot in front that is also on the convoyer belt
 
-        System.out.println("Start move express convo");
         board.moveConveyors(true);
-        System.out.println("End move express convo");
         render(50);
     }
 
+    /**
+     * Decrease the robots health. If robot lose life token and dont have more than one, robot lose.
+     *
+     * @param playerID player to be damaged.
+     * @param damage amount of damage
+     */
     private void applyDamage(int playerID, int damage) {
         if (disableDamage) return;
         if (hosting) {
+            System.out.println("HOST damage to robot " + playerID);
             if (host.applyDamage(playerID, damage)) killRobot(playerID);
-        } else if (client.applyDamage(playerID, damage)) killRobot(playerID);
+        } else {
+            System.out.println("CLIENT damage to robot " + playerID);
+            if (client.applyDamage(playerID, damage)) killRobot(playerID);
+        }
     }
 
+    /**
+     * Increase the robots health.
+     * @param playerID player to be repaired
+     * @param health amount of repair
+     */
     private void repairDamage(int playerID, int health) {
         if (disableDamage) return;
         if (hosting) host.repairDamage(playerID, health);
@@ -342,12 +402,21 @@ public class Game implements IGame {
 
     }
 
+    /**
+     * @param playerID player to be checked.
+     * @return true if player loose a life token, false otherwise.
+     */
     private boolean loseLifeToken(int playerID) {
         if (hosting) {
             return host.loseLifeToken(playerID);
         } else return client.loseLifeToken(playerID);
     }
 
+    /**
+     * If robot go outside the board, it should be hided from the board.
+     * If robot dont have more life tokens, it should be destroyed.
+     * @param playerID robot that lose.
+     */
     private void killRobot(int playerID) {
         board.hideRobot(playerID);
         // not playerID has entered game over, respawn
@@ -378,6 +447,13 @@ public class Game implements IGame {
 
     }
 
+    /**
+     * Move player in dir direction.
+     *
+     * @param player robot to be moved
+     * @param dir move in this direction
+     * @return true if robot goes in a hole or go outside the board, false otherwise.
+     */
     private boolean movePlayer(int player, DIRECTION dir) {
         // move player 1 step in direction dir
         Vector2 ahead = board.getDestination(board.getRobotPos()[player], dir, 1);
@@ -400,6 +476,11 @@ public class Game implements IGame {
         return dead;
     }
 
+    /**
+     * check if robot stands on a hole.
+     * @param player robot to check
+     * @return true if robot stands on a hole, false otherwise.
+     */
     private boolean checkForHole(int player) {
         for (int i = 0; i < board.getRobots().length; i++) {
             if (board.getRobots()[i] != null && player == board.getRobots()[i].getId()) {
@@ -414,11 +495,20 @@ public class Game implements IGame {
         return false;
     }
 
+    /**
+     * Rotate the player with actions instructs.
+     * @param action tell what direction to rotate in.
+     */
     private void rotatePlayer(Event action) {
         board.rotateRobot(action.player, action.card.rotate());
     }
 
-
+    /**
+     * check if a robot can go in dir direction.
+     * @param playerId robot to check for
+     * @param dir direction to check
+     * @return true if the robot can go, false otherwise.
+     */
     private boolean robotCanGo(Integer playerId, DIRECTION dir) {
 
         Vector2 here = board.getRobotPos()[playerId];

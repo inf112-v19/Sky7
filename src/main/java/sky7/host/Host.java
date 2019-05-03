@@ -21,10 +21,13 @@ import java.util.List;
  */
 public class Host implements IHost {
 
+    @Override
+    public void setBoardName(String boardName) {
+        this.boardName = boardName;
+    }
 
     // FIELD VARIABLES --------------
-    private String boardName = "assets/Boards/DizzyDash.json";
-
+    private String boardName = "assets/Boards/VaultAssault.json";
     // TODO MAX_N_PLAYERS should be set based on board.
     private int MAX_N_PLAYERS = 8, nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0, winner = -1;
     private int nFlagsOnBoard = 4; // TODO should be set based on loaded board
@@ -54,8 +57,6 @@ public class Host implements IHost {
         this();
         localClient = cli;
         localClient.connect(this, nPlayers++, boardName);
-
-
     }
 
     public Host() {
@@ -67,6 +68,16 @@ public class Host implements IHost {
             e.printStackTrace();
         }
 
+        
+    }
+
+
+    // PUBLIC METHODS ------------------
+
+    @Override
+    public void Begin() {
+        netHandler.distributeBoard(boardName);
+        
         try {
             board = bg.getBoardFromFile(boardName);
             game = new Game(this, board);
@@ -75,15 +86,14 @@ public class Host implements IHost {
         }
 
         nFlagsOnBoard = board.getFlags().size();
-    }
-
-
-    // PUBLIC METHODS ------------------
-
-    @Override
-    public void Begin() {
-        // TODO Check other conditions if necessary
-        netHandler.distributeBoard(boardName);
+        
+        // Give clients time to generate board before placing robots and starting.
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        
         placeRobots();
         run();
     }
@@ -123,18 +133,17 @@ public class Host implements IHost {
     }
 
     @Override
-    public void repairDamage(int playerID, int damage) {
+    public void repairDamage(int playerID, int health) {
         if (robotDamage[playerID] > 0) {
-            robotDamage[playerID] -= damage;
+            robotDamage[playerID] -= health;
         }
-        //TODO andre årsaker som gjør at player ikke skal få mer health?
     }
 
 
     // PRIVATE METHODS -----------------
 
     /**
-     *
+     * Initialize field variables
      */
     private void initializeFieldVariables() {
         pDeck = new ProgramDeck();
@@ -144,13 +153,16 @@ public class Host implements IHost {
         lockedRegSlots = new int[8];
         robotDamage = new int[8];
         lifeTokens = new int[8];
+        for (int i = 0; i < lifeTokens.length; i++) {
+            lifeTokens[i] = 3;
+        }
         visitedFlags = new int[8];
         powerDown = new boolean[8];
         gameOver = new boolean[8];
     }
 
     /**
-     *
+     * Place robot in start positions
      */
     private void placeRobots() {
         List<StartPosition> startCells = board.getStartCells();
@@ -178,7 +190,7 @@ public class Host implements IHost {
     }
 
     /**
-     * run the game state by state.
+     * Run the game state by state.
      */
     private synchronized void run() {
         while (!terminated) {
@@ -213,7 +225,7 @@ public class Host implements IHost {
 
 
     /**
-     *
+     * Begin th game
      */
     private void runBEGIN() {
         currentState = HOST_STATE.BEGIN;
@@ -221,7 +233,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Deal cards to players
      */
     private void runDEAL_CARDS() {
         currentState = HOST_STATE.DEAL_CARDS;
@@ -232,7 +244,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Waiting for players to be ready
      */
     private void runWAIT_FOR_PLAYERS() {
         currentState = HOST_STATE.WAIT_FOR_PLAYERS;
@@ -242,7 +254,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Distribute registry
      */
     private void runDISTRIBUTE_REGISTRY() {
         currentState = HOST_STATE.DISTRIBUTE_REGISTRY;
@@ -252,7 +264,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Beginning processing
      */
     private void runBEGIN_PROCESSING() {
         if (currentState == HOST_STATE.DISTRIBUTE_REGISTRY) {
@@ -265,7 +277,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Waiting for processing
      */
     private void runWAIT_FOR_PROCESSING() {
         try {
@@ -277,7 +289,7 @@ public class Host implements IHost {
     }
 
     /**
-     *
+     * Game is finished
      */
     private void runFINISHED() {
         // TODO if there is something to do when game is finished
@@ -286,7 +298,7 @@ public class Host implements IHost {
 
 
     /**
-     * returns the cards both chosen and not chosen by a player.
+     * Returns the cards both chosen and not chosen by a player.
      */
     private void returnCardsToDeck() {
         // return registry cards to deck - need to implement locked cards later
@@ -298,7 +310,9 @@ public class Host implements IHost {
     }
 
     /**
-     * @param playerID
+     * return the card that is not locked.
+     *
+     * @param playerID the robot
      */
     private void returnCardsNotLocked(int playerID) {
         if (!playersRegistries.containsKey(playerID)) return;
@@ -313,7 +327,7 @@ public class Host implements IHost {
     }
 
     /**
-     * waits for players to be ready.
+     * Waits for players to be ready.
      */
     private synchronized void waitForPlayersToBeReady() {
         // wait for all players to be ready
@@ -327,17 +341,18 @@ public class Host implements IHost {
     }
 
     /**
-     * gives out 9 card to each player, at the start of a round.
+     * Gives out 9 card to each player, at the start of a round.
      */
     private void giveOutCards() {
         // give 9 cards to each player
-        // TODO: handle situation where host should hand out less than 9 cards to damaged robots
-        if (!powerDown[0]) {
-            System.out.println("Handing out " + (9 - robotDamage[0]) + " cards to player " + 0);
-            localClient.chooseCards(pDeck.draw(9 - robotDamage[0]));
-        } else {
-            localClient.chooseCards(new ArrayList<ICard>());
-            readyPlayers++;
+        if (!gameOver[0]) {
+            if (!powerDown[0]) {
+                System.out.println("Handing out " + (Math.max(0, 9 - robotDamage[0])) + " cards to player 0");
+                localClient.chooseCards(pDeck.draw(Math.max(0, 9 - robotDamage[0])));
+            } else {
+                localClient.chooseCards(new ArrayList<ICard>());
+                readyPlayers++;
+            }
         }
 
         for (int i = 1; i < remotePlayers.length; i++) {
@@ -427,7 +442,8 @@ public class Host implements IHost {
 
         if (visitedFlags[playerID] == nFlagsOnBoard) {
             System.out.println("Player " + playerID + " has won the game!");
-            // TODO victory stuff(?)
+            localClient.winnerFound(playerID);
+            netHandler.winnerFound(playerID);
         }
     }
 
