@@ -43,7 +43,7 @@ public class GUI implements ApplicationListener {
 
 	private int cardXpos = 0;
 	private int scaler = 128;
-	
+
 	private ArrayList<ICard> hand;
 	private ICard[] registry = new ICard[5];
 	private int cardsInReg = 0;
@@ -175,55 +175,54 @@ public class GUI implements ApplicationListener {
 		} else {
 			background.showDock(); //Render background and registry slots
 			boardprinter.showBoard(client);
-			
+
 			if (!client.isGameOver()) {
 				chooseCards(); //Render 9 selectable cards
 				showRegistry();
 				showHealth(); //Render health of player
+
+				/*
+				 * render reset button only if at least one card is selected and
+				 * when the player has not pressed the "ready" button
+				 */
+				if (!cardsChosen) {// && pointer > client.getPlayer().getNLocked()) {
+					reset.draw(batch);
+					if (isClicked(reset)) {
+						reset();
+					}
+				}
+
+				// Render "GO" button only if 5 cards are choosen and player has taken less than 9 damage
+				if (cardsInReg == 5) {
+					confirm.draw(batch);
+
+					// if confirm is clicked:
+					if (isClicked(confirm)) {
+						cardsChosen = true;
+						setRegistry();
+					}
+				}
+
+				powerdown.draw(batch);
+				if (isClicked(powerdown)) {
+					System.out.println("Powering down next round");
+					client.powerDown();
+				}
 			} else {
 				font.getData().setScale(8);
-				font.draw(batch, "GAME OVER", 5*scaler, 10*scaler);
+				font.draw(batch, "GAME OVER", 5*scaler, scaler);
 			}
-
-			/*
-			 * render reset button only if at least one card is selected and
-			 * when the player has not pressed the "ready" button
-			 */
-			if (!cardsChosen) {// && pointer > client.getPlayer().getNLocked()) {
-				reset.draw(batch);
-				if (isClicked(reset)) {
-					reset();
-				}
-			}
-
-			// Render "GO" button only if 5 cards are choosen and player has taken less than 9 damage
-			if (cardsInReg == 5) {
-				confirm.draw(batch);
-
-				// if confirm is clicked:
-				if (isClicked(confirm)) {
-					cardsChosen = true;
-					setRegistry();
-				}
-			}
-			
-			powerdown.draw(batch);
-			if (isClicked(powerdown)) {
-				System.out.println("Powering down next round");
-				client.powerDown();
-			}
-
 		}
 		batch.end();
 	}
 
 	public void showRegistry() {
-	    for (int i=0; i<5; i++) {
-            if (registry[i] != null) {
-                drawSprite(registry[i].GetSpriteRef(), 64+scaler*(5+i), scaler);
-                font.draw(batch, registry[i].getPriority(), scaler*(5+i+1)-64 + 42, scaler + 93);
-            }
-        }
+		for (int i=0; i<5; i++) {
+			if (registry[i] != null) {
+				drawSprite(registry[i].GetSpriteRef(), 64+scaler*(5+i), scaler);
+				font.draw(batch, registry[i].getPriority(), scaler*(5+i+1)-64 + 42, scaler + 93);
+			}
+		}
 	}
 
 	@Override
@@ -242,11 +241,11 @@ public class GUI implements ApplicationListener {
 	 */
 	public void chooseCards() {
 		// check if the current hand is not the same as the hand in Client
-//		if (!hand.equals(client.getHand())) {
-			if (client.isFinishedProcessing()) {
-				reset();
-			}
-//		}
+		//		if (!hand.equals(client.getHand())) {
+		if (client.isFinishedProcessing()) {
+			reset();
+		}
+		//		}
 
 		// if GO is not pressed, draw available cards
 		if (!cardsChosen) {
@@ -266,15 +265,15 @@ public class GUI implements ApplicationListener {
 					if (clickPos.x <= scaler + card.getX() && clickPos.x > card.getX() && clickPos.y <= scaler) {
 						if (card.getY() != scaler) {
 
-//							localregistry.set(pointer, card);
+							//							localregistry.set(pointer, card);
 							for (int i=0; i<5; i++) {
-                                if (registry[i] == null) {
-                                    registry[i] = card;
-                                    cardsInReg++;
-                                    break;
-                                }
-                            }
-							
+								if (registry[i] == null) {
+									registry[i] = card;
+									cardsInReg++;
+									break;
+								}
+							}
+
 							System.out.println(cardsInReg + " card(s) choosen " + card.GetSpriteRef() + " \tPriority: \t" + card.getPriority());
 							card.setY(-scaler);
 						}
@@ -286,7 +285,7 @@ public class GUI implements ApplicationListener {
 
 	public void setRegistry() {
 		//check if there actually are 5 chosen cards
-	    if (cardsInReg < 5) throw new IllegalStateException("GUI attempting to set registry with less than 5 cards");
+		if (cardsInReg < 5) throw new IllegalStateException("GUI attempting to set registry with less than 5 cards");
 		cardsChosen = true;
 		for (int i = 0; i < 5; i++) {
 			client.setCard(registry[i], i);
@@ -298,12 +297,12 @@ public class GUI implements ApplicationListener {
 		System.out.println("\n----------- Resetting -----------");
 		cardsChosen = false;
 		cardXpos = 0;
-		
+
 		cardsInReg = client.getPlayer().getNLocked();
 		System.out.println("Locked cards: " + cardsInReg);
-		
+
 		registry = client.getPlayer().getRegistry().clone();
-		
+
 		hand = client.getHand();
 
 		setHandPos(hand);
