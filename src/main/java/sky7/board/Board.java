@@ -159,7 +159,6 @@ public class Board implements IBoard {
 
     @Override
     public void placeRobot(int playerNr, int x, int y) {
-        System.out.println("Placing robot " + playerNr + " at " + x + ", " + y);
         robotPos[playerNr] = new Vector2(x, y);
         robots[playerNr] = new RobotTile(playerNr);
         grid[x][y].add(robots[playerNr]);
@@ -419,15 +418,12 @@ public class Board implements IBoard {
         for (int i = 0; i < robosWantsToMove.size(); i++) {
             DIRECTION to = convsToBeMoved.get(i).getDirectionTo();
 
-            System.out.println("------------ Checking if robo nr " + robosWantsToMove.get(i).getId() + " can be moved--------");
             if (!canConvoPush(positions.get(i), to, !singelAndDouble)) {
-                System.out.println("------------ Robo nr" + robosWantsToMove.get(i).getId() + " can't move -----------");
                 robosWantsToMove.remove(i);
                 positions.remove(i);
                 convsToBeMoved.remove(i);
                 i--;
             } else {
-                System.out.println("------------ Robo nr " + robosWantsToMove.get(i).getId() + " can be moved--------");
             }
         }
 
@@ -451,7 +447,6 @@ public class Board implements IBoard {
 
     private void activateBelt(RobotTile robo, Belt belt, Vector2 coords) {
         int roboNr = robo.getId();
-        System.out.println("----- acualy moving robo nr " + roboNr + "---------");
 
         Vector2 newCoords = getDestination(coords, belt.getDirectionTo(), 1);
         int rotate = getRotateValue(belt, newCoords);
@@ -461,7 +456,6 @@ public class Board implements IBoard {
             rotateRobot(roboNr, rotate);
         }
 
-        System.out.println("------------ Done moving robot nr: " + roboNr + "-----------");
     }
 
     private int getRotateValue(Belt belt, Vector2 coords) {
@@ -484,7 +478,7 @@ public class Board implements IBoard {
     }
 
     private boolean canConvoPush(Vector2 curCoords, DIRECTION to, boolean onlyExpress) {
-        System.out.println("Recurtion trap");
+
 
         //checking if we can leave current location
         if (wallInCurrentTile(curCoords, to)) {
