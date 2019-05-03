@@ -266,13 +266,7 @@ public class GUI implements ApplicationListener {
 	                }
 				}
 				
-			} else if (client.getPlayer().getLifeToken() <= 0 ){
-				font.getData().setScale(8);
-				font.draw(batch, "GAME OVER", 6*scaler-72, scaler);
-			} else {
-				font.getData().setScale(8);
-				font.draw(batch, "YOU WON", 6*scaler, scaler);
-			}
+			} 
 		}
 		batch.end();
 	}
