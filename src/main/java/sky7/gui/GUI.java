@@ -485,15 +485,16 @@ public class GUI implements ApplicationListener {
 	 */
 	public void connectClient(String hostName) {
 		client = new Client();
-		client.join(hostName);
-		try {
-			Thread.sleep(1000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (client.join(hostName)) {
+		    try {
+		        Thread.sleep(1000);
+		    } catch (InterruptedException e) {
+		        e.printStackTrace();
+		    }
+		    
+		    mainMenu = false;
+		    clientLobby = true;
 		}
-
-		mainMenu = false;
-		clientLobby = true;
 	}
 
 }

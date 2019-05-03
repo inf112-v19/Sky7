@@ -44,12 +44,14 @@ public class Client implements IClient {
     }
 
     @Override
-    public void join(String hostName) {
-        localClient = false;
+    public boolean join(String hostName) {
         try {
             netHandler = new ClientNetHandler(this, hostName);
+            localClient = false;
+            return true;
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Unable to connect to host \"" + hostName + "\"");
+            return false;
         }
     }
     
