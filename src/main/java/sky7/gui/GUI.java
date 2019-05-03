@@ -214,6 +214,8 @@ public class GUI implements ApplicationListener {
 	public void showRegistry() {
 	    for (int i=0; i<5; i++) {
             if (registry[i] != null) {
+                registry[i].setX(64+scaler*(5+i));
+                registry[i].setY(scaler);
                 drawSprite(registry[i].GetSpriteRef(), 64+scaler*(5+i), scaler);
                 font.draw(batch, registry[i].getPriority(), scaler*(5+i+1)-64 + 42, scaler + 93);
             }
@@ -302,7 +304,6 @@ public class GUI implements ApplicationListener {
 		hand = client.getHand();
 
 		setHandPos(hand);
-		cardXpos = 0;
 		chooseCards();
 		System.out.println("----------- end reset -----------");
 	}
