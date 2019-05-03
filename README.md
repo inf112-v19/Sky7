@@ -1,4 +1,6 @@
-# Sky7
+# Sky7 RoboRally
+This is an implementation of the board game "Robo Rally" as a computer game, 
+for Windows, Mac and Linux.
 
 ## How to run
 ### Use if an IDE
@@ -15,13 +17,18 @@
 	- Mac: TODO
 	- Linux: TODO
 
-## Current functionality
-- Game starts in "menu" with only one button. This will later be populated with options to host or connect, what board to load etc.
-- One player can play endless rounds by selecting cards from hand and playing them by clicking "go".
-- Walls block the path of robots.
-- Player can push another robot(placed there for demonstration, not controlled).
-- Cogwheels rotate robots.
-- Player is dealt new cards each round.
+## How to play
+- LAN mode
+	- One of the players may choose to host after starting the game.
+	- Other players connect to the host's IP.
+	- When all players are connected, the host can begin the game.
+- Click on the cards you want to insert into your robot's registry.
+- If you change your mind, hit the reset button to return the cards to your hand.
+- Once the registry is full, you may click "Go".
+- To "Power Down" and repair your robot the next round, hit "Power Down" before you click "Go".
+- Once all players have clicked "Go", all registries will be executed from left to rigth. 
+- Higher priority cards go first.
+- Stop on a flag to pick it up. Flags must be picked up in order (e.g. 1,2,3) to win.
 
 ## Documentation
 - Class diagram in [Documents/Class diagram](Documents/Class diagram).
@@ -61,6 +68,9 @@
 	- Assert that clients always return 5 cards assigned to registry, 
 	and the remaining as discard (n=100) (none lost, duplicated or created).
 ### Manual Tests
-- Instructions in [Documents/UserTest.md](Documents/UserTest.md)
+- Play the game!
+	- Start the game as host, and click begin, to test it with just one player.
+	- Start the game as host, start the game again, but as client, connect to "127.0.0.1" 
+	to test multiplayer functions.
 
 22e3450d273bd813e33374b470ca2e933aee2699
