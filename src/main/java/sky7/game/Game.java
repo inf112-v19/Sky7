@@ -312,7 +312,7 @@ public class Game implements IGame {
         else {
             Vector2 ahead = board.getDestination(pos, laser.getDirection(), 1);
             if (board.containsPosition(ahead)) {
-                return facingWall(pos, laser.getDirection().reverse());
+                return facingWall(ahead, laser.getDirection().reverse());
             }
             return false;
         }
