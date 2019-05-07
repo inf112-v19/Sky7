@@ -28,9 +28,8 @@ public class Host implements IHost {
 
     // FIELD VARIABLES --------------
     private String boardName = "assets/Boards/VaultAssault.json";
-    // TODO MAX_N_PLAYERS should be set based on board.
     private int MAX_N_PLAYERS = 8, nPlayers = 0, readyPlayers = 0, nRemotePlayers = 0, winner = -1;
-    private int nFlagsOnBoard = 4; // TODO should be set based on loaded board
+    private int nFlagsOnBoard = 4;
     private boolean terminated = false, processingFinished = false;
     private HOST_STATE nextState = HOST_STATE.BEGIN;
     private HOST_STATE currentState = HOST_STATE.BEGIN;
@@ -46,7 +45,6 @@ public class Host implements IHost {
     private IDeck pDeck;
     private Game game;
 
-    // TODO host must know where each player can respawn.(?) Or should that be handled locally in game engine?
 
     // CONSTRUCTORS -------------
 
@@ -292,7 +290,6 @@ public class Host implements IHost {
      * Game is finished
      */
     private void runFINISHED() {
-        // TODO if there is something to do when game is finished
         terminated = true;
     }
 
@@ -459,18 +456,13 @@ public class Host implements IHost {
 
     @Override
     public boolean loseLifeToken(int playerID) {
-        // TODO what happens at lose of life-token
-        // Check if game over
-        // if so, do not ask for registry
-        // send game update until game is won or everybody loses.
-        // host must continue to host until match is won or everybody loses.
 
         if(!gameOver[playerID]){
             gameOver[playerID] = --lifeTokens[playerID]<=0;
             if(gameOver[playerID]) --nPlayers;
-        }
-        if(nPlayers == 0){
-            // TODO what happens if nobody wins.
+            if(nPlayers == 0){
+                terminated = true;
+            }
         }
         return gameOver[playerID];
     }

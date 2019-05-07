@@ -276,11 +276,6 @@ public class Board implements IBoard {
     @Override
     public void hideRobot(int player) {
         Vector2 pos = robotPos[player];
-        //deadRobots[player] = robots[player];
-        //robots[player] = null;
-        //deadRobotPos[player] = robotPos[player];
-        //robotPos[player] = null;
-
         for (ICell item : grid[(int) pos.x][(int) pos.y]) {
             if (item instanceof RobotTile) {
                 grid[(int) pos.x][(int) pos.y].remove(item);
@@ -496,7 +491,6 @@ public class Board implements IBoard {
          *
          */
 
-        // todo: might putting this in a method
         boolean foundBelt = false;
         Belt belt = null;
         boolean foundRobo = false;

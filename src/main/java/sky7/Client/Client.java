@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class Client implements IClient {
 
-    private IBoard board; //TODO double check the code, might contain problems.
+    private IBoard board;
     private IHost host;
     private IPlayer player;
     private STATE state;
@@ -156,10 +156,6 @@ public class Client implements IClient {
     public void render(HashMap<Integer, ArrayList<ICard>> cards, boolean[] powerDown) {
     	finishedProcessing = false;
     	new Thread(() -> { game.process(cards, powerDown.clone()); }).start();
-    }
-
-    public int getID() {
-        return player.getPlayerNumber();
     }
 
     @Override

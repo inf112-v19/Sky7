@@ -39,10 +39,6 @@ public class CogWheel implements IActive {
         return this.PRIORITY;
     }
 
-    @Override
-    public boolean isVisible() {
-        return true;
-    }
 
     @Override
     public int compareTo(ICell other) {

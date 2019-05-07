@@ -36,11 +36,6 @@ public class RobotTile implements IMoving {
     }
 
     @Override
-    public boolean isVisible() {
-        return true;
-    }
-
-    @Override
     public int compareTo(ICell other) {
         if(other == this) return 0;
         else if(other instanceof RobotTile ){
