@@ -73,7 +73,10 @@
     
 ### Legg også ved et klassediagram som viser de viktige delene av koden. Tilpass klassediagrammet slik at det gir leseren mest mulig informasjon (feks Intellij kan tilpasse klassediagram som genereres). 
 ### Hvis dere gjør justeringer som feks å ta vekk ubetydelige klasser, skriv noen linjer om hvordan dere har tilpasset disse kommuniserer. Tenk at dere skal forklare arkitekturen i programmet deres til en ny utvikler.
-    - Spillet er strukturert slik at Main start en GUI tråd.Deretter avhengig av Spillerens valg blir enten Host eller Client satt i gang.
-    - En Host har en Client av sin egen, i tillegg til andre Clienter gjennom HostNetHandler I tillegg til at hver client kjører en Game av sin egen, gjør host også det samme.
-    - Både host og client har en Board objekt, men bare Client sin board blir vist på skjermen.
-    - Det finnes andre klasser som blir brukt av disse hover klassene.
+    - Spillet er strukturert slik at Main starter en GUI tråd. Deretter avhengig av Spillerens valg blir enten 
+	Host eller Client satt i gang.
+	- En Host har en Client av sin egen, i tillegg til andre Clienter gjennom HostNetHandler I tillegg til at hver 
+	client kjører en Game av sin egen, gjør host også det samme.
+	- Både host og client har en Board objekt, men bare Client sin board blir vist på skjermen.
+	- Det finnes andre klasser som blir brukt av disse hover klassene.
+
