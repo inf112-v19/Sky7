@@ -22,6 +22,9 @@ public class ProgramCard implements IProgramCard, Comparable<ProgramCard> {
 		else
 			moveType = false;
 	}
+	
+	public ProgramCard() {
+	}
 
 	@Override
 	public int priorityN() {
