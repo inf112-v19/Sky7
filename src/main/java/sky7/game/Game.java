@@ -257,13 +257,13 @@ public class Game implements IGame {
         if (lasers.a.isEmpty()) return;
 
         show(lasers);
-        render(20);
+        render(50);
 
         Pair<List<Laser>, List<Vector2>> next = moveLaserHeads(lasers);
         fireLasers(next);
 
         hide(lasers);
-        render(20);
+        render(50);
     }
 
     /**
